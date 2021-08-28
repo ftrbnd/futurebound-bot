@@ -1,10 +1,11 @@
 const { SlashCommandBuilder } = require('@discordjs/builders')
-const {MessageEmbed} = require('discord.js');
+const { MessageEmbed } = require('discord.js');
 
 module.exports = {
 	data: new SlashCommandBuilder()
 		.setName('help')
 		.setDescription('Get a list of the commands for this bot'),
+		
 	async execute(interaction) {
 		const helpEmbed = new MessageEmbed()
 			.setTitle(`***${interaction.guild}*** commands list`)

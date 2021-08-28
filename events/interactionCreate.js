@@ -1,4 +1,5 @@
 // Interactions: slash commands, buttons, select menus
+const { MessageEmbed } = require('discord.js')
 
 module.exports = {
 	name: 'interactionCreate',
@@ -13,7 +14,10 @@ module.exports = {
             await command.execute(interaction)
         } catch (error) {
             console.error(error)
-            await interaction.reply({ content: 'There was an error while executing this command!', ephemeral: true })
+            const errorEmbed = new MessageEmbed()
+                .setDescription('There was an error while executing this command!')
+                .setColor(0xdf0000)
+            await interaction.reply({ embeds: [errorEmbed], ephemeral: true })
         }
 	},
 }
