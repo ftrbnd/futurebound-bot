@@ -1,4 +1,4 @@
-const { MessageEmbed } = require('discord.js');
+const { MessageEmbed } = require('discord.js')
 
 module.exports = {
 	name: 'ready',
@@ -39,4 +39,4 @@ module.exports = {
 
 		console.log(`${client.user.tag} has restarted and is now online!`)
 	},
-};
+}
