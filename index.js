@@ -1,7 +1,7 @@
 require('dotenv').config()
 const fs = require('fs')
 const { Client, Collection, Intents } = require('discord.js')
-const client = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MEMBERS] })
+const client = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MEMBERS, Intents.FLAGS.GUILD_BANS] })
 
 // Command handler
 client.commands = new Collection()
