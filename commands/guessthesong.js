@@ -64,7 +64,7 @@ module.exports = {
                         .setColor(0x32ff25)
                         .setFooter(m.guild.name, m.guild.iconURL({ dynamic : true}) )
 
-                    interaction.followUp({ embeds: [winnerEmbed] })
+                    m.reply({ embeds: [winnerEmbed] })
                     collector.stop()
                 })
 
