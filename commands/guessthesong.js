@@ -25,7 +25,7 @@ module.exports = {
         const randomSong = songs[Math.floor(Math.random() * songs.length)]
 
         // log the command
-        console.log(`guessthesong command was used - Song: ${randomSong}`);
+        console.log(`guessthesong command was used - Song: ${randomSong}`); // semicolon necessary here
 
         var line = ''
         await (async function(artist, randomSong) {
