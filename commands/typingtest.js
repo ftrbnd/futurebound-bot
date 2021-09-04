@@ -36,8 +36,10 @@ module.exports = {
 
         var typingResult = ''
         const start = new Date()
+        var messageToReply
         collector.on('collect', m => {
-            typingResult += m.content; // once message is collected, add the typed words to a variable
+            typingResult += m.content // once message is collected, add the typed words to a variable
+            messageToReply = m
             collector.stop()
         })
 
@@ -88,7 +90,7 @@ module.exports = {
                     .addField('Accuracy', accuracyCount + '%')
                     .setFooter(interaction.user.username, interaction.user.displayAvatarURL())
         
-                interaction.followUp({ embeds: [wpmEmbed] })
+                messageToReply.reply({ embeds: [wpmEmbed] })
             }
         })
 	},
