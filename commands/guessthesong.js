@@ -6,7 +6,7 @@ const { MessageEmbed } = require('discord.js')
 
 module.exports = {
 	data: new SlashCommandBuilder()
-		.setName('guessthesong2')
+		.setName('guessthesong')
 		.setDescription('Guess the song within 15 seconds!'),
 		
 	async execute(interaction) {
