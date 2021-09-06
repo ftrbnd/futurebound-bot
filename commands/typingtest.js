@@ -88,7 +88,7 @@ module.exports = {
                     .setColor(color)
                     .addField('WPM', wpm)
                     .addField('Accuracy', accuracyCount + '%')
-                    .setFooter(interaction.user.username, interaction.user.displayAvatarURL())
+                    .setFooter(interaction.user.username, interaction.user.displayAvatarURL({ dynamic : true }))
         
                 messageToReply.reply({ embeds: [wpmEmbed] })
             }

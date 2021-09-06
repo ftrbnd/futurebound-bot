@@ -8,7 +8,7 @@ module.exports = {
 		if(message.author.bot) return
 			
 		const msgDeleteEmbed = new MessageEmbed()
-			.setAuthor(`${message.author.tag} deleted a message.`, message.author.displayAvatarURL({ dynamic : true} ))
+			.setAuthor(`${message.author.tag} deleted a message.`, message.author.displayAvatarURL({ dynamic : true }))
 			.setDescription(message.content)
 			.addField('Channel', message.channel.name)
 			.setColor(0xdf0000)
