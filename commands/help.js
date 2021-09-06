@@ -1,3 +1,5 @@
+const fs = require('fs')
+
 const { SlashCommandBuilder } = require('@discordjs/builders')
 const { MessageEmbed } = require('discord.js')
 
@@ -7,27 +9,17 @@ module.exports = {
 		.setDescription('Get a list of the commands for this bot'),
 		
 	async execute(interaction) {
+		var commandList = ''
+		const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'))
+		for (const file of commandFiles) {
+			commandList += `${file.replace('.js', '')}\n`
+		}
+
 		const helpEmbed = new MessageEmbed()
-			.setTitle(`***${interaction.guild}*** commands list`)
-			.setThumbnail(interaction.guild.iconURL({ dynamic : true}))
+			.setTitle(`Commands for ***${interaction.client.user.tag}***`)
+			.setDescription(commandList)
+			.setFooter(interaction.guild.name, interaction.guild.iconURL({ dynamic : true}) )
 			.setColor(0xf03200)
-			.addFields(
-				{
-					name: 'Prefix',
-					value: process.env.PREFIX,
-					inline: true,
-				},
-				{
-					name: 'Moderator Commands',
-					value: 'ban, clear, kick, listeningparty, listeningpartyopen, lockdown, mute, react, reopen, say, slowmode, survivor, unmute, warn',
-					inline: false,
-				},
-				{
-					name: 'General Commands',
-					value: '8ball, eden, lyrics, serverinfo, typingtest, urban',
-					inline: false,
-				},  
-			);
 
 		interaction.reply({ embeds: [helpEmbed] })
 	},
