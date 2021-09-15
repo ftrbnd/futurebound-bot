@@ -1,3 +1,5 @@
+require('dotenv').config()
+
 const { SlashCommandBuilder } = require('@discordjs/builders')
 const { MessageEmbed } = require('discord.js')
 
@@ -15,11 +17,11 @@ module.exports = {
             .setRequired(true)),
 		
 	async execute(interaction) {
-        if(interaction.member.roles.cache.has('691882703674540042')) { // Moderator role
+        if(interaction.member.roles.cache.has(process.env.MODERATORS_ROLE_ID)) { // Moderator role
             const userToMute = interaction.options._hoistedOptions[0].user
             const reasonForMute = interaction.options._hoistedOptions[1].value
 
-            const modChannel = interaction.guild.channels.cache.find(channel => channel.name === "moderators")
+            const modChannel = interaction.guild.channels.cache.get(process.env.MODERATORS_CHANNEL_ID)
             if(!modChannel) return
 
             const logEmbed = new MessageEmbed()
@@ -47,7 +49,7 @@ module.exports = {
             }
             
             userToMuteMember = interaction.guild.members.cache.get(`${userToMute.id}`)
-            userToMuteMember.roles.set(['739268829808558151'])
+            userToMuteMember.roles.set([process.env.MUTE_ROLE_ID]) // Mute role
 
             const mutedEmbed = new MessageEmbed()
                 .setDescription(`${userToMute} was muted.`)

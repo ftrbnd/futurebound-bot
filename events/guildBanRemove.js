@@ -1,9 +1,11 @@
+require('dotenv').config()
+
 const { MessageEmbed } = require('discord.js')
 
 module.exports = {
 	name: 'guildBanRemove',
 	async execute(ban) {
-        const modChannel = ban.guild.channels.cache.find(channel => channel.name === "moderators")
+        const modChannel = ban.guild.channels.cache.get(process.env.MODERATORS_CHANNEL_ID)
 		if(!modChannel) return
 
         var log = new MessageEmbed()

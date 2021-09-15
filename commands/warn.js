@@ -1,3 +1,5 @@
+require('dotenv').config()
+
 const { SlashCommandBuilder } = require('@discordjs/builders')
 const { MessageEmbed } = require('discord.js')
 
@@ -15,11 +17,11 @@ module.exports = {
             .setRequired(true)),
 		
 	async execute(interaction) {
-        if(interaction.member.roles.cache.has('691882703674540042')) { // Moderator role
+        if(interaction.member.roles.cache.has(MODERATORS_ROLE_ID)) { // Moderator role
             const userToWarn = interaction.options._hoistedOptions[0].user
             const reasonForWarn = interaction.options._hoistedOptions[1].value
 
-            const modChannel = interaction.guild.channels.cache.find(channel => channel.name === "moderators")
+            const modChannel = interaction.guild.channels.cache.get(process.env.MODERATORS_CHANNEL_ID)
             if(!modChannel) return
 
             const logEmbed = new MessageEmbed()

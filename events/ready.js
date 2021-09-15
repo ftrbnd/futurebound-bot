@@ -1,3 +1,5 @@
+require('dotenv').config()
+
 const { MessageEmbed } = require('discord.js')
 
 module.exports = {
@@ -29,7 +31,7 @@ module.exports = {
             : currentIndex + 1
         }, updateDelay * 1000)
 
-        const logChannel = client.channels.cache.find(channel => channel.name.toLowerCase() === 'spam')
+        const logChannel = client.channels.cache.get(process.env.LOGS_CHANNEL_ID)
         if(logChannel) {
             const readyEmbed = new MessageEmbed()
                 .setDescription(`**${client.user.tag}** has restarted and is now online!`)

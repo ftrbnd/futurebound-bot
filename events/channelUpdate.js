@@ -1,9 +1,11 @@
+require('dotenv').config()
+
 const { MessageEmbed } = require('discord.js')
 
 module.exports = {
 	name: 'channelUpdate',
 	async execute(oldChannel, newChannel) {
-        const logChannel = oldChannel.guild.channels.cache.find(channel => channel.name === "spam")
+        const logChannel = oldChannel.guild.channels.cache.get(process.env.LOGS_CHANNEL_ID)
 		if(!logChannel) return
 			
         const channelType = (oldChannel.type === 'GUILD_TEXT') ? "text" : "voice" // if oldChannel type is GUILD_TEXT, then set channelType to text

@@ -1,3 +1,5 @@
+require('dotenv').config()
+
 const { SlashCommandBuilder } = require('@discordjs/builders')
 const { MessageEmbed } = require('discord.js')
 
@@ -15,7 +17,7 @@ module.exports = {
             .setRequired(true)),
         
 	async execute(interaction) {
-        if(interaction.member.roles.cache.has('691882703674540042')) { // Moderator role
+        if(interaction.member.roles.cache.has(process.env.MODERATORS_ROLE_ID)) { // Moderator role
             const channel = interaction.options._hoistedOptions[0].channel
             const emoji = interaction.options._hoistedOptions[1].value
 

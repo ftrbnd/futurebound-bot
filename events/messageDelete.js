@@ -1,9 +1,11 @@
+require('dotenv').config()
+
 const { MessageEmbed } = require('discord.js')
 
 module.exports = {
 	name: 'messageDelete',
 	async execute(message) {
-        const channel = message.guild.channels.cache.find(channel => channel.name === "spam")
+        const logChannel = message.guild.channels.cache.get(process.env.LOGS_CHANNEL_ID)
 		if(!channel) return
 		if(message.author.bot) return
 			
@@ -13,6 +15,6 @@ module.exports = {
 			.addField('Channel', message.channel.name)
 			.setColor(0xdf0000)
 			.setTimestamp()
-		channel.send({ embeds: [msgDeleteEmbed] })
+		logChannel.send({ embeds: [msgDeleteEmbed] })
 	},
 }

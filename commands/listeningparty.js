@@ -1,3 +1,5 @@
+require('dotenv').config()
+
 const { SlashCommandBuilder } = require('@discordjs/builders')
 const { MessageEmbed, Permissions } = require('discord.js')
 
@@ -23,7 +25,7 @@ module.exports = {
                 .setDescription('Make the channels private')),
 
 	async execute(interaction) {
-		if(interaction.member.roles.cache.has('691882703674540042')) { // Moderator role
+		if(interaction.member.roles.cache.has(process.env.MODERATORS_ROLE_ID)) { // Moderator role
             if(interaction.options.getSubcommand() === 'create') {
                 const listeningPartyName = interaction.options._hoistedOptions[0].value
 
