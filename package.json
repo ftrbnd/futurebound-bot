@@ -5,7 +5,7 @@
   "engines": {
     "node": "16.x"
   },
-  "main": "index.js",
+  "main": "deploy-commands.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node deploy-commands.js && node index.js"
