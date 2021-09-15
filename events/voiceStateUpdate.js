@@ -50,7 +50,7 @@ module.exports = {
 				.setTimestamp()
 				.setFooter(`User ID: ${newState.member.user.id}`, newState.member.user.displayAvatarURL({ dynamic : true }))
 				
-			logChannel.send({ embeds: [joinEmbed] })
+			return logChannel.send({ embeds: [joinEmbed] })
 
 		} else if(!newState.channel) { // if they leave a channel
 			leaveEmbed = new MessageEmbed()
