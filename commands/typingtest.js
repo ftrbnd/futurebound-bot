@@ -23,7 +23,7 @@ module.exports = {
         // embed that will show the quote
         const typingTestEmbed = new MessageEmbed()
             .setTitle('Typing Test')
-            .setThumbnail('https://knovi.com/images/JurvoTypingAnimation.gif') // typing animation
+            .setThumbnail('https://support.signal.org/hc/article_attachments/360016877511/typing-animation-3x.gif') // typing animation
             .setColor(0xfdfaff)
             .setDescription(textToType)
             .setFooter(interaction.user.username, interaction.user.displayAvatarURL({ dynamic : true }));
