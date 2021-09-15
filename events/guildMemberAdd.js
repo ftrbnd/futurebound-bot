@@ -13,7 +13,6 @@ module.exports = {
             .setDescription(`Go to <#702231983853666335> to pick your favorite EP/album, and a color will be added to your name.`)
             .setFooter(member.guild.name, member.guild.iconURL({ dynamic : true}))
             .setTimestamp()
-
         return welcomeChannel.send({ content: `${member}`, embeds: [welcomeEmbed] })
 	},
 }
