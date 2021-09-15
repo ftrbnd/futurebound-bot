@@ -18,8 +18,6 @@ module.exports = {
         urbanResults = urban(searchEntry)
 
         urbanResults.first(function(json) {
-            console.log(json)
-
             var jsonDefinition = json.definition
             jsonDefinition = jsonDefinition.split('[').join('')
             jsonDefinition = jsonDefinition.split(']').join('')
