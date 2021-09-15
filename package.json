@@ -1,10 +1,11 @@
 {
   "name": "eden-bot-v13",
   "version": "1.13.0",
-  "description": "",
+  "description": "Updated version of my Discord bot, now using Discord.js v13",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js"
   },
   "author": "Giovanni Salas",
   "license": "ISC",
