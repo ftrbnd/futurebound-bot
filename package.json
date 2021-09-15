@@ -16,6 +16,7 @@
     "dotenv": "^10.0.0",
     "imgur": "^1.0.2",
     "lyrics-finder": "^21.7.0",
+    "reddit-snooper": "^1.0.1",
     "twit": "^2.2.11",
     "urban": "^0.3.4"
   }
