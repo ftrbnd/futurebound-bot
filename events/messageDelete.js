@@ -6,7 +6,7 @@ module.exports = {
 	name: 'messageDelete',
 	async execute(message) {
         const logChannel = message.guild.channels.cache.get(process.env.LOGS_CHANNEL_ID)
-		if(!channel) return
+		if(!logChannel) return
 		if(message.author.bot) return
 			
 		const msgDeleteEmbed = new MessageEmbed()
