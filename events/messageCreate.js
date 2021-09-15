@@ -16,9 +16,9 @@ module.exports = {
                 .setAuthor(`Direct message from ${message.author.tag}`, message.author.displayAvatarURL({ dynamic : true }))
                 .setDescription(message.content)
                 .setColor(0x7289da)
-                .setTimestamp();
+                .setTimestamp()
 
-            return logChannel.send({ embeds: [dmEmbed] });
+            return logChannel.send({ embeds: [dmEmbed] })
         }
 
         const boostEmbed = new MessageEmbed()
@@ -28,7 +28,7 @@ module.exports = {
             .addField('Server Level', `${message.guild.premiumTier}`, true)
             .addField('Server Boosts', `${message.guild.premiumSubscriptionCount}`, true)
             .setFooter(`${message.guild.name}`, `${message.guild.iconURL({ dynamic : true })}`) // server icon
-            .setTimestamp(); // when the boost happened
+            .setTimestamp() // when the boost happened
 
         switch(message.type) {
             case 'USER_PREMIUM_GUILD_SUBSCRIPTION_TIER_3':
