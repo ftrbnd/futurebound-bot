@@ -14,6 +14,6 @@ module.exports = {
             .setFooter(member.guild.name, member.guild.iconURL({ dynamic : true}))
             .setTimestamp()
 
-        welcomeChannel.send({ content: `${member}`, embeds: [welcomeEmbed] })
+        return welcomeChannel.send({ content: `${member}`, embeds: [welcomeEmbed] })
 	},
 }
