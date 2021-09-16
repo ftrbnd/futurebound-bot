@@ -79,7 +79,7 @@ snooper = new Snooper(
 snooper.watcher.getPostWatcher('eden') // blank argument or 'all' looks at the entire website
     .on('post', function(post) {
         // comment is a object containing all comment data
-        console.log(post)
+        // console.log(post)
 
         const subredditChannel = client.channels.cache.get(process.env.SUBREDDIT_CHANNEL_ID)
 
@@ -92,5 +92,16 @@ snooper.watcher.getPostWatcher('eden') // blank argument or 'all' looks at the e
             .setFooter(`Posted by u/${post.data.author} on r/${post.data.subreddit}`, 'https://logodownload.org/wp-content/uploads/2018/02/reddit-logo-16.png')
             .setTimestamp()
         subredditChannel.send({ embeds: [redditEmbed] })
+            .then(() => subredditChannel.messages.fetch({ limit: 1 }) // fetch latest message
+                .then(messages => {
+                    let lastMessage = messages.first() // message retrieved
+                    const upvoteEmoji = client.emojis.cache.get(process.env.UPVOTE_EMOJI_ID)
+                    const downvoteEmoji = client.emojis.cache.get(process.env.DOWNVOTE_EMOJI_ID)
+
+                    lastMessage.react(upvoteEmoji)     // react with upvote
+                        .then(() => lastMessage.react(downvoteEmoji)) // react with downvote
+                })
+                .catch(console.error))
+
     })
     .on('error', console.error)
