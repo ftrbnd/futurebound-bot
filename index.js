@@ -6,9 +6,8 @@ const fs = require('fs')
 const { Client, Collection, Intents, MessageEmbed} = require('discord.js')
 const client = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MEMBERS, Intents.FLAGS.GUILD_BANS, Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.GUILD_VOICE_STATES] })
 
-// Command handler
 client.commands = new Collection()
-const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'))
+const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'))  // Command handler
 for (const file of commandFiles) {
 	const command = require(`./commands/${file}`)
 	// set a new item in the Collection
@@ -16,8 +15,7 @@ for (const file of commandFiles) {
 	client.commands.set(command.data.name, command)
 }
 
-// Event handler
-const eventFiles = fs.readdirSync('./events').filter(file => file.endsWith('.js'))
+const eventFiles = fs.readdirSync('./events').filter(file => file.endsWith('.js')) // Event handler
 for(const file of eventFiles) {
 	const event = require(`./events/${file}`)
 	if(event.once) {
@@ -105,7 +103,7 @@ snooper.watcher.getPostWatcher('eden') // blank argument or 'all' looks at the e
     })
     .on('error', console.error)
 
-// MongoDB
+// Mongo DB
 
 const mongoose = require('mongoose')
 const User = require('./schemas/UserSchema')
@@ -114,3 +112,4 @@ mongoose.connect(process.env.MONGODB_URI)
     .then((m) => {
         console.log("Connected to database!")
     }).catch((err) => console.log(err))
+
