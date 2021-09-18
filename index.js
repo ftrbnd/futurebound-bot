@@ -108,7 +108,7 @@ snooper.watcher.getPostWatcher('eden') // blank argument or 'all' looks at the e
 const mongoose = require('mongoose')
 const User = require('./schemas/UserSchema')
 
-mongoose.connect(process.env.MONGODB_URI)
+await mongoose.connect(process.env.MONGODB_URI)
     .then((m) => {
         console.log("Connected to database!")
     }).catch((err) => console.log(err))
