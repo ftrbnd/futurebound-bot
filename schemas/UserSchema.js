@@ -2,15 +2,15 @@ const mongoose = require('mongoose')
 
 const UserSchema = new mongoose.Schema({
     discordId: {
-        type: mongoose.SchemaType.String,
+        type: mongoose.SchemaTypes.String,
         require: true,
     },
     birthday: {
-        type: mongoose.SchemaType.Date,
+        type: mongoose.SchemaTypes.Date,
         require: true,
     },
     timezone: {
-        type: mongoose.SchemaType.String,
+        type: mongoose.SchemaTypes.String,
         require: true,
     },
 })
