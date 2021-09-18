@@ -1,6 +1,8 @@
 require('dotenv').config()
 const fs = require('fs')
 
+// Discord
+
 const { Client, Collection, Intents, MessageEmbed} = require('discord.js')
 const client = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MEMBERS, Intents.FLAGS.GUILD_BANS, Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.GUILD_VOICE_STATES] })
 
@@ -78,9 +80,6 @@ snooper = new Snooper(
 
 snooper.watcher.getPostWatcher('eden') // blank argument or 'all' looks at the entire website
     .on('post', function(post) {
-        // comment is a object containing all comment data
-        // console.log(post)
-
         const subredditChannel = client.channels.cache.get(process.env.SUBREDDIT_CHANNEL_ID)
 
         var redditEmbed = new MessageEmbed()
@@ -105,3 +104,13 @@ snooper.watcher.getPostWatcher('eden') // blank argument or 'all' looks at the e
 
     })
     .on('error', console.error)
+
+// MongoDB
+
+const mongoose = require('mongoose')
+const User = require('./schemas/UserSchema')
+
+mongoose.connect(process.env.MONGODB_URI)
+    .then((m) => {
+        console.log("Connected to database!")
+    }).catch((err) => console.log(err))
