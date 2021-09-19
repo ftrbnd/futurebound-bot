@@ -108,8 +108,76 @@ snooper.watcher.getPostWatcher('eden') // blank argument or 'all' looks at the e
 const mongoose = require('mongoose')
 const User = require('./schemas/UserSchema')
 
-await mongoose.connect(process.env.MONGODB_URI)
+mongoose.connect(process.env.MONGODB_URI)
     .then((m) => {
         console.log("Connected to database!")
     }).catch((err) => console.log(err))
 
+setInterval(() => {
+    User.find((err, data)=> { // is there a birthday today?
+        if(data) {
+            var today = new Date()
+            console.log(`\nChecking for birthdays... Today's date: ${today}`)
+    
+            const numberEndings = new Map()
+            numberEndings.set(13, 'th')
+            numberEndings.set(12, 'th')
+            numberEndings.set(11, 'th')
+            numberEndings.set(3, 'rd')
+            numberEndings.set(2, 'nd')
+            numberEndings.set(1, 'st')
+    
+            data.forEach(user => {
+                if(today.getMonth() === user.birthday.getMonth() && today.getDate() === user.birthday.getDate() && today.getHours() === user.birthday.getHours() && today.getMinutes() === user.birthday.getMinutes()) {
+                    var age = today.getFullYear() - user.birthday.getFullYear()
+    
+                    var ageSuffix
+                    for(const [number, suffix] of numberEndings.entries()) { // every number ends with 'th' except for numbers that end in 1, 2, or 3
+                        if(`${age}`.endsWith(`${number}`)) {
+                            ageSuffix = suffix
+                            break
+                        } else {
+                            ageSuffix = "th"
+                        }
+                    }
+    
+                    var balloons = ''
+                    for(var i = 0; i < age; i++) {
+                        balloons += '🎈'
+                    }
+    
+                    var bdayDescription
+                    if(age < 18) {
+                        bdayDescription = `It's ${user.username}'s birthday today!`
+                    } else {
+                        bdayDescription = `It's ${user.username}'s ${age}${ageSuffix} birthday today!`
+                    }
+                    const birthdayPerson = client.guilds.cache.get(process.env.GUILD_ID).members.fetch(user.discordId)
+                        .then(birthdayPerson => {
+                            const birthdayEmbed = new MessageEmbed()
+                                .setTitle(bdayDescription)
+                                .setDescription(balloons)
+                                .setColor(0xffffc5)
+                                .setThumbnail(birthdayPerson.user.displayAvatarURL({ dynamic : true }))
+                                .setFooter(`${client.guilds.cache.get(process.env.GUILD_ID).name}`, `${client.guilds.cache.get(process.env.GUILD_ID).iconURL({ dynamic : true })}`)
+    
+                            try {
+                                birthdayPerson.send({ content: 'happy birthday!' })
+                            } catch(error) {
+                                console.log(`Failed to dm ${user.username}`)
+                                console.log(error)
+                            }
+                            const generalChannel = client.channels.cache.get(process.env.GENERAL_CHANNEL_ID)
+                            generalChannel.send({ embeds: [birthdayEmbed] })
+                            console.log(`It's ${user.username}'s ${age}${ageSuffix} birthday today! - ${user.birthday}`)
+                        })
+                        .catch(console.error)
+                }
+            })
+            // console.log(`Today's date object: ${today}`)
+            // return console.log(`There is no birthay at this very minute (${today.getHours()}:${today.getMinutes()}:${today.getSeconds()})`)
+        } else {
+            console.log(err)
+        }
+    })
+}, 60000) // run this every minute
