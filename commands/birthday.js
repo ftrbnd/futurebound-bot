@@ -126,7 +126,7 @@ module.exports = {
                     timezone: timezoneOption
                 }).catch(err => console.log(err))
                 
-                console.log(`${interaction.user.username} set their birthday to ${theirBirthday.toLocaleDateString()}: ${theirBirthday}`)
+                console.log(`${interaction.user.username} set their birthday to ${theirBirthday.toLocaleDateString()}: ${birthdayAttempt}`)
                 
                 birthdayEmbed.setAuthor(`${interaction.user.username} set their birthday to ${theirBirthday.toLocaleDateString()}`, interaction.user.displayAvatarURL({ dynamic : true }))
                 logChannel.send({ embeds: [birthdayEmbed] })
@@ -140,7 +140,7 @@ module.exports = {
                 data.timezone = timezoneOption
                 data.save()
 
-                console.log(`${interaction.user.username} updated their birthday to ${theirBirthday.toLocaleDateString()}: ${theirBirthday}`)
+                console.log(`${interaction.user.username} updated their birthday to ${theirBirthday.toLocaleDateString()}: ${birthdayAttempt}`)
 
                 birthdayEmbed.setAuthor(`${interaction.user.username} updated their birthday to ${theirBirthday.toLocaleDateString()}`, interaction.user.displayAvatarURL({ dynamic : true }))
                 logChannel.send({ embeds: [birthdayEmbed] })
