@@ -59,7 +59,7 @@ module.exports = {
         }
 
         // adjust their timezone to PST (Note: Heroku doesn't run on PST, but we're sticking to the variable names)
-        const pstOffset = (getTimeZones().find(tz => tz.name === timezoneOption).rawOffsetInMinutes + 120) / 60 // hours behind or ahead of PST; 480 for PST/120 for Heroku's timezone
+        const pstOffset = (getTimeZones().find(tz => tz.name === timezoneOption).rawOffsetInMinutes) / 60 // hours behind or ahead of PST; add 480 before dividing by 60 for PST/120 for Heroku's timezone
         // console.log(timezoneOption, "is", pstOffset, "hours ahead of PST")
         var midnightPST
         if(pstOffset != 0) {
@@ -126,7 +126,7 @@ module.exports = {
                     timezone: timezoneOption
                 }).catch(err => console.log(err))
                 
-                console.log(`${interaction.user.username} set their birthday to ${theirBirthday.toLocaleDateString()}`)
+                console.log(`${interaction.user.username} set their birthday to ${theirBirthday.toLocaleDateString()}: ${theirBirthday}`)
                 
                 birthdayEmbed.setAuthor(`${interaction.user.username} set their birthday to ${theirBirthday.toLocaleDateString()}`, interaction.user.displayAvatarURL({ dynamic : true }))
                 logChannel.send({ embeds: [birthdayEmbed] })
@@ -140,7 +140,7 @@ module.exports = {
                 data.timezone = timezoneOption
                 data.save()
 
-                console.log(`${interaction.user.username} updated their birthday to ${theirBirthday.toLocaleDateString()}`)
+                console.log(`${interaction.user.username} updated their birthday to ${theirBirthday.toLocaleDateString()}: ${theirBirthday}`)
 
                 birthdayEmbed.setAuthor(`${interaction.user.username} updated their birthday to ${theirBirthday.toLocaleDateString()}`, interaction.user.displayAvatarURL({ dynamic : true }))
                 logChannel.send({ embeds: [birthdayEmbed] })
