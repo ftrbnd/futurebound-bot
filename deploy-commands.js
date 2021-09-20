@@ -8,7 +8,7 @@ const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('
 
 for(const file of commandFiles) {
     const command = require(`./commands/${file}`)
-    // commands.push(command.data.toJSON()) // COMMENT THIS WHEN BOT IS OFFLINE TO HIDE IT FROM SERVER
+    commands.push(command.data.toJSON()) // COMMENT THIS WHEN BOT IS OFFLINE TO HIDE IT FROM SERVER
 }
 
 const rest = new REST({ version: '9' }).setToken(process.env.DISCORD_TOKEN); // semicolon is necessary in this line
