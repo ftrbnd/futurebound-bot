@@ -50,7 +50,6 @@ module.exports = {
             return interaction.reply({ embeds: [dayErrEmbed], ephemeral: true })
         }
 
-        // adjust their timezone to PST
         if(!timeZonesNames.includes(timezoneOption)) {
             const tzErrEmbed = new MessageEmbed()
                 .setDescription('Please enter a valid TZ database name. More info can be found here: https://en.wikipedia.org/wiki/List_of_tz_database_time_zones#List \nExample: **America/Los_Angeles**')
@@ -59,7 +58,8 @@ module.exports = {
             return interaction.reply({ embeds: [tzErrEmbed], ephemeral: true })
         }
 
-        const pstOffset = (getTimeZones().find(tz => tz.name === timezoneOption).rawOffsetInMinutes + 480) / 60 // hours behind or ahead of PST
+        // adjust their timezone to PST (Note: Heroku doesn't run on PST, but we're sticking to the variable names)
+        const pstOffset = (getTimeZones().find(tz => tz.name === timezoneOption).rawOffsetInMinutes + 120) / 60 // hours behind or ahead of PST; 480 for PST/120 for Heroku's timezone
         // console.log(timezoneOption, "is", pstOffset, "hours ahead of PST")
         var midnightPST
         if(pstOffset != 0) {
