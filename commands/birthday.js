@@ -59,7 +59,7 @@ module.exports = {
         }
 
         // adjust their timezone to PST (Note: Heroku doesn't run on PST, but we're sticking to the variable names)
-        const pstOffset = (getTimeZones().find(tz => tz.name === timezoneOption).rawOffsetInMinutes) / 60 // hours behind or ahead of PST; add 480 before dividing by 60 for PST/120 for Heroku's timezone
+        const pstOffset = (getTimeZones().find(tz => tz.name === timezoneOption + 60).rawOffsetInMinutes) / 60 // hours behind or ahead of PST; add 480 before dividing by 60 for PST/60 for Heroku's timezone
         // console.log(timezoneOption, "is", pstOffset, "hours ahead of PST")
         var midnightPST
         if(pstOffset != 0) {
