@@ -82,7 +82,7 @@ snooper.watcher.getPostWatcher('eden') // blank argument or 'all' looks at the e
 
         var redditEmbed = new MessageEmbed()
             .setTitle(post.data.title)
-            .setURL(`https://reddit.com/r${post.data.permalink}`)
+            .setURL(`https://reddit.com${post.data.permalink}`)
             .setDescription(post.data.selftext)
             .setImage(post.data.url)
             .setColor(0xFF4500)
