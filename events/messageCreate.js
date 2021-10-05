@@ -3,24 +3,23 @@ const { MessageEmbed } = require('discord.js')
 module.exports = {
 	name: 'messageCreate',
 	async execute(message) {
-
-        if(message.channel.type === 'DM') {
-            const logChannel = message.client.guild.channels.cache.get(process.env.LOGS_CHANNEL_ID)
-            if(!logChannel) return
-
-            const dmEmbed = new MessageEmbed()
-                .setAuthor(`Direct message from ${message.author.tag}`, message.author.displayAvatarURL({ dynamic : true }))
-                .setDescription(message.content)
-                .setColor(0x7289da)
-                .setTimestamp()
-
-            return logChannel.send({ embeds: [dmEmbed] })
-        }
-        
         const welcomeChannel = message.guild.channels.cache.find(channel => channel.name === "welcome")
 		if(!welcomeChannel) return
         const generalChannel = message.guild.channels.cache.find(channel => channel.name === "general")
         if(!generalChannel) return
+
+        // if(message.channel.type === 'DM') {
+        //     const logChannel = message.guild.channels.cache.get(process.env.LOGS_CHANNEL_ID)
+        //     if(!logChannel) return
+
+        //     const dmEmbed = new MessageEmbed()
+        //         .setAuthor(`Direct message from ${message.author.tag}`, message.author.displayAvatarURL({ dynamic : true }))
+        //         .setDescription(message.content)
+        //         .setColor(0x7289da)
+        //         .setTimestamp()
+
+        //     return logChannel.send({ embeds: [dmEmbed] })
+        // }
 
         const boostEmbed = new MessageEmbed()
             .setAuthor(message.member.displayName + ' just boosted the server!', message.member.user.displayAvatarURL({ dynamic : true })) // message + their avatar
