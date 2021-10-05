@@ -57,7 +57,7 @@ module.exports = {
                 break 
         }
 
-        if(message.mentions.has(client.user) && !message.author.bot) {
+        if(message.mentions.has(message.client.user) && !message.author.bot) {
             if(message.content.includes('good morning') || message.content.includes('Morning') || message.content.includes('morning') || message.content.includes('gm') || message.content.includes('Good Morning') || message.content.includes('Good morning') || message.content.includes('GOOD MORNING')) {
                 const messages = ['GOOD MORNING!', 'good morning x', 'goooood morning', 'mornin'] 
                 var randomMessage = messages[Math.floor(Math.random() * messages.length)] 
