@@ -3,13 +3,9 @@ const { MessageEmbed } = require('discord.js')
 module.exports = {
 	name: 'messageCreate',
 	async execute(message) {
-        const welcomeChannel = message.guild.channels.cache.find(channel => channel.name === "welcome")
-		if(!welcomeChannel) return
-        const generalChannel = message.guild.channels.cache.find(channel => channel.name === "general")
-        if(!generalChannel) return
 
         if(message.channel.type === 'DM') {
-            const logChannel = message.guild.channels.cache.get(process.env.LOGS_CHANNEL_ID)
+            const logChannel = message.client.guild.channels.cache.get(process.env.LOGS_CHANNEL_ID)
             if(!logChannel) return
 
             const dmEmbed = new MessageEmbed()
@@ -20,6 +16,11 @@ module.exports = {
 
             return logChannel.send({ embeds: [dmEmbed] })
         }
+        
+        const welcomeChannel = message.guild.channels.cache.find(channel => channel.name === "welcome")
+		if(!welcomeChannel) return
+        const generalChannel = message.guild.channels.cache.find(channel => channel.name === "general")
+        if(!generalChannel) return
 
         const boostEmbed = new MessageEmbed()
             .setAuthor(message.member.displayName + ' just boosted the server!', message.member.user.displayAvatarURL({ dynamic : true })) // message + their avatar
