@@ -3,6 +3,9 @@ const { MessageEmbed } = require('discord.js')
 module.exports = {
 	name: 'messageCreate',
 	async execute(message) {
+
+        if(message.channel.type === 'DM') return
+
         const welcomeChannel = message.guild.channels.cache.find(channel => channel.name === "welcome")
 		if(!welcomeChannel) return
         const generalChannel = message.guild.channels.cache.find(channel => channel.name === "general")
