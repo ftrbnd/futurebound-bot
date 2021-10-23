@@ -3,6 +3,7 @@ const { MessageEmbed } = require('discord.js')
 module.exports = {
 	name: 'messageCreate',
 	async execute(message) {
+        if(message.author.bot) return // ignore bot messages
 
         if(message.channel.type === 'DM') return
 
