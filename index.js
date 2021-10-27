@@ -150,11 +150,13 @@ setInterval(() => {
                     }
     
                     var bdayDescription
-                    if(age < 18) {
-                        bdayDescription = `It's ${user.username}'s birthday today!`
-                    } else {
-                        bdayDescription = `It's ${user.username}'s ${age}${ageSuffix} birthday today!`
-                    }
+                    // if(age < 18) {
+                    //     bdayDescription = `It's ${user.username}'s birthday today!`
+                    // } else {
+                    //     bdayDescription = `It's ${user.username}'s ${age}${ageSuffix} birthday today!`
+                    // }
+                    bdayDescription = `It's ${user.username}'s birthday today! 🥳🎈🎉`
+
                     const birthdayPerson = client.guilds.cache.get(process.env.GUILD_ID).members.fetch(user.discordId)
                         .then(birthdayPerson => {
                             const birthdayEmbed = new MessageEmbed()
@@ -162,10 +164,10 @@ setInterval(() => {
                                 .setDescription(balloons)
                                 .setColor(0xffffc5)
                                 .setThumbnail(birthdayPerson.user.displayAvatarURL({ dynamic : true }))
-                                .setFooter(`${client.guilds.cache.get(process.env.GUILD_ID).name}`, `${client.guilds.cache.get(process.env.GUILD_ID).iconURL({ dynamic : true })}`)
+                                .setFooter(`Use the /birthday command to set your own birthday`, `${client.guilds.cache.get(process.env.GUILD_ID).iconURL({ dynamic : true })}`)
     
                             try {
-                                birthdayPerson.send({ content: 'happy birthday!' })
+                                birthdayPerson.send({ content: 'happy birthday!! 🥳' })
                             } catch(error) {
                                 console.log(`Failed to dm ${user.username}`)
                                 console.log(error)
