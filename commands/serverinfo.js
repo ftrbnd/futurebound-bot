@@ -11,7 +11,7 @@ module.exports = {
 
         const serverInfo = new MessageEmbed()
             .setTitle(`***${interaction.guild}*** server info`)
-            .setDescription(interaction.guild.description)
+            .setDescription(`${interaction.guild.description}`)
             .setThumbnail(interaction.guild.iconURL({ dynamic : true}))
             .setColor(0xf03200)
             .addFields(
