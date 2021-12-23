@@ -14,7 +14,7 @@ module.exports = {
         'nowhere else', '909', 'good morning', 'in', 'hertz', 'static', 'projector', 
         'love, death, distraction', 'how to sleep', 'calm down', 'just saying', 'fomo', 
         'so far so good', 'isohel', 'tides', 'rushing', '$treams', '2020', 'out', 'untitled', 
-        'Peaked', 'Cold Feet', 'Stingray', 'cant help']
+        'Peaked', 'Cold Feet', 'Stingray', 'cant help', '🔒 (demo)']
 
         var updateDelay = 180
         let currentIndex = 0
