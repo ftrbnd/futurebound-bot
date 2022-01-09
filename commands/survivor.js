@@ -47,6 +47,9 @@ module.exports = {
                 '929631863549595658', '929631863440556043', '929631863520243784', '929634144667983892', 
                 '929634144777031690', '929634144588288020', '929634144537944064', '929634144491819018', 
                 '929634144487612416']
+            const emojiIds = ['929631863549595658', '929631863440556043', '929631863520243784', '929634144667983892', 
+                '929634144777031690', '929634144588288020', '929634144537944064', '929634144491819018', 
+                '929634144487612416']
 
             // const numberSongMap = (songNamesList, numberEmojis) => {
             //     const map = new Map();
@@ -60,7 +63,12 @@ module.exports = {
                 // separate song names into an array
                 var songNamesList = songNames.split(',')
                 songNamesList.forEach((songName, index) => {
-                    songNamesList[index] = songName.trim()
+                    var numberEmoji = numberEmojis[index]
+                    if(emojiIds.includes(numberEmoji)) {
+                        numberEmoji = interaction.guild.emojis.cache.get(numberEmoji)
+                    }
+
+                    songNamesList[index] = `${numberEmoji} ${songName.trim()}`
                 })
 
                 const survivorEmbed = new MessageEmbed()
