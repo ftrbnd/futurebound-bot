@@ -75,8 +75,8 @@ module.exports = {
                     .setTitle(`Survivor - ${albumName}`)
                     .setDescription(`${songNamesList.join("\n\n")}`)
                     // .setColor(0xb8ffe4) // each album has a color
-                    .setFooter('Vote for your **LEAST** favorite song!', interaction.guild.iconURL({ dynamic : true}) )
-                await targetChannel.send({ content: '@&929642070874939392', embeds: [survivorEmbed] })
+                    .setFooter('Vote for your LEAST favorite song!', interaction.guild.iconURL({ dynamic : true}) )
+                await targetChannel.send({ content: '<@&929642070874939392>', embeds: [survivorEmbed] })
 
                 // x amount of reactions for x number of songs
                 for(i = 0; i < songNamesList.length; i++) {
