@@ -68,7 +68,7 @@ module.exports = {
                     .setDescription(`${songNamesList.join("\n\n")}`)
                     // .setColor(0xb8ffe4) // each album has a color
                     .setFooter(interaction.guild.name, interaction.guild.iconURL({ dynamic : true}) )
-                targetChannel.send({ embeds: [survivorEmbed] })
+                await targetChannel.send({ embeds: [survivorEmbed] })
 
                 // x amount of reactions for x number of songs
                 for(i = 0; i < songNamesList.length; i++) {
