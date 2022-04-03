@@ -67,44 +67,44 @@ stream.on('tweet', tweet => {
 
 // Reddit
 
-var Snooper = require('reddit-snooper')
+// var Snooper = require('reddit-snooper')
 
-snooper = new Snooper(
-    {
-        app_id: process.env.APP_ID,
-        api_secret: process.env.API_SECRET,
+// snooper = new Snooper(
+//     {
+//         app_id: process.env.APP_ID,
+//         api_secret: process.env.API_SECRET,
 
-        automatic_retries: true,
-        api_requests_per_minute: 60
-    }
-)
+//         automatic_retries: true,
+//         api_requests_per_minute: 60
+//     }
+// )
 
-snooper.watcher.getPostWatcher('eden') // blank argument or 'all' looks at the entire website
-    .on('post', function(post) {
-        const subredditChannel = client.channels.cache.get(process.env.SUBREDDIT_CHANNEL_ID)
+// snooper.watcher.getPostWatcher('eden') // blank argument or 'all' looks at the entire website
+//     .on('post', function(post) {
+//         const subredditChannel = client.channels.cache.get(process.env.SUBREDDIT_CHANNEL_ID)
 
-        var redditEmbed = new MessageEmbed()
-            .setTitle(post.data.title)
-            .setURL(`https://reddit.com${post.data.permalink}`)
-            .setDescription(post.data.selftext)
-            .setImage(post.data.url)
-            .setColor(0xFF4500)
-            .setFooter(`Posted by u/${post.data.author} on r/${post.data.subreddit}`, 'https://logodownload.org/wp-content/uploads/2018/02/reddit-logo-16.png')
-            .setTimestamp()
-        subredditChannel.send({ embeds: [redditEmbed] })
-            .then(() => subredditChannel.messages.fetch({ limit: 1 }) // fetch latest message
-                .then(messages => {
-                    let lastMessage = messages.first() // message retrieved
-                    const upvoteEmoji = client.emojis.cache.get(process.env.UPVOTE_EMOJI_ID)
-                    const downvoteEmoji = client.emojis.cache.get(process.env.DOWNVOTE_EMOJI_ID)
+//         var redditEmbed = new MessageEmbed()
+//             .setTitle(post.data.title)
+//             .setURL(`https://reddit.com${post.data.permalink}`)
+//             .setDescription(post.data.selftext)
+//             .setImage(post.data.url)
+//             .setColor(0xFF4500)
+//             .setFooter(`Posted by u/${post.data.author} on r/${post.data.subreddit}`, 'https://logodownload.org/wp-content/uploads/2018/02/reddit-logo-16.png')
+//             .setTimestamp()
+//         subredditChannel.send({ embeds: [redditEmbed] })
+//             .then(() => subredditChannel.messages.fetch({ limit: 1 }) // fetch latest message
+//                 .then(messages => {
+//                     let lastMessage = messages.first() // message retrieved
+//                     const upvoteEmoji = client.emojis.cache.get(process.env.UPVOTE_EMOJI_ID)
+//                     const downvoteEmoji = client.emojis.cache.get(process.env.DOWNVOTE_EMOJI_ID)
 
-                    lastMessage.react(upvoteEmoji)     // react with upvote
-                        .then(() => lastMessage.react(downvoteEmoji)) // react with downvote
-                })
-                .catch(console.error))
+//                     lastMessage.react(upvoteEmoji)     // react with upvote
+//                         .then(() => lastMessage.react(downvoteEmoji)) // react with downvote
+//                 })
+//                 .catch(console.error))
 
-    })
-    .on('error', console.error)
+//     })
+//     .on('error', console.error)
 
 // Mongo DB
 
