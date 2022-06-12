@@ -17,7 +17,7 @@ module.exports = {
             .setRequired(true)),
 		
 	async execute(interaction) {
-        if(interaction.member.roles.cache.has(MODERATORS_ROLE_ID)) { // Moderator role
+        if(interaction.member.roles.cache.has(process.env.MODERATORS_ROLE_ID) || interaction.member.roles.cache.has(process.env.HELPER_ROLE_ID)) { // Moderator and Helper roles
             const userToWarn = interaction.options._hoistedOptions[0].user
             const reasonForWarn = interaction.options._hoistedOptions[1].value
 
