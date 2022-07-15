@@ -43,7 +43,10 @@ module.exports = {
                 
                 const defaultPermissions = [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.CreateInstantInvite, PermissionFlagsBits.ChangeNickname, PermissionFlagsBits.SendMessages, PermissionFlagsBits.UsePublicThreads, PermissionFlagsBits.EmbedLinks, PermissionFlagsBits.AttachFiles, PermissionFlagsBits.AddReactions, PermissionFlagsBits.UseExternalEmojis, PermissionFlagsBits.UseExternalStickers, PermissionFlagsBits.ReadMessageHistory, PermissionFlagsBits.UseSlashCommands, PermissionFlagsBits.Connect, PermissionFlagsBits.Speak, PermissionFlagsBits.Stream, PermissionFlagsBits.UseVAD, PermissionFlagsBits.RequestToSpeak]
 
-                roles.forEach(role => role.setPermissions(defaultPermissions))
+                roles.forEach(role => {
+                    role.setPermissions(defaultPermissions)
+                    // TODO: add SEND_MESSAGES_IN_THREADS permission
+                })
 
                 const confirmEmbed = new MessageEmbed()
                     .setDescription(`**${interaction.guild.name}** is now open!`)
