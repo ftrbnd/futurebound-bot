@@ -1,6 +1,7 @@
 require('dotenv').config()
 
-const { MessageEmbed, Permissions } = require('discord.js')
+const { PermissionFlagsBits, ChannelType } = require('discord-api-types/v9')
+const { MessageEmbed } = require('discord.js')
 
 module.exports = {
 	name: 'voiceStateUpdate',
@@ -14,13 +15,14 @@ module.exports = {
 		if(newState.channel !== null && newState.channel.id === process.env.JOIN_TO_CREATE_ID) { // if they join the 'join to create' vc
 			const parentCategory = newState.channel.parent
 
-			const customVoiceChannel = await newState.guild.channels.create(`${newState.member.displayName}'s channel`, {
-				type: 'GUILD_VOICE',
+			const customVoiceChannel = await newState.guild.channels.create({
+				name: `${newState.member.displayName}'s channel`,
+				type: ChannelType.GuildVoice,
 				parent: parentCategory,
 				PermissionOverwrites: [
 					{
 						id: newState.member.id,
-						allow: [Permissions.FLAGS.MANAGE_CHANNELS],
+						allow: [PermissionFlagsBits.ManageChannels],
 					},
 				]
 			})
@@ -29,7 +31,10 @@ module.exports = {
 			helloEmbed = new MessageEmbed()
 				.setDescription('You just created your own voice channel! Feel free to edit the channel name to let others know what your channel is about. \nNOTE: Make sure you have **Two-Factor Authentication** enabled on your Discord account.')
 				.setColor(0x32ff25)
-				.setFooter(newState.guild.name, newState.guild.iconURL({ dynamic: true }))
+				.setFooter({
+					text: newState.guild.name,
+					iconURL: newState.guild.iconURL({ dynamic: true })
+				})
 
 			voiceChat.send({ content: `${newState.member}`, embeds: [helloEmbed] })
 				.then(message => {
@@ -39,7 +44,10 @@ module.exports = {
 			const vcUpdateEmbed = new MessageEmbed()
 				.setDescription(`${newState.member.user.tag} created **${customVoiceChannel.name}**`)
 				.setColor(0x32ff25)
-				.setFooter(`User ID: ${newState.member.user.id}`, newState.member.user.displayAvatarURL({ dynamic : true }));
+				.setFooter({
+					text: `User ID: ${newState.member.user.id}`, 
+					iconURL: newState.member.user.displayAvatarURL({ dynamic : true })
+				});
 			return logChannel.send({ embeds: [vcUpdateEmbed] })
 		}
 
@@ -48,7 +56,10 @@ module.exports = {
 				.setDescription(`${newState.member.user} joined **${newState.channel.name}**`)
 				.setColor(0x32ff25)
 				.setTimestamp()
-				.setFooter(`User ID: ${newState.member.user.id}`, newState.member.user.displayAvatarURL({ dynamic : true }))
+				.setFooter({
+					text: `User ID: ${newState.member.user.id}`, 
+					iconURL: newState.member.user.displayAvatarURL({ dynamic : true })
+				})
 				
 			return logChannel.send({ embeds: [joinEmbed] })
 
@@ -57,7 +68,10 @@ module.exports = {
 				.setDescription(`${oldState.member.user} left **${oldState.channel.name}**`)
 				.setColor(0xdf0000)
 				.setTimestamp()
-				.setFooter(`User ID: ${oldState.member.user.id}`, oldState.member.user.displayAvatarURL({ dynamic : true }))
+				.setFooter({
+					text: `User ID: ${oldState.member.user.id}`, 
+					iconURL: oldState.member.user.displayAvatarURL({ dynamic : true })
+				})
 				
 			logChannel.send({ embeds: [leaveEmbed] })
 		}
