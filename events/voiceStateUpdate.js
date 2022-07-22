@@ -15,8 +15,8 @@ module.exports = {
 		if(newState.channel !== null && newState.channel.id === process.env.JOIN_TO_CREATE_ID) { // if they join the 'join to create' vc
 			const parentCategory = newState.channel.parent
 
-			const customVoiceChannel = await newState.guild.channels.create({
-				name: `${newState.member.displayName}'s channel`,
+			const customVoiceChannel = await newState.guild.channels.create(`${newState.member.displayName}'s channel`,
+			{
 				type: ChannelType.GuildVoice,
 				parent: parentCategory,
 				PermissionOverwrites: [
