@@ -11,10 +11,14 @@ module.exports = {
             option.setName('channel')
             .setDescription('The channel to send the Survivor message')
             .setRequired(true))
-            .addStringOption(option => 
-                option.setName('album')
-                .setDescription('The name of the album/ep')
-                .setRequired(true))
+        .addStringOption(option => 
+            option.setName('album')
+            .setDescription('The name of the album/ep')
+            .setRequired(true))
+        .addStringOption(option => 
+            option.setName('eliminated song')
+            .setDescription('The song that was eliminated in the previous round.')
+            .setRequired(false))
         .addStringOption(option => 
             option.setName('songs')
             .setDescription('The names of the songs, separated by commas (02:09, End Credits, Gravity)')
@@ -22,19 +26,11 @@ module.exports = {
 		
 	async execute(interaction) {
         if(interaction.member.roles.cache.has(process.env.MODERATORS_ROLE_ID)) { // Moderator role
-            // const emojiMap = new Map()
-            // emojiMap.set('sex', 'sex')
-            // emojiMap.set('drugs', 'drugs')
-            // emojiMap.set('and', 'and')
-            // emojiMap.set('rockandroll', 'rock + roll')
-            // emojiMap.set('fumes_gnash', 'Fumes (feat. gnash)')
-            // emojiMap.set('xo', 'XO')
-            // emojiMap.set('circles', 'Circles')
             
-            const survivorChannel = interaction.guild.channels.cache.get('871163051380994058')
             const targetChannel = interaction.options._hoistedOptions[0].channel
             const albumName = interaction.options._hoistedOptions[1].value
-            const songNames = interaction.options._hoistedOptions[2].value
+            const eliminatedSong = interaction.options._hoistedOptions[2].value
+            const songNames = interaction.options._hoistedOptions[3].value
 
             if(!songNames.includes(',')) {
                 const commaEmbed = new MessageEmbed()
@@ -51,14 +47,6 @@ module.exports = {
                 '929634144777031690', '929634144588288020', '929634144537944064', '929634144491819018', 
                 '929634144487612416']
 
-            // const numberSongMap = (songNamesList, numberEmojis) => {
-            //     const map = new Map();
-            //     for(let i = 0; i < songNamesList.length; i++) {
-            //         map.set(songNamesList[i], numberEmojis[i])
-            //     }
-            //     return map
-            // };
-
             try {
                 // separate song names into an array
                 var songNamesList = songNames.split(',')
@@ -71,11 +59,20 @@ module.exports = {
                     songNamesList[index] = `${numberEmoji} ${songName.trim()}`
                 })
 
+                var embedTitle = ""
+                if(eliminatedSong == null) {
+                    embedTitle = `${eliminatedSong} was eliminated!`
+                } else {
+                    embedTitle = `${albumName} - Survivor`
+                }
+
                 const survivorEmbed = new MessageEmbed()
-                    .setTitle(`Survivor - ${albumName}`)
+                    .setTitle(embedTitle)
                     .setDescription(`${songNamesList.join("\n\n")}`)
-                    // .setColor(0xb8ffe4) // each album has a color
-                    .setFooter('Vote for your LEAST favorite song!', interaction.guild.iconURL({ dynamic : true}) )
+                    .setFooter({
+                        text: 'Vote for your LEAST favorite song!', 
+                        iconURL: interaction.guild.iconURL({ dynamic : true}) 
+                    })
                 await targetChannel.send({ content: '<@&929642070874939392>', embeds: [survivorEmbed] })
 
                 // x amount of reactions for x number of songs
@@ -85,14 +82,13 @@ module.exports = {
 
                 const confirmEmbed = new MessageEmbed()
                     .setDescription(`New round of **${albumName} Survivor** sent in ${targetChannel}`)
-                // .setColor(0x32ff25) // different color for each album
                 interaction.reply({ embeds: [confirmEmbed] })
 
             } catch(error) {
                 console.log(error)
                 const errorEmbed = new MessageEmbed()
                     .setDescription('Could not find the emojis for the songs.')
-                    .setColor(0xdf0000) // different color for each album
+                    .setColor(0xdf0000)
                 interaction.reply({ embeds: [errorEmbed], ephemeral: true })
             }
         } else {
