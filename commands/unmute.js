@@ -25,14 +25,20 @@ module.exports = {
                 .addField('By: ', `${interaction.user}`, true)
                 .setColor(0x32ff25)
                 .setThumbnail(userToUnmute.displayAvatarURL({ dynamic : true }))
-                .setFooter(interaction.guild.name, interaction.guild.iconURL({ dynamic : true }))
+                .setFooter({
+                    text: interaction.guild.name, 
+                    iconURL: interaction.guild.iconURL({ dynamic : true })
+                })
                 .setTimestamp()
             modChannel.send({ embeds: [logEmbed] })
 
             const unmuteEmbed = new MessageEmbed()
                 .setTitle(`You were unmuted in **${interaction.guild.name}**.`)
                 .setColor(0x32ff25)
-                .setFooter(interaction.guild.name, interaction.guild.iconURL({ dynamic : true }))
+                .setFooter({
+                    text: interaction.guild.name, 
+                    iconURL: interaction.guild.iconURL({ dynamic : true })
+                })
                 .setTimestamp()
             
             try {
