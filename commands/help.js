@@ -18,7 +18,10 @@ module.exports = {
 		const helpEmbed = new MessageEmbed()
 			.setTitle(`Commands for ***${interaction.client.user.tag}***`)
 			.setDescription(commandList)
-			.setFooter(interaction.guild.name, interaction.guild.iconURL({ dynamic : true}) )
+			.setFooter({
+				text: interaction.guild.name, 
+				iconURL: interaction.guild.iconURL({ dynamic : true})
+			})
 			.setColor(0xf03200)
 
 		interaction.reply({ embeds: [helpEmbed] })

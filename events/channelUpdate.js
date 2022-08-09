@@ -18,7 +18,10 @@ module.exports = {
                     { name: 'New name', value: newChannel.name, inline: true },
                 )
                 .setColor(0x32ff25)
-                .setFooter(`${oldChannel.guild.name}`, oldChannel.guild.iconURL({ dynamic: true }))
+                .setFooter({
+                    text: `${oldChannel.guild.name}`, 
+                    iconURL: oldChannel.guild.iconURL({ dynamic: true })
+                })
                 .setTimestamp()
             logChannel.send({ embeds: [changedEmbed] })
         }

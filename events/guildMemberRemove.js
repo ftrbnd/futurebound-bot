@@ -9,11 +9,17 @@ module.exports = {
         if(!logChannel) return
 
         const leaveEmbed = new MessageEmbed()
-            .setAuthor(member.displayName + ' has left the server.', member.user.displayAvatarURL({ dynamic : true}))
+            .setAuthor({
+                name: member.displayName + ' has left the server.', 
+                iconURL: member.user.displayAvatarURL({ dynamic : true})
+            })
             .addField('User ID: ', `${member.user.id}`, true)
             .setColor(0xdf0000)
             .setThumbnail(member.user.displayAvatarURL({ dynamic : true}))
-            .setFooter(member.guild.name, member.guild.iconURL({ dynamic : true}))
+            .setFooter({
+                text: member.guild.name, 
+                iconURL: member.guild.iconURL({ dynamic : true})
+            })
             .setTimestamp()
 
         logChannel.send({ embeds: [leaveEmbed] })

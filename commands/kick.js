@@ -31,7 +31,10 @@ module.exports = {
                 .addField('Reason: ', reasonForKick)
                 .setColor(0xdf0000)
                 .setThumbnail(userToKick.displayAvatarURL({ dynamic : true }))
-                .setFooter(interaction.guild.name, interaction.guild.iconURL({ dynamic : true }))
+                .setFooter({
+                    text: interaction.guild.name, 
+                    iconURL: interaction.guild.iconURL({ dynamic : true })
+                })
                 .setTimestamp()
             modChannel.send({ embeds: [logEmbed] })
 
@@ -39,7 +42,10 @@ module.exports = {
                 .setTitle(`You were kicked from **${interaction.guild.name}**.`)
                 .setDescription(reasonForKick)
                 .setColor(0xdf0000)
-                .setFooter(interaction.guild.name, interaction.guild.iconURL({ dynamic : true }))
+                .setFooter({
+                    text: interaction.guild.name, 
+                    iconURL: interaction.guild.iconURL({ dynamic : true })
+                })
                 .setTimestamp()
             
             try {

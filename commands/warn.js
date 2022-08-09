@@ -31,7 +31,10 @@ module.exports = {
                 .addField('Reason: ', reasonForWarn)
                 .setColor(0xffd100)
                 .setThumbnail(userToWarn.displayAvatarURL({ dynamic : true }))
-                .setFooter(interaction.guild.name, interaction.guild.iconURL({ dynamic : true }))
+                .setFooter({
+                    text: interaction.guild.name, 
+                    iconURL: interaction.guild.iconURL({ dynamic : true })
+                })
                 .setTimestamp()
             modChannel.send({ embeds: [logEmbed] })
 
@@ -39,7 +42,10 @@ module.exports = {
                 .setTitle(`You were warned in **${interaction.guild.name}**.`)
                 .setDescription(reasonForWarn)
                 .setColor(0xffd100)
-                .setFooter(interaction.guild.name, interaction.guild.iconURL({ dynamic : true }))
+                .setFooter({
+                    text: interaction.guild.name, 
+                    iconURL: interaction.guild.iconURL({ dynamic : true })
+                })
                 .setTimestamp()
             
             try {

@@ -106,12 +106,18 @@ module.exports = {
         var birthdayEmbed = new MessageEmbed()
             .setColor(0x32ff25)
             .addField('Timezone', timezoneOption)
-            .setFooter(interaction.guild.name, interaction.guild.iconURL({ dynamic : true }))
+            .setFooter({
+                text: interaction.guild.name, 
+                iconURL: interaction.guild.iconURL({ dynamic : true })
+            })
 
         var personalEmbed = new MessageEmbed()
             .setColor(0x32ff25)
             .addField('Timezone', timezoneOption)
-            .setFooter(interaction.guild.name, interaction.guild.iconURL({ dynamic : true }))
+            .setFooter({
+                text: interaction.guild.name, 
+                iconURL: interaction.guild.iconURL({ dynamic : true })
+            })
 
         const theirBirthday = new Date(`${interaction.options._hoistedOptions[0].value} ${interaction.options._hoistedOptions[1].value} ${interaction.options._hoistedOptions[2].value}`)
         
@@ -128,10 +134,15 @@ module.exports = {
                 
                 console.log(`${interaction.user.username} set their birthday to ${theirBirthday.toLocaleDateString()}: ${birthdayAttempt}`)
                 
-                birthdayEmbed.setAuthor(`${interaction.user.username} set their birthday to ${theirBirthday.toLocaleDateString()}`, interaction.user.displayAvatarURL({ dynamic : true }))
+                birthdayEmbed.setAuthor({
+                    name: `${interaction.user.username} set their birthday to ${theirBirthday.toLocaleDateString()}`, 
+                    iconURL: interaction.user.displayAvatarURL({ dynamic : true })
+                })
                 logChannel.send({ embeds: [birthdayEmbed] })
 
-                personalEmbed.setAuthor(`You have set your birthday to ${theirBirthday.toLocaleDateString()}`)
+                personalEmbed.setAuthor({
+                    name: `You have set your birthday to ${theirBirthday.toLocaleDateString()}`
+                })
                 return interaction.reply({ embeds: [personalEmbed], ephemeral: true })
 
             } else { // if they already were in the database, simply update and save
@@ -142,10 +153,15 @@ module.exports = {
 
                 console.log(`${interaction.user.username} updated their birthday to ${theirBirthday.toLocaleDateString()}: ${birthdayAttempt}`)
 
-                birthdayEmbed.setAuthor(`${interaction.user.username} updated their birthday to ${theirBirthday.toLocaleDateString()}`, interaction.user.displayAvatarURL({ dynamic : true }))
+                birthdayEmbed.setAuthor({
+                    name: `${interaction.user.username} updated their birthday to ${theirBirthday.toLocaleDateString()}`, 
+                    iconURL: interaction.user.displayAvatarURL({ dynamic : true })
+                })
                 logChannel.send({ embeds: [birthdayEmbed] })
 
-                personalEmbed.setAuthor(`You have updated your birthday to ${theirBirthday.toLocaleDateString()}`)
+                personalEmbed.setAuthor({
+                    name: `You have updated your birthday to ${theirBirthday.toLocaleDateString()}`
+                })
                 return interaction.reply({ embeds: [personalEmbed], ephemeral: true })
             }
         })

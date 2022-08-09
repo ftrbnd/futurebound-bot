@@ -14,7 +14,10 @@ module.exports = {
             .addField('ID: ', `${ban.user.id}`)
             .setColor(0xdf0000)
             .setThumbnail(ban.user.displayAvatarURL({ dynamic : true }))
-            .setFooter(ban.guild.name, ban.guild.iconURL({ dynamic : true }))
+            .setFooter({
+                text: ban.guild.name, 
+                iconURL: ban.guild.iconURL({ dynamic : true })
+            })
             .setTimestamp()
         modChannel.send({ embeds: [log] })
 	},

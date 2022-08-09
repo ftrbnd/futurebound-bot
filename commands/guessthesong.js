@@ -48,7 +48,10 @@ module.exports = {
                     .setThumbnail('https://i.imgur.com/rQmm1FM.png') // EDEN's logo
                     .setColor(0xfa57c1)
                     .setDescription(`${line}`)
-                    .setFooter(interaction.guild.name, interaction.guild.iconURL({ dynamic : true}))
+                    .setFooter({
+                        text: interaction.guild.name, 
+                        iconURL: interaction.guild.iconURL({ dynamic : true})
+                    })
 
                 interaction.reply({ embeds: [guessTheSongEmbed] })
 
@@ -62,7 +65,10 @@ module.exports = {
                         .setDescription(`${line}`)
                         .setThumbnail(m.author.displayAvatarURL({ dynamic : true}))
                         .setColor(0x32ff25)
-                        .setFooter(m.guild.name, m.guild.iconURL({ dynamic : true}) )
+                        .setFooter({
+                            text: m.guild.name, 
+                            iconURL: m.guild.iconURL({ dynamic : true})
+                        })
 
                     m.reply({ embeds: [winnerEmbed] })
                     collector.stop()
@@ -75,7 +81,10 @@ module.exports = {
                             .addField('Song', randomSong)
                             .setDescription(`${line}`)
                             .setColor(0xdf0000)
-                            .setFooter(interaction.guild.name, interaction.guild.iconURL({ dynamic : true}) )
+                            .setFooter({
+                                text: interaction.guild.name, 
+                                iconURL: interaction.guild.iconURL({ dynamic : true})
+                            })
                         
                         interaction.followUp({ embeds: [timeOutEmbed] })
                     }
@@ -89,7 +98,10 @@ module.exports = {
                     .setTitle(`Could not find the lyrics to ${randomSong}, please try again!`)
                     .setColor(0xdf0000)
                     .setDescription(`${line}`)
-                    .setFooter(interaction.guild.name, interaction.guild.iconURL({ dynamic : true}))
+                    .setFooter({
+                        text: interaction.guild.name, 
+                        iconURL: interaction.guild.iconURL({ dynamic : true})
+                    })
 
                 giosalad.send(`Couldn't find the lyrics to ${randomSong}`)
                 interaction.reply({ embeds: [couldntFindEmbed], ephemeral: true })

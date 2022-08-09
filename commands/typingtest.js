@@ -26,7 +26,10 @@ module.exports = {
             .setThumbnail('https://support.signal.org/hc/article_attachments/360016877511/typing-animation-3x.gif') // typing animation
             .setColor(0xfdfaff)
             .setDescription(textToType)
-            .setFooter(interaction.user.username, interaction.user.displayAvatarURL({ dynamic : true }));
+            .setFooter({
+                text: interaction.user.username, 
+                iconURL: interaction.user.displayAvatarURL({ dynamic : true })
+            });
 
         await interaction.reply({ embeds: [typingTestEmbed] })
 
@@ -48,7 +51,10 @@ module.exports = {
                 const couldntFindEmbed = new MessageEmbed()
                     .setDescription(`You did not type within a minute, please try again!`)
                     .setColor(0xdf0000)
-                    .setFooter(interaction.guild.name, interaction.guild.iconURL({ dynamic : true}))
+                    .setFooter({
+                        text: interaction.guild.name, 
+                        iconURL: interaction.guild.iconURL({ dynamic : true})
+                    })
 
                 interaction.followUp({ embeds: [couldntFindEmbed], ephemeral: true })
             } else {
@@ -88,7 +94,10 @@ module.exports = {
                     .setColor(color)
                     .addField('WPM', wpm)
                     .addField('Accuracy', accuracyCount + '%')
-                    .setFooter(interaction.user.username, interaction.user.displayAvatarURL({ dynamic : true }))
+                    .setFooter({
+                        text: interaction.user.username, 
+                        iconURL: interaction.user.displayAvatarURL({ dynamic : true })
+                    })
         
                 messageToReply.reply({ embeds: [wpmEmbed] })
             }

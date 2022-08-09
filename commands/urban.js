@@ -45,7 +45,9 @@ module.exports = {
                     }
                 )
                 .addField('Urban Dictionary', `[link](${json.permalink})`)
-                .setFooter('by ' + json.author + ' on ' + jsonDate)
+                .setFooter({
+                    text: 'by ' + json.author + ' on ' + jsonDate
+                })
 
             interaction.reply({ embeds: [urbanEmbed] })
         })

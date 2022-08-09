@@ -31,7 +31,10 @@ module.exports = {
                 .addField('Reason: ', reasonForMute)
                 .setColor(0x000001)
                 .setThumbnail(userToMute.displayAvatarURL({ dynamic : true }))
-                .setFooter(interaction.guild.name, interaction.guild.iconURL({ dynamic : true }))
+                .setFooter({
+                    text: interaction.guild.name, 
+                    iconURL: interaction.guild.iconURL({ dynamic : true })
+                })
                 .setTimestamp()
             modChannel.send({ embeds: [logEmbed] })
 
@@ -39,7 +42,10 @@ module.exports = {
                 .setTitle(`You were muted in **${interaction.guild.name}**.`)
                 .setDescription(reasonForMute)
                 .setColor(0x000001)
-                .setFooter(interaction.guild.name, interaction.guild.iconURL({ dynamic : true }))
+                .setFooter({
+                    text: interaction.guild.name, 
+                    iconURL: interaction.guild.iconURL({ dynamic : true })
+                })
                 .setTimestamp()
             
             try {

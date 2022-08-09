@@ -7,11 +7,17 @@ module.exports = {
         if(!welcomeChannel) return
         
         const welcomeEmbed = new MessageEmbed()
-            .setAuthor(member.displayName + ' just joined the server!', member.user.displayAvatarURL({ dynamic : true}))
+            .setAuthor({
+                name: member.displayName + ' just joined the server!', 
+                iconURL: member.user.displayAvatarURL({ dynamic : true})
+            })
             .setColor(0x32ff25)
             .setThumbnail(member.user.displayAvatarURL({ dynamic : true}))
             .setDescription(`Go to <#702231983853666335> to pick your favorite EP/album, and a color will be added to your name.`)
-            .setFooter(member.guild.name, member.guild.iconURL({ dynamic : true}))
+            .setFooter({
+                text: member.guild.name, 
+                iconURL: member.guild.iconURL({ dynamic : true})
+            })
             .setTimestamp()
         return welcomeChannel.send({ content: `${member}`, embeds: [welcomeEmbed] })
 	},
