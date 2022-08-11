@@ -1,11 +1,11 @@
-const { EmbedBuilder } = require('discord.js')
+const { EmbedBuilder, ChannelType } = require('discord.js')
 
 module.exports = {
 	name: 'messageCreate',
 	async execute(message) {
         if(message.author.bot) return // ignore bot messages
 
-        if(message.channel.type === 'DM') { 
+        if(message.channel.type === ChannelType.DM) { 
             const logChannel = message.client.guilds.cache.get(process.env.GUILD_ID).channels.cache.get(process.env.LOGS_CHANNEL_ID)
             if(!logChannel) return
 

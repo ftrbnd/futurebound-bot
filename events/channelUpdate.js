@@ -1,6 +1,6 @@
 require('dotenv').config()
 
-const { EmbedBuilder } = require('discord.js')
+const { EmbedBuilder, ChannelType } = require('discord.js')
 
 module.exports = {
 	name: 'channelUpdate',
@@ -8,7 +8,7 @@ module.exports = {
         const logChannel = oldChannel.guild.channels.cache.get(process.env.LOGS_CHANNEL_ID)
 		if(!logChannel) return
 			
-        const channelType = (oldChannel.type === 'GUILD_TEXT') ? "text" : "voice" // if oldChannel type is GUILD_TEXT, then set channelType to text
+        const channelType = (oldChannel.type === ChannelType.GuildText) ? "text" : "voice" // if oldChannel type is GUILD_TEXT, then set channelType to text
 
         if(oldChannel.name != newChannel.name) {
             const changedEmbed = new EmbedBuilder()

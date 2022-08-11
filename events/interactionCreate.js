@@ -1,10 +1,10 @@
 // Interactions: slash commands, buttons, select menus
-const { EmbedBuilder } = require('discord.js')
+const { EmbedBuilder, InteractionType } = require('discord.js')
 
 module.exports = {
 	name: 'interactionCreate',
 	async execute(interaction) {
-        if (!interaction.isCommand()) return
+        if (!interaction.type === InteractionType.ApplicationCommand) return
 
         const command = interaction.client.commands.get(interaction.commandName)
 

@@ -1,5 +1,6 @@
 require('dotenv').config()
 
+const { ChannelType } = require('discord-api-types')
 const { EmbedBuilder, PermissionFlagsBits, SlashCommandBuilder } = require('discord.js')
 
 module.exports = {
@@ -116,7 +117,7 @@ module.exports = {
                     }
                 )
 
-                var stageChannel = interaction.guild.channels.cache.find(channel => channel.type === 'GUILD_STAGE_VOICE')
+                var stageChannel = interaction.guild.channels.cache.find(channel => channel.type === ChannelType.GuildStageVoice)
                 stageChannel.edit(
                     {
                         permissionOverwrites: [
@@ -175,7 +176,7 @@ module.exports = {
                     }
                 )
 
-                var stageChannel = interaction.guild.channels.cache.find(channel => channel.type === 'GUILD_STAGE_VOICE')
+                var stageChannel = interaction.guild.channels.cache.find(channel => channel.type === ChannelType.GuildStageVoice)
                 stageChannel.edit(
                     {
                         permissionOverwrites: [
