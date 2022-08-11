@@ -1,7 +1,6 @@
 require('dotenv').config()
 
-const { SlashCommandBuilder } = require('@discordjs/builders')
-const { EmbedBuilder, Permissions, PermissionFlagsBits } = require('discord.js')
+const { EmbedBuilder, PermissionFlagsBits, SlashCommandBuilder } = require('discord.js')
 
 module.exports = {
 	data: new SlashCommandBuilder()

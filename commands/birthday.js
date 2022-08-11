@@ -1,7 +1,5 @@
-const { SlashCommandBuilder } = require('@discordjs/builders')
-const { EmbedBuilder } = require('discord.js')
+const { EmbedBuilder, SlashCommandBuilder } = require('discord.js')
 
-const mongoose = require('mongoose')
 const User = require('../schemas/UserSchema')
 
 const { getTimeZones, rawTimeZones, timeZonesNames } = require("@vvo/tzdb")
