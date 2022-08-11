@@ -35,11 +35,11 @@ module.exports = {
                     permissionOverwrites: [
                         {
                             id: interaction.guild.roles.everyone.id, 
-                            deny: [Permissions.FLAGS.VIEW_CHANNEL]
+                            deny: [PermissionFlagsBits.ViewChannel]
                         },
                         {
                             id: interaction.client.user.id, // this bot itself
-                            allow: [Permissions.FLAGS.VIEW_CHANNEL]
+                            allow: [PermissionFlagsBits.ViewChannel]
                         }
                     ]
                 })
@@ -50,15 +50,15 @@ module.exports = {
                     permissionOverwrites: [
                         {
                             id: interaction.guild.roles.everyone.id, 
-                            deny: [Permissions.FLAGS.VIEW_CHANNEL]
+                            deny: [PermissionFlagsBits.ViewChannel]
                         },
                         {
                             id: interaction.guild.roles.cache.find(role => role.name === 'Bot').id, // all other bots
-                            deny: [Permissions.FLAGS.VIEW_CHANNEL]
+                            deny: [PermissionFlagsBits.ViewChannel]
                         },
                         {
                             id: interaction.client.user.id, // this bot itself
-                            allow: [Permissions.FLAGS.VIEW_CHANNEL]
+                            allow: [PermissionFlagsBits.ViewChannel]
                         }
                     ]
                 })
@@ -69,11 +69,11 @@ module.exports = {
                     permissionOverwrites: [
                         {
                             id: interaction.guild.roles.everyone.id,
-                            deny: [Permissions.FLAGS.VIEW_CHANNEL]
+                            deny: [PermissionFlagsBits.ViewChannel]
                         },
                         {
                             id: interaction.client.user.id, // this bot itself
-                            allow: [Permissions.FLAGS.VIEW_CHANNEL]
+                            allow: [PermissionFlagsBits.ViewChannel]
                         }
                     ]
                 })
@@ -90,7 +90,7 @@ module.exports = {
                         permissionOverwrites: [
                             {
                                 id: interaction.guild.roles.everyone.id, 
-                                allow: [Permissions.FLAGS.VIEW_CHANNEL]
+                                allow: [PermissionFlagsBits.ViewChannel]
                             }
                         ]
                     }
@@ -102,15 +102,15 @@ module.exports = {
                         permissionOverwrites: [
                             {
                                 id: interaction.guild.roles.everyone.id, 
-                                allow: [Permissions.FLAGS.VIEW_CHANNEL]
+                                allow: [PermissionFlagsBits.ViewChannel]
                             },
                             {
                                 id: interaction.guild.roles.cache.find(role => role.name === 'Bot').id,
-                                deny: [Permissions.FLAGS.VIEW_CHANNEL]
+                                deny: [PermissionFlagsBits.ViewChannel]
                             },
                             {
                                 id: interaction.client.user.id, // this bot itself
-                                allow: [Permissions.FLAGS.VIEW_CHANNEL]
+                                allow: [PermissionFlagsBits.ViewChannel]
                             }
                         ]
                     }
@@ -122,11 +122,11 @@ module.exports = {
                         permissionOverwrites: [
                             {
                                 id: interaction.guild.roles.everyone.id, 
-                                allow: [Permissions.FLAGS.VIEW_CHANNEL]
+                                allow: [PermissionFlagsBits.ViewChannel]
                             },
                             {
                                 id: interaction.client.user.id, // this bot itself
-                                allow: [Permissions.FLAGS.VIEW_CHANNEL]
+                                allow: [PermissionFlagsBits.ViewChannel]
                             }
                         ]
                     }
@@ -145,11 +145,11 @@ module.exports = {
                         permissionOverwrites: [
                             {
                                 id: interaction.guild.roles.everyone.id, 
-                                deny: [Permissions.FLAGS.VIEW_CHANNEL]
+                                deny: [PermissionFlagsBits.ViewChannel]
                             },
                             {
                                 id: interaction.client.user.id, // this bot itself
-                                allow: [Permissions.FLAGS.VIEW_CHANNEL]
+                                allow: [PermissionFlagsBits.ViewChannel]
                             }
                         ]
                     }
@@ -161,15 +161,15 @@ module.exports = {
                         permissionOverwrites: [
                             {
                                 id: interaction.guild.roles.everyone.id, 
-                                deny: [Permissions.FLAGS.VIEW_CHANNEL]
+                                deny: [PermissionFlagsBits.ViewChannel]
                             },
                             {
                                 id: interaction.guild.roles.cache.find(role => role.name === 'Bot').id,
-                                deny: [Permissions.FLAGS.VIEW_CHANNEL]
+                                deny: [PermissionFlagsBits.ViewChannel]
                             },
                             {
                                 id: interaction.client.user.id, // this bot itself
-                                allow: [Permissions.FLAGS.VIEW_CHANNEL]
+                                allow: [PermissionFlagsBits.ViewChannel]
                             }
                         ]
                     }
@@ -181,11 +181,11 @@ module.exports = {
                         permissionOverwrites: [
                             {
                                 id: interaction.guild.roles.everyone.id, 
-                                deny: [Permissions.FLAGS.VIEW_CHANNEL]
+                                deny: [PermissionFlagsBits.ViewChannel]
                             },
                             {
                                 id: interaction.client.user.id, // this bot itself
-                                allow: [Permissions.FLAGS.VIEW_CHANNEL]
+                                allow: [PermissionFlagsBits.ViewChannel]
                             }
                         ]
                     }
