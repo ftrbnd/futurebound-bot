@@ -15,7 +15,7 @@ module.exports = {
         // 'love, death, distraction', 'how to sleep', 'calm down', 'just saying', 'fomo', 
         // 'so far so good', 'isohel', 'tides', 'rushing', '$treams', '2020', 'out', 'untitled', 
         // 'Peaked', 'Cold Feet', 'Stingray', 'cant help', '🔒 (demo)', 'Modern Warfare']
-        const song = 'Balling'
+        const song = 'Sci-Fi'
         client.user.setPresence({ activities: [{ name: song, type: ActivityType.Listening}]})
 
         // var updateDelay = 180
