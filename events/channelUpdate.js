@@ -13,10 +13,10 @@ module.exports = {
         if(oldChannel.name != newChannel.name) {
             const changedEmbed = new EmbedBuilder()
                 .setTitle(`A ${channelType} channel's name was changed.`)
-                .addFields(
+                .addFields([
                     { name: 'Previous name', value: oldChannel.name},
                     { name: 'New name', value: newChannel.name},
-                )
+                ])
                 .setColor('0x32ff25')
                 .setFooter({
                     text: `${oldChannel.guild.name}`, 

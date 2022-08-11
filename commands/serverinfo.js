@@ -13,7 +13,7 @@ module.exports = {
             .setDescription(`${interaction.guild.description}`)
             .setThumbnail(interaction.guild.iconURL({ dynamic : true}))
             .setColor('0xf03200')
-            .addFields(
+            .addFields([
                 {
                     name: 'Owner',
                     value: `<@${interaction.guild.ownerId}>`,
@@ -34,7 +34,7 @@ module.exports = {
                     name: 'Server Boosts',
                     value: `${interaction.guild.premiumSubscriptionCount}`,
                 },     
-            )
+            ])
 
 		interaction.reply({ embeds: [serverInfo] })
 	},

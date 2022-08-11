@@ -31,7 +31,7 @@ module.exports = {
                 .setTitle(json.word.toUpperCase())
                 .setThumbnail('https://i.imgur.com/azXqb1w.png')
                 .setColor('0x134fe6')
-                .addFields(
+                .addFields([
                     {
                         name: 'Definition',
                         value: jsonDefinition,
@@ -40,7 +40,7 @@ module.exports = {
                         name: 'Example',
                         value: jsonExample,
                     }
-                )
+                ])
                 .addFields([
                     { name: 'Urban Dictionary', value: `[link](${json.permalink})`},
                 ])
