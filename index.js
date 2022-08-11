@@ -3,7 +3,7 @@ const fs = require('fs')
 
 // Discord
 
-const { Client, Collection, Intents, MessageEmbed, Partials, GatewayIntentBits} = require('discord.js')
+const { Client, Collection, MessageEmbed, Partials, GatewayIntentBits} = require('discord.js')
 const client = new Client({ 
     intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMembers, GatewayIntentBits.GuildBans, GatewayIntentBits.GuildMessages, GatewayIntentBits.GuildVoiceStates, GatewayIntentBits.DirectMessages],
     partials: [Partials.Channel]
