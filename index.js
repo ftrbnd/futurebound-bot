@@ -167,7 +167,10 @@ setInterval(() => {
                                 .setDescription(balloons)
                                 .setColor(0xffffc5)
                                 .setThumbnail(birthdayPerson.user.displayAvatarURL({ dynamic : true }))
-                                .setFooter(`Use the /birthday command to set your own birthday`, `${client.guilds.cache.get(process.env.GUILD_ID).iconURL({ dynamic : true })}`)
+                                .setFooter({
+                                    text: `Use the /birthday command to set your own birthday`, 
+                                    iconURL: `${client.guilds.cache.get(process.env.GUILD_ID).iconURL({ dynamic : true })}`
+                                })
     
                             try {
                                 birthdayPerson.send({ content: 'happy birthday!! 🥳' })
