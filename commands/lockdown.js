@@ -15,7 +15,8 @@ module.exports = {
         .addSubcommand(subcommand =>
             subcommand
                 .setName('open')
-                .setDescription('Re-open all text channels')),
+                .setDescription('Re-open all text channels'))
+        .setDefaultMemberPermissions(PermissionFlagsBits.ManageRoles), // any permission that the Helper role has access to should work
 		
 	async execute(interaction) {
         if(interaction.member.roles.cache.has(process.env.MODERATORS_ROLE_ID) || interaction.member.roles.cache.has(process.env.HELPER_ROLE_ID)) { // Moderator and Helper roles

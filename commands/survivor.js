@@ -1,7 +1,7 @@
 require('dotenv').config()
 
 const { SlashCommandBuilder } = require('@discordjs/builders')
-const { MessageEmbed } = require('discord.js')
+const { MessageEmbed, PermissionFlagsBits } = require('discord.js')
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -18,7 +18,8 @@ module.exports = {
         .addStringOption(option => 
             option.setName('songs')
             .setDescription('The names of the songs, separated by commas (02:09, End Credits, Gravity)')
-            .setRequired(true)),
+            .setRequired(true))
+        .setDefaultMemberPermissions(PermissionFlagsBits.Administrator),  // only the Server Moderator role can use this command
 		
 	async execute(interaction) {
         if(interaction.member.roles.cache.has(process.env.MODERATORS_ROLE_ID)) { // Moderator role

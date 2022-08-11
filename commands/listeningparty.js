@@ -1,7 +1,7 @@
 require('dotenv').config()
 
 const { SlashCommandBuilder } = require('@discordjs/builders')
-const { MessageEmbed, Permissions } = require('discord.js')
+const { MessageEmbed, Permissions, PermissionFlagsBits } = require('discord.js')
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -22,7 +22,8 @@ module.exports = {
         .addSubcommand(subcommand =>
             subcommand
                 .setName('close')
-                .setDescription('Make the channels private')),
+                .setDescription('Make the channels private'))
+        .setDefaultMemberPermissions(PermissionFlagsBits.Administrator),  // only the Server Moderator role can use this command
 
 	async execute(interaction) {
 		if(interaction.member.roles.cache.has(process.env.MODERATORS_ROLE_ID)) { // Moderator role
