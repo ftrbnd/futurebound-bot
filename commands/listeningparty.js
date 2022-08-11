@@ -1,7 +1,6 @@
 require('dotenv').config()
 
-const { ChannelType } = require('discord-api-types')
-const { EmbedBuilder, PermissionFlagsBits, SlashCommandBuilder } = require('discord.js')
+const { EmbedBuilder, PermissionFlagsBits, SlashCommandBuilder, ChannelType } = require('discord.js')
 
 module.exports = {
 	data: new SlashCommandBuilder()
