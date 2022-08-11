@@ -29,7 +29,8 @@ module.exports = {
             if(interaction.options.getSubcommand() === 'create') {
                 const listeningPartyName = interaction.options._hoistedOptions[0].value
 
-                const categoryChannel = await interaction.guild.channels.create('Listening Party', {
+                const categoryChannel = await interaction.guild.channels.create({
+                    name: 'Listening Party',
                     type: 'GUILD_CATEGORY',
                     position: 2,
                     permissionOverwrites: [
@@ -44,7 +45,8 @@ module.exports = {
                     ]
                 })
 
-                const listeningPartyChat = await interaction.guild.channels.create('listening party chat', {
+                const listeningPartyChat = await interaction.guild.channels.create({
+                    name: 'listening party chat',
                     type: 'GUILD_TEXT',
                     parent: categoryChannel,
                     permissionOverwrites: [
@@ -63,7 +65,8 @@ module.exports = {
                     ]
                 })
 
-                const stageChannel = await interaction.guild.channels.create(listeningPartyName, {
+                const stageChannel = await interaction.guild.channels.create({
+                    name: listeningPartyName,
                     type: 'GUILD_STAGE_VOICE',
                     parent: categoryChannel,
                     permissionOverwrites: [
