@@ -17,7 +17,7 @@ module.exports = {
                 { name: 'Owner', value: `<@${interaction.guild.ownerId}>` },
                 { name: 'Date Created', value: `${createdAt[1]} ${createdAt[2]} ${createdAt[3]}` },
                 { name: 'Member Count', value: `${interaction.guild.memberCount}` },
-                { name: 'Server Level', value: `${interaction.guild.premiumTier}`.slice(5) }, // remove 'TIER_' from 'TIER_#'
+                { name: 'Server Level', value: `${interaction.guild.premiumTier}` }, // remove 'TIER_' from 'TIER_#'
                 { name: 'Server Boosts', value: `${interaction.guild.premiumSubscriptionCount}` },     
             ])
 
