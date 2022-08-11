@@ -1,6 +1,6 @@
 require('dotenv').config()
 
-const { MessageEmbed } = require('discord.js')
+const { EmbedBuilder } = require('discord.js')
 
 module.exports = {
 	name: 'guildMemberRemove',
@@ -8,7 +8,7 @@ module.exports = {
         const logChannel = member.guild.channels.cache.get(process.env.LOGS_CHANNEL_ID)
         if(!logChannel) return
 
-        const leaveEmbed = new MessageEmbed()
+        const leaveEmbed = new EmbedBuilder()
             .setAuthor({
                 name: member.displayName + ' has left the server.', 
                 iconURL: member.user.displayAvatarURL({ dynamic : true})

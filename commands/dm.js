@@ -1,7 +1,7 @@
 require('dotenv').config()
 
 const { SlashCommandBuilder } = require('@discordjs/builders')
-const { MessageEmbed, PermissionFlagsBits } = require('discord.js')
+const { EmbedBuilder, PermissionFlagsBits } = require('discord.js')
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -23,13 +23,13 @@ module.exports = {
             const messageToSend = interaction.options._hoistedOptions[1].value
             targetUser.send(messageToSend).catch(console.error)
 
-            const sentEmbed = new MessageEmbed()
+            const sentEmbed = new EmbedBuilder()
                 .setDescription(`Sent **"${messageToSend}"** to ${targetUser}`)
                 .setColor(0x32ff25)
 
             interaction.reply({ embeds: [sentEmbed] })
         } else {
-            const permsEmbed = new MessageEmbed()
+            const permsEmbed = new EmbedBuilder()
                 .setDescription('You do not have permission to use this command.')
                 .setColor(0xdf0000)
             return interaction.reply({ embeds: [permsEmbed], ephemeral: true })

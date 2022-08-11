@@ -1,6 +1,6 @@
 require('dotenv').config()
 
-const { MessageEmbed } = require('discord.js')
+const { EmbedBuilder } = require('discord.js')
 
 module.exports = {
 	name: 'messageDelete',
@@ -9,7 +9,7 @@ module.exports = {
 		if(!logChannel) return
 		if(message.author.bot) return
 			
-		const msgDeleteEmbed = new MessageEmbed()
+		const msgDeleteEmbed = new EmbedBuilder()
 			.setAuthor({
 				name: `${message.author.tag} deleted a message.`, 
 				iconURL: message.author.displayAvatarURL({ dynamic : true })

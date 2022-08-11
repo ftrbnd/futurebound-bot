@@ -1,7 +1,7 @@
 require('dotenv').config()
 
 const { SlashCommandBuilder } = require('@discordjs/builders')
-const { MessageEmbed, PermissionFlagsBits } = require('discord.js')
+const { EmbedBuilder, PermissionFlagsBits } = require('discord.js')
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -38,7 +38,7 @@ module.exports = {
             const songNames = interaction.options._hoistedOptions[2].value
 
             if(!songNames.includes(',')) {
-                const commaEmbed = new MessageEmbed()
+                const commaEmbed = new EmbedBuilder()
                     .setDescription(`Please separate the song names with commas.`)
                     .setColor(0xdf0000)
                 return interaction.reply({ embeds: [commaEmbed], ephemeral: true })
@@ -72,7 +72,7 @@ module.exports = {
                     songNamesList[index] = `${numberEmoji} ${songName.trim()}`
                 })
 
-                const survivorEmbed = new MessageEmbed()
+                const survivorEmbed = new EmbedBuilder()
                     .setTitle(`Survivor - ${albumName}`)
                     .setDescription(`${songNamesList.join("\n\n")}`)
                     // .setColor(0xb8ffe4) // each album has a color
@@ -87,20 +87,20 @@ module.exports = {
                     targetChannel.lastMessage.react(numberEmojis[i])
                 }
 
-                const confirmEmbed = new MessageEmbed()
+                const confirmEmbed = new EmbedBuilder()
                     .setDescription(`New round of **${albumName} Survivor** sent in ${targetChannel}`)
                 // .setColor(0x32ff25) // different color for each album
                 interaction.reply({ embeds: [confirmEmbed] })
 
             } catch(error) {
                 console.log(error)
-                const errorEmbed = new MessageEmbed()
+                const errorEmbed = new EmbedBuilder()
                     .setDescription('Could not find the emojis for the songs.')
                     .setColor(0xdf0000) // different color for each album
                 interaction.reply({ embeds: [errorEmbed], ephemeral: true })
             }
         } else {
-            const permsEmbed = new MessageEmbed()
+            const permsEmbed = new EmbedBuilder()
                 .setDescription('You do not have permission to use this command.')
                 .setColor(0xdf0000)
             return interaction.reply({ embeds: [permsEmbed], ephemeral: true })

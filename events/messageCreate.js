@@ -1,4 +1,4 @@
-const { MessageEmbed } = require('discord.js')
+const { EmbedBuilder } = require('discord.js')
 
 module.exports = {
 	name: 'messageCreate',
@@ -9,7 +9,7 @@ module.exports = {
             const logChannel = message.client.guilds.cache.get(process.env.GUILD_ID).channels.cache.get(process.env.LOGS_CHANNEL_ID)
             if(!logChannel) return
 
-            const dmEmbed = new MessageEmbed()
+            const dmEmbed = new EmbedBuilder()
                 .setAuthor({
                     name: `${message.author.tag}`,
                     iconURL: `${message.author.displayAvatarURL({ dynamic : true })}` // message + their avatar
@@ -26,7 +26,7 @@ module.exports = {
             const generalChannel = message.guild.channels.cache.find(channel => channel.name === "general")
             if(!generalChannel) return
 
-            const boostEmbed = new MessageEmbed()
+            const boostEmbed = new EmbedBuilder()
                 .setAuthor({
                     name: `${message.member.displayName}`,
                     iconURL: `${message.member.user.displayAvatarURL({ dynamic : true })}` // message + their avatar

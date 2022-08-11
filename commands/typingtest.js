@@ -1,5 +1,5 @@
 const { SlashCommandBuilder } = require('@discordjs/builders')
-const { MessageEmbed } = require('discord.js')
+const { EmbedBuilder } = require('discord.js')
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -21,7 +21,7 @@ module.exports = {
             textToType += ' ' + words[Math.floor(Math.random()*(words.length))]
         
         // embed that will show the quote
-        const typingTestEmbed = new MessageEmbed()
+        const typingTestEmbed = new EmbedBuilder()
             .setTitle('Typing Test')
             .setThumbnail('https://support.signal.org/hc/article_attachments/360016877511/typing-animation-3x.gif') // typing animation
             .setColor(0xfdfaff)
@@ -48,7 +48,7 @@ module.exports = {
 
         collector.on('end', collected => {
             if(collected.size === 0) { // if no message was entered
-                const couldntFindEmbed = new MessageEmbed()
+                const couldntFindEmbed = new EmbedBuilder()
                     .setDescription(`You did not type within a minute, please try again!`)
                     .setColor(0xdf0000)
                     .setFooter({
@@ -89,7 +89,7 @@ module.exports = {
                 else
                     color = 0xe30e0e
         
-                const wpmEmbed = new MessageEmbed()
+                const wpmEmbed = new EmbedBuilder()
                     .setTitle('Typing Test Results')
                     .setColor(color)
                     .addField('WPM', wpm)

@@ -1,6 +1,6 @@
 require('dotenv').config()
 
-const { MessageEmbed } = require('discord.js')
+const { EmbedBuilder } = require('discord.js')
 
 module.exports = {
 	name: 'guildBanAdd',
@@ -8,7 +8,7 @@ module.exports = {
         const modChannel = ban.guild.channels.cache.get(process.env.MODERATORS_CHANNEL_ID)
 		if(!modChannel) return
 
-        var log = new MessageEmbed()
+        var log = new EmbedBuilder()
             .setTitle(`${ban.user.username} was banned.`)
             .addField('User: ', `${ban.user}`, true)
             .addField('ID: ', `${ban.user.id}`)

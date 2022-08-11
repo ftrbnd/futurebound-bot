@@ -1,7 +1,7 @@
 const fs = require('fs')
 
 const { SlashCommandBuilder } = require('@discordjs/builders')
-const { MessageEmbed } = require('discord.js')
+const { EmbedBuilder } = require('discord.js')
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -15,7 +15,7 @@ module.exports = {
 			commandList += `${file.replace('.js', '')}\n`
 		}
 
-		const helpEmbed = new MessageEmbed()
+		const helpEmbed = new EmbedBuilder()
 			.setTitle(`Commands for ***${interaction.client.user.tag}***`)
 			.setDescription(commandList)
 			.setFooter({

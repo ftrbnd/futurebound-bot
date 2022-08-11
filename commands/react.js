@@ -1,7 +1,7 @@
 require('dotenv').config()
 
 const { SlashCommandBuilder } = require('@discordjs/builders')
-const { MessageEmbed, PermissionFlagsBits } = require('discord.js')
+const { EmbedBuilder, PermissionFlagsBits } = require('discord.js')
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -25,19 +25,19 @@ module.exports = {
             try {
                 channel.lastMessage.react(emoji)
 
-                const confirmEmbed = new MessageEmbed()
+                const confirmEmbed = new EmbedBuilder()
                     .setDescription(`Reacted to ${channel.lastMessage} with ${emoji}`)
                     .setColor(0x32ff25)
                 interaction.reply({ embeds: [confirmEmbed], ephemeral: true })
             } catch(error) {
                 console.log(error)
-                const errorEmbed = new MessageEmbed()
+                const errorEmbed = new EmbedBuilder()
                     .setDescription(`Failed to react with ${emoji}`)
                     .setColor(0xdf0000)
                 interaction.reply({ embeds: [errorEmbed], ephemeral: true })
             }
         } else {
-            const permsEmbed = new MessageEmbed()
+            const permsEmbed = new EmbedBuilder()
                 .setDescription('You do not have permission to use this command.')
                 .setColor(0xdf0000)
             return interaction.reply({ embeds: [permsEmbed], ephemeral: true })

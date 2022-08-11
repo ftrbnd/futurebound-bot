@@ -1,7 +1,7 @@
 require('dotenv').config()
 
 const { SlashCommandBuilder } = require('@discordjs/builders')
-const { MessageEmbed, PermissionFlagsBits } = require('discord.js')
+const { EmbedBuilder, PermissionFlagsBits } = require('discord.js')
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -24,13 +24,13 @@ module.exports = {
 
             targetChannel.setRateLimitPerUser(seconds)
 
-            const slowmodeEmbed = new MessageEmbed()
+            const slowmodeEmbed = new EmbedBuilder()
                 .setDescription(`Enabled slowmode in ${targetChannel} for ${seconds} seconds`)
                 .setColor(0x32ff25)
 
             interaction.reply({ embeds: [slowmodeEmbed], ephemeral: true })
         } else {
-            const permsEmbed = new MessageEmbed()
+            const permsEmbed = new EmbedBuilder()
                 .setDescription('You do not have permission to use this command.')
                 .setColor(0xdf0000)
             return interaction.reply({ embeds: [permsEmbed], ephemeral: true })

@@ -1,7 +1,7 @@
 require('dotenv').config()
 
 const { SlashCommandBuilder } = require('@discordjs/builders')
-const { MessageEmbed, Permissions, PermissionFlagsBits } = require('discord.js')
+const { EmbedBuilder, Permissions, PermissionFlagsBits } = require('discord.js')
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -79,7 +79,7 @@ module.exports = {
                     ]
                 })
 
-                const confirmEmbed = new MessageEmbed()
+                const confirmEmbed = new EmbedBuilder()
                     .setDescription(`**${listeningPartyName}** channels have been created!`)
                     .setColor(0x32ff25)
                 return interaction.reply({ embeds: [confirmEmbed] })
@@ -134,7 +134,7 @@ module.exports = {
                 )
                 stageChannel.setTopic(`Listening to ${stageChannel.name}!`)
 
-                const confirmEmbed = new MessageEmbed()
+                const confirmEmbed = new EmbedBuilder()
                     .setDescription(`**${stageChannel.name}** channels have been opened to everyone!`)
                     .setColor(0x32ff25)
                 interaction.reply(({ embeds: [confirmEmbed] }))
@@ -192,14 +192,14 @@ module.exports = {
                     }
                 )
 
-                const confirmEmbed = new MessageEmbed()
+                const confirmEmbed = new EmbedBuilder()
                     .setDescription(`**${stageChannel.name}** channels have been closed.`)
                     .setColor(0x32ff25)
                 interaction.reply(({ embeds: [confirmEmbed] }))
 
             }
         } else {
-        const permsEmbed = new MessageEmbed()
+        const permsEmbed = new EmbedBuilder()
             .setDescription('You do not have permission to use this command.')
             .setColor(0xdf0000)
         return interaction.reply({ embeds: [permsEmbed], ephemeral: true })

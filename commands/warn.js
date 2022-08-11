@@ -1,7 +1,7 @@
 require('dotenv').config()
 
 const { SlashCommandBuilder } = require('@discordjs/builders')
-const { MessageEmbed, PermissionFlagsBits } = require('discord.js')
+const { EmbedBuilder, PermissionFlagsBits } = require('discord.js')
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -25,7 +25,7 @@ module.exports = {
             const modChannel = interaction.guild.channels.cache.get(process.env.MODERATORS_CHANNEL_ID)
             if(!modChannel) return
 
-            const logEmbed = new MessageEmbed()
+            const logEmbed = new EmbedBuilder()
                 .setTitle(userToWarn.tag + ' was warned.')
                 .addField('User ID: ', `${userToWarn.id}`, true)        
                 .addField('By: ', `${interaction.user}`, true)
@@ -39,7 +39,7 @@ module.exports = {
                 .setTimestamp()
             modChannel.send({ embeds: [logEmbed] })
 
-            const warnEmbed = new MessageEmbed()
+            const warnEmbed = new EmbedBuilder()
                 .setTitle(`You were warned in **${interaction.guild.name}**.`)
                 .setDescription(reasonForWarn)
                 .setColor(0xffd100)
@@ -55,12 +55,12 @@ module.exports = {
                 console.log(err)
             }
 
-            const warnedEmbed = new MessageEmbed()
+            const warnedEmbed = new EmbedBuilder()
                 .setDescription(`${userToWarn} was warned.`)
                 .setColor(0xffd100)
             interaction.reply({ embeds: [warnedEmbed] })
         } else {
-            const permsEmbed = new MessageEmbed()
+            const permsEmbed = new EmbedBuilder()
                 .setDescription('You do not have permission to use this command.')
                 .setColor(0xdf0000)
             return interaction.reply({ embeds: [permsEmbed], ephemeral: true })

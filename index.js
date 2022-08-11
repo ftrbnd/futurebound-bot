@@ -3,7 +3,7 @@ const fs = require('fs')
 
 // Discord
 
-const { Client, Collection, MessageEmbed, Partials, GatewayIntentBits} = require('discord.js')
+const { Client, Collection, EmbedBuilder, Partials, GatewayIntentBits} = require('discord.js')
 const client = new Client({ 
     intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMembers, GatewayIntentBits.GuildBans, GatewayIntentBits.GuildMessages, GatewayIntentBits.GuildVoiceStates, GatewayIntentBits.DirectMessages],
     partials: [Partials.Channel]
@@ -83,7 +83,7 @@ snooper.watcher.getPostWatcher('eden') // blank argument or 'all' looks at the e
     .on('post', function(post) {
         const subredditChannel = client.channels.cache.get(process.env.SUBREDDIT_CHANNEL_ID)
 
-        var redditEmbed = new MessageEmbed()
+        var redditEmbed = new EmbedBuilder()
             .setTitle(post.data.title)
             .setURL(`https://reddit.com${post.data.permalink}`)
             .setDescription(post.data.selftext)
@@ -162,7 +162,7 @@ setInterval(() => {
 
                     const birthdayPerson = client.guilds.cache.get(process.env.GUILD_ID).members.fetch(user.discordId)
                         .then(birthdayPerson => {
-                            const birthdayEmbed = new MessageEmbed()
+                            const birthdayEmbed = new EmbedBuilder()
                                 .setTitle(bdayDescription)
                                 .setDescription(balloons)
                                 .setColor(0xffffc5)

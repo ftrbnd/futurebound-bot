@@ -2,7 +2,7 @@ require('dotenv').config()
 
 const { SlashCommandBuilder } = require('@discordjs/builders')
 const { PermissionFlagsBits } = require('discord-api-types/v9')
-const { MessageEmbed } = require('discord.js')
+const { EmbedBuilder } = require('discord.js')
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -35,7 +35,7 @@ module.exports = {
 
                 roles.forEach(role => role.setPermissions(removedPermissions))
 
-                const confirmEmbed = new MessageEmbed()
+                const confirmEmbed = new EmbedBuilder()
                     .setDescription(`**${interaction.guild.name}** is now on lockdown.`)
                     .setColor(0xdf0000)
                 return interaction.reply({ embeds: [confirmEmbed], ephemeral: false })
@@ -49,14 +49,14 @@ module.exports = {
                     // TODO: add SEND_MESSAGES_IN_THREADS permission
                 })
 
-                const confirmEmbed = new MessageEmbed()
+                const confirmEmbed = new EmbedBuilder()
                     .setDescription(`**${interaction.guild.name}** is now open!`)
                     .setColor(0x32ff25)
                 return interaction.reply({ embeds: [confirmEmbed], ephemeral: false })
 
             }
         } else {
-            const permsEmbed = new MessageEmbed()
+            const permsEmbed = new EmbedBuilder()
                 .setDescription('You do not have permission to use this command.')
                 .setColor(0xdf0000)
             return interaction.reply({ embeds: [permsEmbed], ephemeral: true })

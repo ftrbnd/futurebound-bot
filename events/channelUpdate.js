@@ -1,6 +1,6 @@
 require('dotenv').config()
 
-const { MessageEmbed } = require('discord.js')
+const { EmbedBuilder } = require('discord.js')
 
 module.exports = {
 	name: 'channelUpdate',
@@ -11,7 +11,7 @@ module.exports = {
         const channelType = (oldChannel.type === 'GUILD_TEXT') ? "text" : "voice" // if oldChannel type is GUILD_TEXT, then set channelType to text
 
         if(oldChannel.name != newChannel.name) {
-            const changedEmbed = new MessageEmbed()
+            const changedEmbed = new EmbedBuilder()
                 .setTitle(`A ${channelType} channel's name was changed.`)
                 .addFields(
                     { name: 'Previous name', value: oldChannel.name, inline: true },

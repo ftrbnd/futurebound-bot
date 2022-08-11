@@ -1,7 +1,7 @@
 const urban = require('urban')
 
 const { SlashCommandBuilder } = require('@discordjs/builders')
-const { MessageEmbed } = require('discord.js')
+const { EmbedBuilder } = require('discord.js')
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -28,7 +28,7 @@ module.exports = {
 
             var jsonDate = json.written_on.toString().slice(0, 10); // make the date more reader-friendly
         
-            const urbanEmbed = new MessageEmbed()
+            const urbanEmbed = new EmbedBuilder()
                 .setTitle(json.word.toUpperCase())
                 .setThumbnail('https://i.imgur.com/azXqb1w.png')
                 .setColor(0x134fe6)

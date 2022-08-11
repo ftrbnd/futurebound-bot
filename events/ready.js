@@ -1,6 +1,6 @@
 require('dotenv').config()
 
-const { MessageEmbed } = require('discord.js')
+const { EmbedBuilder } = require('discord.js')
 
 module.exports = {
 	name: 'ready',
@@ -35,7 +35,7 @@ module.exports = {
 
         const logChannel = client.channels.cache.get(process.env.LOGS_CHANNEL_ID)
         if(logChannel) {
-            const readyEmbed = new MessageEmbed()
+            const readyEmbed = new EmbedBuilder()
                 .setDescription(`**${client.user.tag}** has restarted and is now online!`)
                 .setColor(0x32ff25)
             logChannel.send({ embeds: [readyEmbed] })

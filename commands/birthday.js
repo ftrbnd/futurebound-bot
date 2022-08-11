@@ -1,5 +1,5 @@
 const { SlashCommandBuilder } = require('@discordjs/builders')
-const { MessageEmbed } = require('discord.js')
+const { EmbedBuilder } = require('discord.js')
 
 const mongoose = require('mongoose')
 const User = require('../schemas/UserSchema')
@@ -35,7 +35,7 @@ module.exports = {
         const timezoneOption = interaction.options._hoistedOptions[3].value
 
         if(monthOption < 1 || 12 < monthOption) {
-            const monthErrEmbed = new MessageEmbed()
+            const monthErrEmbed = new EmbedBuilder()
                 .setDescription('Please enter a valid month number (1-12)')
                 .setColor(0xdf0000)
 
@@ -43,7 +43,7 @@ module.exports = {
         }
 
         if(dayOption < 1 || 31 < dayOption) {
-            const dayErrEmbed = new MessageEmbed()
+            const dayErrEmbed = new EmbedBuilder()
                 .setDescription('Please enter a valid day number (1-31)')
                 .setColor(0xdf0000)
 
@@ -51,7 +51,7 @@ module.exports = {
         }
 
         if(!timeZonesNames.includes(timezoneOption)) {
-            const tzErrEmbed = new MessageEmbed()
+            const tzErrEmbed = new EmbedBuilder()
                 .setDescription('Please enter a valid TZ database name. More info can be found here: https://en.wikipedia.org/wiki/List_of_tz_database_time_zones#List \nExample: **America/Los_Angeles**')
                 .setColor(0xdf0000)
 
@@ -103,7 +103,7 @@ module.exports = {
         const birthdayAttempt = new Date(`${monthOption} ${dayOption} ${yearOption} ${midnightPST}:00`)
 
         logChannel = interaction.guild.channels.cache.get(process.env.LOGS_CHANNEL_ID)
-        var birthdayEmbed = new MessageEmbed()
+        var birthdayEmbed = new EmbedBuilder()
             .setColor(0x32ff25)
             .addField('Timezone', timezoneOption)
             .setFooter({
@@ -111,7 +111,7 @@ module.exports = {
                 iconURL: interaction.guild.iconURL({ dynamic : true })
             })
 
-        var personalEmbed = new MessageEmbed()
+        var personalEmbed = new EmbedBuilder()
             .setColor(0x32ff25)
             .addField('Timezone', timezoneOption)
             .setFooter({

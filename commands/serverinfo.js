@@ -1,5 +1,5 @@
 const { SlashCommandBuilder } = require('@discordjs/builders')
-const { MessageEmbed } = require('discord.js')
+const { EmbedBuilder } = require('discord.js')
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -9,7 +9,7 @@ module.exports = {
 	async execute(interaction) {
         const createdAt = interaction.guild.createdAt.toString().split(' ')
 
-        const serverInfo = new MessageEmbed()
+        const serverInfo = new EmbedBuilder()
             .setTitle(`***${interaction.guild}*** server info`)
             .setDescription(`${interaction.guild.description}`)
             .setThumbnail(interaction.guild.iconURL({ dynamic : true}))

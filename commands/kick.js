@@ -1,7 +1,7 @@
 require('dotenv').config()
 
 const { SlashCommandBuilder } = require('@discordjs/builders')
-const { MessageEmbed, PermissionFlagsBits } = require('discord.js')
+const { EmbedBuilder, PermissionFlagsBits } = require('discord.js')
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -25,7 +25,7 @@ module.exports = {
             const modChannel = interaction.guild.channels.cache.get(process.env.MODERATORS_CHANNEL_ID)
             if(!modChannel) return
 
-            const logEmbed = new MessageEmbed()
+            const logEmbed = new EmbedBuilder()
                 .setTitle(userToKick.tag + ' was kicked.')
                 .addField('User ID: ', `${userToKick.id}`, true)        
                 .addField('By: ', `${interaction.user}`, true)
@@ -39,7 +39,7 @@ module.exports = {
                 .setTimestamp()
             modChannel.send({ embeds: [logEmbed] })
 
-            const kickEmbed = new MessageEmbed()
+            const kickEmbed = new EmbedBuilder()
                 .setTitle(`You were kicked from **${interaction.guild.name}**.`)
                 .setDescription(reasonForKick)
                 .setColor(0xdf0000)
@@ -55,14 +55,14 @@ module.exports = {
                 console.log(err)
             }
                 
-            const kickedEmbed = new MessageEmbed()
+            const kickedEmbed = new EmbedBuilder()
                 .setDescription(`${userToKick} was kicked.`)
                 .setColor(0x32ff25)
             interaction.reply({ embeds: [kickedEmbed] })
 
             interaction.guild.members.kick(userToKick, options = { reason: reasonForKick})
         } else {
-            const permsEmbed = new MessageEmbed()
+            const permsEmbed = new EmbedBuilder()
                 .setDescription('You do not have permission to use this command.')
                 .setColor(0xdf0000)
             return interaction.reply({ embeds: [permsEmbed], ephemeral: true })

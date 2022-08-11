@@ -1,5 +1,5 @@
 const { SlashCommandBuilder } = require('@discordjs/builders')
-const { MessageEmbed } = require('discord.js')
+const { EmbedBuilder } = require('discord.js')
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -18,7 +18,7 @@ module.exports = {
 
         const questionAsked = interaction.options._hoistedOptions[0].value
 
-        const eightBall = new MessageEmbed()
+        const eightBall = new EmbedBuilder()
             .setTitle('🎱 ' + questionAsked)
             .setDescription(responses[Math.floor(Math.random()*(responses.length))])
             .setColor('RANDOM')

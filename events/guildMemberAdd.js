@@ -1,4 +1,4 @@
-const { MessageEmbed } = require('discord.js')
+const { EmbedBuilder } = require('discord.js')
 
 module.exports = {
 	name: 'guildMemberAdd',
@@ -6,7 +6,7 @@ module.exports = {
         const welcomeChannel = member.guild.channels.cache.find(channel => channel.name === "welcome")
         if(!welcomeChannel) return
         
-        const welcomeEmbed = new MessageEmbed()
+        const welcomeEmbed = new EmbedBuilder()
             .setAuthor({
                 name: member.displayName + ' just joined the server!', 
                 iconURL: member.user.displayAvatarURL({ dynamic : true})

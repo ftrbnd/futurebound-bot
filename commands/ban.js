@@ -1,7 +1,7 @@
 require('dotenv').config()
 
 const { SlashCommandBuilder } = require('@discordjs/builders')
-const { MessageEmbed, PermissionFlagsBits } = require('discord.js')
+const { EmbedBuilder, PermissionFlagsBits } = require('discord.js')
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -25,7 +25,7 @@ module.exports = {
             const modChannel = interaction.guild.channels.cache.get(process.env.MODERATORS_CHANNEL_ID)
             if(!modChannel) return
 
-            const logEmbed = new MessageEmbed()
+            const logEmbed = new EmbedBuilder()
                 .setTitle(userToBan.tag + ' was banned.')
                 .addField('User ID: ', `${userToBan.id}`, true)        
                 .addField('By: ', `${interaction.user}`, true)
@@ -39,7 +39,7 @@ module.exports = {
                 .setTimestamp()
             modChannel.send({ embeds: [logEmbed] })
 
-            const banEmbed = new MessageEmbed()
+            const banEmbed = new EmbedBuilder()
                 .setTitle(`You were banned from **${interaction.guild.name}**.`)
                 .setDescription(reasonForBan)
                 .setColor(0xdf0000)
@@ -55,14 +55,14 @@ module.exports = {
                 console.log(err)
             }
                 
-            const bannedEmbed = new MessageEmbed()
+            const bannedEmbed = new EmbedBuilder()
                 .setDescription(`${userToBan} was banned.`)
                 .setColor(0x32ff25)
             interaction.reply({ embeds: [bannedEmbed] })
 
             interaction.guild.members.ban(userToBan, options = { reason: reasonForBan})
         } else {
-            const permsEmbed = new MessageEmbed()
+            const permsEmbed = new EmbedBuilder()
                 .setDescription('You do not have permission to use this command.')
                 .setColor(0xdf0000)
             return interaction.reply({ embeds: [permsEmbed], ephemeral: true })

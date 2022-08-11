@@ -2,7 +2,7 @@ const lyricsFinder = require('lyrics-finder')
 require('dotenv').config()
 
 const { SlashCommandBuilder } = require('@discordjs/builders')
-const { MessageEmbed } = require('discord.js')
+const { EmbedBuilder } = require('discord.js')
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -43,7 +43,7 @@ module.exports = {
                 line = lines[randomIndex] + "\n" + lines[randomIndex + 1]
 
                 // embed that will show the song lyric
-                const guessTheSongEmbed = new MessageEmbed()
+                const guessTheSongEmbed = new EmbedBuilder()
                     .setTitle(`Guess The Song`)
                     .setThumbnail('https://i.imgur.com/rQmm1FM.png') // EDEN's logo
                     .setColor(0xfa57c1)
@@ -59,7 +59,7 @@ module.exports = {
                 const collector = interaction.channel.createMessageCollector({ filter, time: 15000 }) // collector stops checking after 15 seconds
 
                 collector.on('collect', m => {
-                    const winnerEmbed = new MessageEmbed()
+                    const winnerEmbed = new EmbedBuilder()
                         .setTitle(m.author.username + ' guessed the song!')
                         .addField('Song', randomSong)
                         .setDescription(`${line}`)
@@ -76,7 +76,7 @@ module.exports = {
 
                 collector.on('end', collected => {
                     if(collected.size == 0) { // if no correct song was guessed (collected by the MessageCollector)
-                        const timeOutEmbed = new MessageEmbed()
+                        const timeOutEmbed = new EmbedBuilder()
                             .setTitle('Nobody guessed the song within 15 seconds.')
                             .addField('Song', randomSong)
                             .setDescription(`${line}`)
@@ -94,7 +94,7 @@ module.exports = {
 
                 const giosalad = interaction.guild.members.cache.get(process.env.GIOSALAD_ID) // my account
 
-                const couldntFindEmbed = new MessageEmbed()
+                const couldntFindEmbed = new EmbedBuilder()
                     .setTitle(`Could not find the lyrics to ${randomSong}, please try again!`)
                     .setColor(0xdf0000)
                     .setDescription(`${line}`)
