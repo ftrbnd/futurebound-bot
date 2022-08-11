@@ -94,7 +94,6 @@ module.exports = {
                     .addFields([
                         { name: 'WPM', value: wpm},
                         { name: 'Acuracy', value: accuracyCount + '%'},
-                        { name: 'Reason: ', value: reasonForKick},
                     ])
                     .setFooter({
                         text: interaction.user.username, 
