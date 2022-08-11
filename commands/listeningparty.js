@@ -31,7 +31,7 @@ module.exports = {
 
                 const categoryChannel = await interaction.guild.channels.create({
                     name: 'Listening Party',
-                    type: 'GUILD_CATEGORY',
+                    type: ChannelType.GuildCategory,
                     position: 2,
                     permissionOverwrites: [
                         {
@@ -47,7 +47,7 @@ module.exports = {
 
                 const listeningPartyChat = await interaction.guild.channels.create({
                     name: 'listening party chat',
-                    type: 'GUILD_TEXT',
+                    type: ChannelType.GuildText,
                     parent: categoryChannel,
                     permissionOverwrites: [
                         {
@@ -67,7 +67,7 @@ module.exports = {
 
                 const stageChannel = await interaction.guild.channels.create({
                     name: listeningPartyName,
-                    type: 'GUILD_STAGE_VOICE',
+                    type: ChannelType.GuildStageVoice,
                     parent: categoryChannel,
                     permissionOverwrites: [
                         {
