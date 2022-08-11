@@ -113,7 +113,6 @@ snooper.watcher.getPostWatcher('eden') // blank argument or 'all' looks at the e
 
 const mongoose = require('mongoose')
 const User = require('./schemas/UserSchema')
-const { GatewayIntentBits } = require('discord-api-types')
 
 mongoose.connect(process.env.MONGODB_URI)
     .then((m) => {
