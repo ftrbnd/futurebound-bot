@@ -55,7 +55,7 @@ module.exports = {
                 interaction.reply({ embeds: [guessTheSongEmbed] })
 
                 const filter = m => m.content.toLowerCase().includes(randomSong.toLowerCase())
-                const collector = interaction.channel.createMessageCollector({ filter, time: 15000 }) // collector stops checking after 15 seconds
+                const collector = interaction.channel.createMessageCollector({ filter, time: 15_000 }) // collector stops checking after 15 seconds
 
                 collector.on('collect', m => {
                     const winnerEmbed = new EmbedBuilder()
