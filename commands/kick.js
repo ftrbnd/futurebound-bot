@@ -26,9 +26,11 @@ module.exports = {
 
             const logEmbed = new EmbedBuilder()
                 .setTitle(userToKick.tag + ' was kicked.')
-                .addField('User ID: ', `${userToKick.id}`, true)        
-                .addField('By: ', `${interaction.user}`, true)
-                .addField('Reason: ', reasonForKick)
+                .addFields([
+                    { name: 'User ID: ', value: `${userToKick.id}`},
+                    { name: 'By: ', value: `${interaction.user}`},
+                    { name: 'Reason: ', value: reasonForKick},
+                ])
                 .setColor(0xdf0000)
                 .setThumbnail(userToKick.displayAvatarURL({ dynamic : true }))
                 .setFooter({

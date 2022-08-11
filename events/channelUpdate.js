@@ -14,8 +14,8 @@ module.exports = {
             const changedEmbed = new EmbedBuilder()
                 .setTitle(`A ${channelType} channel's name was changed.`)
                 .addFields(
-                    { name: 'Previous name', value: oldChannel.name, inline: true },
-                    { name: 'New name', value: newChannel.name, inline: true },
+                    { name: 'Previous name', value: oldChannel.name},
+                    { name: 'New name', value: newChannel.name},
                 )
                 .setColor(0x32ff25)
                 .setFooter({

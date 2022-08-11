@@ -91,8 +91,11 @@ module.exports = {
                 const wpmEmbed = new EmbedBuilder()
                     .setTitle('Typing Test Results')
                     .setColor(color)
-                    .addField('WPM', wpm)
-                    .addField('Accuracy', accuracyCount + '%')
+                    .addFields([
+                        { name: 'WPM', value: wpm},
+                        { name: 'Acuracy', value: accuracyCount + '%'},
+                        { name: 'Reason: ', value: reasonForKick},
+                    ])
                     .setFooter({
                         text: interaction.user.username, 
                         iconURL: interaction.user.displayAvatarURL({ dynamic : true })

@@ -60,7 +60,9 @@ module.exports = {
                 collector.on('collect', m => {
                     const winnerEmbed = new EmbedBuilder()
                         .setTitle(m.author.username + ' guessed the song!')
-                        .addField('Song', randomSong)
+                        .addFields([
+                            { name: 'Song', value: randomSong}
+                        ])
                         .setDescription(`${line}`)
                         .setThumbnail(m.author.displayAvatarURL({ dynamic : true}))
                         .setColor(0x32ff25)
@@ -77,7 +79,9 @@ module.exports = {
                     if(collected.size == 0) { // if no correct song was guessed (collected by the MessageCollector)
                         const timeOutEmbed = new EmbedBuilder()
                             .setTitle('Nobody guessed the song within 15 seconds.')
-                            .addField('Song', randomSong)
+                            .addFields([
+                                { name: 'Song', value: randomSong}
+                            ])
                             .setDescription(`${line}`)
                             .setColor(0xdf0000)
                             .setFooter({

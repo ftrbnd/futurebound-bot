@@ -35,15 +35,15 @@ module.exports = {
                     {
                         name: 'Definition',
                         value: jsonDefinition,
-                        inline: false,
                     },
                     {
                         name: 'Example',
                         value: jsonExample,
-                        inline: false,
                     }
                 )
-                .addField('Urban Dictionary', `[link](${json.permalink})`)
+                .addFields([
+                    { name: 'Urban Dictionary', value: `[link](${json.permalink})`},
+                ])
                 .setFooter({
                     text: 'by ' + json.author + ' on ' + jsonDate
                 })

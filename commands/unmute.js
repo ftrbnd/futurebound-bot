@@ -21,8 +21,10 @@ module.exports = {
 
             const logEmbed = new EmbedBuilder()
                 .setTitle(userToUnmute.tag + ' was unmuted.')
-                .addField('User ID: ', `${userToUnmute.id}`, true)        
-                .addField('By: ', `${interaction.user}`, true)
+                .addFields([
+                    { name: 'User ID: ', value: `${userToUnmute.id}`},
+                    { name: 'By: ', value: `${interaction.user}`},
+                ])
                 .setColor(0x32ff25)
                 .setThumbnail(userToUnmute.displayAvatarURL({ dynamic : true }))
                 .setFooter({

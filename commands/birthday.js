@@ -103,7 +103,9 @@ module.exports = {
         logChannel = interaction.guild.channels.cache.get(process.env.LOGS_CHANNEL_ID)
         var birthdayEmbed = new EmbedBuilder()
             .setColor(0x32ff25)
-            .addField('Timezone', timezoneOption)
+            .addFields([
+                { name: 'Timezone', value: timezoneOption}
+            ])
             .setFooter({
                 text: interaction.guild.name, 
                 iconURL: interaction.guild.iconURL({ dynamic : true })
@@ -111,7 +113,9 @@ module.exports = {
 
         var personalEmbed = new EmbedBuilder()
             .setColor(0x32ff25)
-            .addField('Timezone', timezoneOption)
+            .addFields([
+                { name: 'Timezone', value: timezoneOption}
+            ])
             .setFooter({
                 text: interaction.guild.name, 
                 iconURL: interaction.guild.iconURL({ dynamic : true })

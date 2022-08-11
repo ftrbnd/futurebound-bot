@@ -15,7 +15,9 @@ module.exports = {
 				iconURL: message.author.displayAvatarURL({ dynamic : true })
 			})
 			.setDescription(message.content)
-			.addField('Channel', message.channel.name)
+			.addFields([
+				{ name: 'Channel', value: message.channel.name},
+			])
 			.setColor(0xdf0000)
 			.setTimestamp()
 		logChannel.send({ embeds: [msgDeleteEmbed] })

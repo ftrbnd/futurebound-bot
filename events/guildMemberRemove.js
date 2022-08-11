@@ -13,7 +13,9 @@ module.exports = {
                 name: member.displayName + ' has left the server.', 
                 iconURL: member.user.displayAvatarURL({ dynamic : true})
             })
-            .addField('User ID: ', `${member.user.id}`, true)
+            .addFields([
+                { name: 'User ID: ', value: `${member.user.id}`},
+            ])
             .setColor(0xdf0000)
             .setThumbnail(member.user.displayAvatarURL({ dynamic : true}))
             .setFooter({

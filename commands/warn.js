@@ -26,9 +26,11 @@ module.exports = {
 
             const logEmbed = new EmbedBuilder()
                 .setTitle(userToWarn.tag + ' was warned.')
-                .addField('User ID: ', `${userToWarn.id}`, true)        
-                .addField('By: ', `${interaction.user}`, true)
-                .addField('Reason: ', reasonForWarn)
+                .addFields([
+                    { name: 'User ID: ', value: `${userToWarn.id}`},
+                    { name: 'By: ', value: `${interaction.user}`},
+                    { name: 'Reason: ', value: reasonForWarn},
+                ])
                 .setColor(0xffd100)
                 .setThumbnail(userToWarn.displayAvatarURL({ dynamic : true }))
                 .setFooter({

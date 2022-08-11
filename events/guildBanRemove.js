@@ -10,8 +10,10 @@ module.exports = {
 
         var log = new EmbedBuilder()
             .setTitle(`${ban.user.username} was unbanned.`)
-            .addField('User: ', `${ban.user}`, true)
-            .addField('ID: ', `${ban.user.id}`)
+            .addFields([
+                { name: 'User: ', value: `${ban.user}`},
+                { name: 'ID: ', value: `${ban.user.id}`},
+            ])
             .setColor(0x32ff25)
             .setThumbnail(ban.user.displayAvatarURL({ dynamic : true }))
             .setFooter({

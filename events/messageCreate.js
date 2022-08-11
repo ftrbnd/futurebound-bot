@@ -33,8 +33,10 @@ module.exports = {
                 })        
                 .setColor(0xf47fff) // pink boost color
                 .setThumbnail('https://emoji.gg/assets/emoji/1819_boostingtop.gif') // nitro boost gif
-                .addField('Server Level', `${message.guild.premiumTier}`, true)
-                .addField('Server Boosts', `${message.guild.premiumSubscriptionCount}`, true)
+                .addFields([
+                    { name: 'Server Level', value: `${message.guild.premiumTier}`},
+                    { name: 'Server Boosts', value: `${message.guild.premiumSubscriptionCount}`},
+                ])
                 .setFooter({
                     text: `${message.guild.name}`, // server name
                     iconURL: `${message.guild.iconURL({ dynamic : true })}` // server icon

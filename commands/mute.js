@@ -26,9 +26,11 @@ module.exports = {
 
             const logEmbed = new EmbedBuilder()
                 .setTitle(userToMute.tag + ' was muted.')
-                .addField('User ID: ', `${userToMute.id}`, true)        
-                .addField('By: ', `${interaction.user}`, true)
-                .addField('Reason: ', reasonForMute)
+                .addFields([
+                    { name: 'User ID: ', value: `${userToMute.id}`},
+                    { name: 'By: ', value: `${interaction.user}`},
+                    { name: 'Reason: ', value: reasonForMute},
+                ])
                 .setColor(0x000001)
                 .setThumbnail(userToMute.displayAvatarURL({ dynamic : true }))
                 .setFooter({

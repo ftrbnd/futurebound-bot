@@ -26,9 +26,11 @@ module.exports = {
 
             const logEmbed = new EmbedBuilder()
                 .setTitle(userToBan.tag + ' was banned.')
-                .addField('User ID: ', `${userToBan.id}`, true)        
-                .addField('By: ', `${interaction.user}`, true)
-                .addField('Reason: ', reasonForBan)
+                .addFields([
+                    { name: 'User ID: ', value: `${userToBan.id}`},
+                    { name: 'By: ', value: `${interaction.user}`},
+                    { name: 'Reason: ', value: reasonForBan},
+                ])
                 .setColor(0xdf0000)
                 .setThumbnail(userToBan.displayAvatarURL({ dynamic : true }))
                 .setFooter({
