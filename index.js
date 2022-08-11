@@ -88,7 +88,7 @@ snooper.watcher.getPostWatcher('eden') // blank argument or 'all' looks at the e
             .setURL(`https://reddit.com${post.data.permalink}`)
             .setDescription(post.data.selftext)
             .setImage(post.data.url)
-            .setColor(0xFF4500)
+            .setColor('0xFF4500')
             .setFooter({ 
                 text: `Posted by u/${post.data.author} on r/${post.data.subreddit}`,
                 iconURL: 'https://logodownload.org/wp-content/uploads/2018/02/reddit-logo-16.png'
@@ -165,7 +165,7 @@ setInterval(() => {
                             const birthdayEmbed = new EmbedBuilder()
                                 .setTitle(bdayDescription)
                                 .setDescription(balloons)
-                                .setColor(0xffffc5)
+                                .setColor('0xffffc5')
                                 .setThumbnail(birthdayPerson.user.displayAvatarURL({ dynamic : true }))
                                 .setFooter({
                                     text: `Use the /birthday command to set your own birthday`, 

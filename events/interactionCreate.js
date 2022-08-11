@@ -16,7 +16,7 @@ module.exports = {
             console.error(error)
             const errorEmbed = new EmbedBuilder()
                 .setDescription('There was an error while executing this command!')
-                .setColor(0xdf0000)
+                .setColor('0xdf0000')
             await interaction.reply({ embeds: [errorEmbed], ephemeral: true })
         }
 	},

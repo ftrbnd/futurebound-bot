@@ -80,7 +80,7 @@ module.exports = {
 
                 const confirmEmbed = new EmbedBuilder()
                     .setDescription(`**${listeningPartyName}** channels have been created!`)
-                    .setColor(0x32ff25)
+                    .setColor('0x32ff25')
                 return interaction.reply({ embeds: [confirmEmbed] })
 
             } else if(interaction.options.getSubcommand() === 'open') {
@@ -135,7 +135,7 @@ module.exports = {
 
                 const confirmEmbed = new EmbedBuilder()
                     .setDescription(`**${stageChannel.name}** channels have been opened to everyone!`)
-                    .setColor(0x32ff25)
+                    .setColor('0x32ff25')
                 interaction.reply(({ embeds: [confirmEmbed] }))
 
             } else if(interaction.options.getSubcommand() === 'close') {
@@ -193,14 +193,14 @@ module.exports = {
 
                 const confirmEmbed = new EmbedBuilder()
                     .setDescription(`**${stageChannel.name}** channels have been closed.`)
-                    .setColor(0x32ff25)
+                    .setColor('0x32ff25')
                 interaction.reply(({ embeds: [confirmEmbed] }))
 
             }
         } else {
         const permsEmbed = new EmbedBuilder()
             .setDescription('You do not have permission to use this command.')
-            .setColor(0xdf0000)
+            .setColor('0xdf0000')
         return interaction.reply({ embeds: [permsEmbed], ephemeral: true })
         }
 	},

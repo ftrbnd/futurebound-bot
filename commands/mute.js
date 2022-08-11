@@ -31,7 +31,7 @@ module.exports = {
                     { name: 'By: ', value: `${interaction.user}`},
                     { name: 'Reason: ', value: reasonForMute},
                 ])
-                .setColor(0x000001)
+                .setColor('0x000001')
                 .setThumbnail(userToMute.displayAvatarURL({ dynamic : true }))
                 .setFooter({
                     text: interaction.guild.name, 
@@ -43,7 +43,7 @@ module.exports = {
             const muteEmbed = new EmbedBuilder()
                 .setTitle(`You were muted in **${interaction.guild.name}**.`)
                 .setDescription(reasonForMute)
-                .setColor(0x000001)
+                .setColor('0x000001')
                 .setFooter({
                     text: interaction.guild.name, 
                     iconURL: interaction.guild.iconURL({ dynamic : true })
@@ -61,12 +61,12 @@ module.exports = {
 
             const mutedEmbed = new EmbedBuilder()
                 .setDescription(`${userToMute} was muted.`)
-                .setColor(0x32ff25)
+                .setColor('0x32ff25')
             interaction.reply({ embeds: [mutedEmbed] })
         } else {
             const permsEmbed = new EmbedBuilder()
                 .setDescription('You do not have permission to use this command.')
-                .setColor(0xdf0000)
+                .setColor('0xdf0000')
             return interaction.reply({ embeds: [permsEmbed], ephemeral: true })
         }
 	},

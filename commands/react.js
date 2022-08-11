@@ -26,19 +26,19 @@ module.exports = {
 
                 const confirmEmbed = new EmbedBuilder()
                     .setDescription(`Reacted to ${channel.lastMessage} with ${emoji}`)
-                    .setColor(0x32ff25)
+                    .setColor('0x32ff25')
                 interaction.reply({ embeds: [confirmEmbed], ephemeral: true })
             } catch(error) {
                 console.log(error)
                 const errorEmbed = new EmbedBuilder()
                     .setDescription(`Failed to react with ${emoji}`)
-                    .setColor(0xdf0000)
+                    .setColor('0xdf0000')
                 interaction.reply({ embeds: [errorEmbed], ephemeral: true })
             }
         } else {
             const permsEmbed = new EmbedBuilder()
                 .setDescription('You do not have permission to use this command.')
-                .setColor(0xdf0000)
+                .setColor('0xdf0000')
             return interaction.reply({ embeds: [permsEmbed], ephemeral: true })
         }
 	},

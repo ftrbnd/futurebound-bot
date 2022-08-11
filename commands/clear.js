@@ -18,7 +18,7 @@ module.exports = {
 
             const errorEmbed = new EmbedBuilder()
                 .setDescription('Enter a value between 1-100.')
-                .setColor(0x32ff25)      
+                .setColor('0x32ff25')      
             if(amountToDelete < 1 || amountToDelete > 100)
                 return interaction.reply({ embeds: [errorEmbed], ephemeral: true })
 
@@ -30,12 +30,12 @@ module.exports = {
                 
             const clearEmbed = new EmbedBuilder()
                 .setDescription(amountDescription)
-                .setColor(0x32ff25)
+                .setColor('0x32ff25')
             interaction.reply({ embeds: [clearEmbed], ephemeral: true })
         } else {
             const permsEmbed = new EmbedBuilder()
                 .setDescription('You do not have permission to use this command.')
-                .setColor(0xdf0000)
+                .setColor('0xdf0000')
             return interaction.reply({ embeds: [permsEmbed], ephemeral: true })
         }
 	},

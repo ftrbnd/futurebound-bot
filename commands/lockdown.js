@@ -36,7 +36,7 @@ module.exports = {
 
                 const confirmEmbed = new EmbedBuilder()
                     .setDescription(`**${interaction.guild.name}** is now on lockdown.`)
-                    .setColor(0xdf0000)
+                    .setColor('0xdf0000')
                 return interaction.reply({ embeds: [confirmEmbed], ephemeral: false })
 
             } else if(interaction.options.getSubcommand() === 'open') { // Open all text channels
@@ -50,14 +50,14 @@ module.exports = {
 
                 const confirmEmbed = new EmbedBuilder()
                     .setDescription(`**${interaction.guild.name}** is now open!`)
-                    .setColor(0x32ff25)
+                    .setColor('0x32ff25')
                 return interaction.reply({ embeds: [confirmEmbed], ephemeral: false })
 
             }
         } else {
             const permsEmbed = new EmbedBuilder()
                 .setDescription('You do not have permission to use this command.')
-                .setColor(0xdf0000)
+                .setColor('0xdf0000')
             return interaction.reply({ embeds: [permsEmbed], ephemeral: true })
         }
 	},

@@ -25,13 +25,13 @@ module.exports = {
 
             const slowmodeEmbed = new EmbedBuilder()
                 .setDescription(`Enabled slowmode in ${targetChannel} for ${seconds} seconds`)
-                .setColor(0x32ff25)
+                .setColor('0x32ff25')
 
             interaction.reply({ embeds: [slowmodeEmbed], ephemeral: true })
         } else {
             const permsEmbed = new EmbedBuilder()
                 .setDescription('You do not have permission to use this command.')
-                .setColor(0xdf0000)
+                .setColor('0xdf0000')
             return interaction.reply({ embeds: [permsEmbed], ephemeral: true })
         }
 	},

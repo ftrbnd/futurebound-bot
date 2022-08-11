@@ -30,7 +30,7 @@ module.exports = {
 
 			helloEmbed = new EmbedBuilder()
 				.setDescription('You just created your own voice channel! Feel free to edit the channel name to let others know what your channel is about. \nNOTE: Make sure you have **Two-Factor Authentication** enabled on your Discord account.')
-				.setColor(0x32ff25)
+				.setColor('0x32ff25')
 				.setFooter({
 					text: newState.guild.name,
 					iconURL: newState.guild.iconURL({ dynamic: true })
@@ -43,7 +43,7 @@ module.exports = {
 			
 			const vcUpdateEmbed = new EmbedBuilder()
 				.setDescription(`${newState.member.user.tag} created **${customVoiceChannel.name}**`)
-				.setColor(0x32ff25)
+				.setColor('0x32ff25')
 				.setFooter({
 					text: `User ID: ${newState.member.user.id}`, 
 					iconURL: newState.member.user.displayAvatarURL({ dynamic : true })
@@ -54,7 +54,7 @@ module.exports = {
 		if(!oldState.channel) { // if they join a channel
 			joinEmbed = new EmbedBuilder()
 				.setDescription(`${newState.member.user} joined **${newState.channel.name}**`)
-				.setColor(0x32ff25)
+				.setColor('0x32ff25')
 				.setTimestamp()
 				.setFooter({
 					text: `User ID: ${newState.member.user.id}`, 
@@ -66,7 +66,7 @@ module.exports = {
 		} else if(!newState.channel) { // if they leave a channel
 			leaveEmbed = new EmbedBuilder()
 				.setDescription(`${oldState.member.user} left **${oldState.channel.name}**`)
-				.setColor(0xdf0000)
+				.setColor('0xdf0000')
 				.setTimestamp()
 				.setFooter({
 					text: `User ID: ${oldState.member.user.id}`, 
@@ -79,7 +79,7 @@ module.exports = {
 		if(oldState.channel.members.size === 0 && oldState.channel.parent.id === process.env.JOIN_TO_CREATE_CATEGORY_ID && oldState.channel.id !== process.env.JOIN_TO_CREATE_ID) { // once a custom channel is empty
 			const vcUpdateEmbed = new EmbedBuilder()
 				.setDescription(`**${oldState.channel.name}** was deleted after being empty.`)
-				.setColor(0xdf0000)
+				.setColor('0xdf0000')
 				.setTimestamp()
 			
 			oldState.channel.delete(`**${oldState.channel.name}** was deleted after being empty.`)

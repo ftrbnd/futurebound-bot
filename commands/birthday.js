@@ -35,7 +35,7 @@ module.exports = {
         if(monthOption < 1 || 12 < monthOption) {
             const monthErrEmbed = new EmbedBuilder()
                 .setDescription('Please enter a valid month number (1-12)')
-                .setColor(0xdf0000)
+                .setColor('0xdf0000')
 
             return interaction.reply({ embeds: [monthErrEmbed], ephemeral: true })
         }
@@ -43,7 +43,7 @@ module.exports = {
         if(dayOption < 1 || 31 < dayOption) {
             const dayErrEmbed = new EmbedBuilder()
                 .setDescription('Please enter a valid day number (1-31)')
-                .setColor(0xdf0000)
+                .setColor('0xdf0000')
 
             return interaction.reply({ embeds: [dayErrEmbed], ephemeral: true })
         }
@@ -51,7 +51,7 @@ module.exports = {
         if(!timeZonesNames.includes(timezoneOption)) {
             const tzErrEmbed = new EmbedBuilder()
                 .setDescription('Please enter a valid TZ database name. More info can be found here: https://en.wikipedia.org/wiki/List_of_tz_database_time_zones#List \nExample: **America/Los_Angeles**')
-                .setColor(0xdf0000)
+                .setColor('0xdf0000')
 
             return interaction.reply({ embeds: [tzErrEmbed], ephemeral: true })
         }
@@ -102,7 +102,7 @@ module.exports = {
 
         logChannel = interaction.guild.channels.cache.get(process.env.LOGS_CHANNEL_ID)
         var birthdayEmbed = new EmbedBuilder()
-            .setColor(0x32ff25)
+            .setColor('0x32ff25')
             .addFields([
                 { name: 'Timezone', value: timezoneOption}
             ])
@@ -112,7 +112,7 @@ module.exports = {
             })
 
         var personalEmbed = new EmbedBuilder()
-            .setColor(0x32ff25)
+            .setColor('0x32ff25')
             .addFields([
                 { name: 'Timezone', value: timezoneOption}
             ])

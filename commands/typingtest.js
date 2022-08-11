@@ -23,7 +23,7 @@ module.exports = {
         const typingTestEmbed = new EmbedBuilder()
             .setTitle('Typing Test')
             .setThumbnail('https://support.signal.org/hc/article_attachments/360016877511/typing-animation-3x.gif') // typing animation
-            .setColor(0xfdfaff)
+            .setColor('0xfdfaff')
             .setDescription(textToType)
             .setFooter({
                 text: interaction.user.username, 
@@ -49,7 +49,7 @@ module.exports = {
             if(collected.size === 0) { // if no message was entered
                 const couldntFindEmbed = new EmbedBuilder()
                     .setDescription(`You did not type within a minute, please try again!`)
-                    .setColor(0xdf0000)
+                    .setColor('0xdf0000')
                     .setFooter({
                         text: interaction.guild.name, 
                         iconURL: interaction.guild.iconURL({ dynamic : true})
@@ -76,17 +76,17 @@ module.exports = {
         
                 var color
                 if(wpm >= 100)
-                    color = 0x8000db
+                    color = '0x8000db'
                 else if(90 <= wpm && wpm < 100)
-                    color = 0x34eb43
+                    color = '0x34eb43'
                 else if(80 <= wpm && wpm < 90)
-                    color = 0x9ceb34
+                    color = '0x9ceb34'
                 else if(70 <= wpm && wpm < 80)
-                    color = 0xf5e431
+                    color = '0xf5e431'
                 else if(60 <= wpm && wpm < 70)
-                    color = 0xff9100
+                    color = '0xff9100'
                 else
-                    color = 0xe30e0e
+                    color = '0xe30e0e'
         
                 const wpmEmbed = new EmbedBuilder()
                     .setTitle('Typing Test Results')

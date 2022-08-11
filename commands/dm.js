@@ -24,13 +24,13 @@ module.exports = {
 
             const sentEmbed = new EmbedBuilder()
                 .setDescription(`Sent **"${messageToSend}"** to ${targetUser}`)
-                .setColor(0x32ff25)
+                .setColor('0x32ff25')
 
             interaction.reply({ embeds: [sentEmbed] })
         } else {
             const permsEmbed = new EmbedBuilder()
                 .setDescription('You do not have permission to use this command.')
-                .setColor(0xdf0000)
+                .setColor('0xdf0000')
             return interaction.reply({ embeds: [permsEmbed], ephemeral: true })
         }
 	},

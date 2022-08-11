@@ -20,7 +20,7 @@ module.exports = {
         const eightBall = new EmbedBuilder()
             .setTitle('🎱 ' + questionAsked)
             .setDescription(responses[Math.floor(Math.random()*(responses.length))])
-            .setColor('RANDOM')
+            .setColor('Random')
 
 		interaction.reply({ embeds: [eightBall] })
 	},

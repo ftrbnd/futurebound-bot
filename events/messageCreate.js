@@ -15,7 +15,7 @@ module.exports = {
                     iconURL: `${message.author.displayAvatarURL({ dynamic : true })}` // message + their avatar
                 })
                 .setDescription(message.content)
-                .setColor(0x7289da)
+                .setColor('0x7289da')
                 .setTimestamp()
 
             return logChannel.send({ embeds: [dmEmbed] })
@@ -31,7 +31,7 @@ module.exports = {
                     name: `${message.member.displayName}`,
                     iconURL: `${message.member.user.displayAvatarURL({ dynamic : true })}` // message + their avatar
                 })        
-                .setColor(0xf47fff) // pink boost color
+                .setColor('0xf47fff') // pink boost color
                 .setThumbnail('https://emoji.gg/assets/emoji/1819_boostingtop.gif') // nitro boost gif
                 .addFields([
                     { name: 'Server Level', value: `${message.guild.premiumTier}`},

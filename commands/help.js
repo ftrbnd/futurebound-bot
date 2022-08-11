@@ -21,7 +21,7 @@ module.exports = {
 				text: interaction.guild.name, 
 				iconURL: interaction.guild.iconURL({ dynamic : true})
 			})
-			.setColor(0xf03200)
+			.setColor('0xf03200')
 
 		interaction.reply({ embeds: [helpEmbed] })
 	},

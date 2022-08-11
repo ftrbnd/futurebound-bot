@@ -17,7 +17,7 @@ module.exports = {
                     { name: 'Previous name', value: oldChannel.name},
                     { name: 'New name', value: newChannel.name},
                 )
-                .setColor(0x32ff25)
+                .setColor('0x32ff25')
                 .setFooter({
                     text: `${oldChannel.guild.name}`, 
                     iconURL: oldChannel.guild.iconURL({ dynamic: true })

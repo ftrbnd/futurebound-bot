@@ -30,7 +30,7 @@ module.exports = {
             const urbanEmbed = new EmbedBuilder()
                 .setTitle(json.word.toUpperCase())
                 .setThumbnail('https://i.imgur.com/azXqb1w.png')
-                .setColor(0x134fe6)
+                .setColor('0x134fe6')
                 .addFields(
                     {
                         name: 'Definition',

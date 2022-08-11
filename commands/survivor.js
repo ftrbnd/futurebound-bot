@@ -39,7 +39,7 @@ module.exports = {
             if(!songNames.includes(',')) {
                 const commaEmbed = new EmbedBuilder()
                     .setDescription(`Please separate the song names with commas.`)
-                    .setColor(0xdf0000)
+                    .setColor('0xdf0000')
                 return interaction.reply({ embeds: [commaEmbed], ephemeral: true })
             }
 
@@ -74,7 +74,7 @@ module.exports = {
                 const survivorEmbed = new EmbedBuilder()
                     .setTitle(`Survivor - ${albumName}`)
                     .setDescription(`${songNamesList.join("\n\n")}`)
-                    // .setColor(0xb8ffe4) // each album has a color
+                    // .setColor('0xb8ffe4') // each album has a color
                     .setFooter({
                         text: 'Vote for your LEAST favorite song!', 
                         iconURL: interaction.guild.iconURL({ dynamic : true})
@@ -88,20 +88,20 @@ module.exports = {
 
                 const confirmEmbed = new EmbedBuilder()
                     .setDescription(`New round of **${albumName} Survivor** sent in ${targetChannel}`)
-                // .setColor(0x32ff25) // different color for each album
+                // .setColor('0x32ff25') // different color for each album
                 interaction.reply({ embeds: [confirmEmbed] })
 
             } catch(error) {
                 console.log(error)
                 const errorEmbed = new EmbedBuilder()
                     .setDescription('Could not find the emojis for the songs.')
-                    .setColor(0xdf0000) // different color for each album
+                    .setColor('0xdf0000') // different color for each album
                 interaction.reply({ embeds: [errorEmbed], ephemeral: true })
             }
         } else {
             const permsEmbed = new EmbedBuilder()
                 .setDescription('You do not have permission to use this command.')
-                .setColor(0xdf0000)
+                .setColor('0xdf0000')
             return interaction.reply({ embeds: [permsEmbed], ephemeral: true })
         }
 	},

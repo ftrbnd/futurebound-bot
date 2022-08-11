@@ -31,7 +31,7 @@ module.exports = {
                     { name: 'By: ', value: `${interaction.user}`},
                     { name: 'Reason: ', value: reasonForKick},
                 ])
-                .setColor(0xdf0000)
+                .setColor('0xdf0000')
                 .setThumbnail(userToKick.displayAvatarURL({ dynamic : true }))
                 .setFooter({
                     text: interaction.guild.name, 
@@ -43,7 +43,7 @@ module.exports = {
             const kickEmbed = new EmbedBuilder()
                 .setTitle(`You were kicked from **${interaction.guild.name}**.`)
                 .setDescription(reasonForKick)
-                .setColor(0xdf0000)
+                .setColor('0xdf0000')
                 .setFooter({
                     text: interaction.guild.name, 
                     iconURL: interaction.guild.iconURL({ dynamic : true })
@@ -58,14 +58,14 @@ module.exports = {
                 
             const kickedEmbed = new EmbedBuilder()
                 .setDescription(`${userToKick} was kicked.`)
-                .setColor(0x32ff25)
+                .setColor('0x32ff25')
             interaction.reply({ embeds: [kickedEmbed] })
 
             interaction.guild.members.kick(userToKick, options = { reason: reasonForKick})
         } else {
             const permsEmbed = new EmbedBuilder()
                 .setDescription('You do not have permission to use this command.')
-                .setColor(0xdf0000)
+                .setColor('0xdf0000')
             return interaction.reply({ embeds: [permsEmbed], ephemeral: true })
         }
 	},

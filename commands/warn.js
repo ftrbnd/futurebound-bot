@@ -31,7 +31,7 @@ module.exports = {
                     { name: 'By: ', value: `${interaction.user}`},
                     { name: 'Reason: ', value: reasonForWarn},
                 ])
-                .setColor(0xffd100)
+                .setColor('0xffd100')
                 .setThumbnail(userToWarn.displayAvatarURL({ dynamic : true }))
                 .setFooter({
                     text: interaction.guild.name, 
@@ -43,7 +43,7 @@ module.exports = {
             const warnEmbed = new EmbedBuilder()
                 .setTitle(`You were warned in **${interaction.guild.name}**.`)
                 .setDescription(reasonForWarn)
-                .setColor(0xffd100)
+                .setColor('0xffd100')
                 .setFooter({
                     text: interaction.guild.name, 
                     iconURL: interaction.guild.iconURL({ dynamic : true })
@@ -58,12 +58,12 @@ module.exports = {
 
             const warnedEmbed = new EmbedBuilder()
                 .setDescription(`${userToWarn} was warned.`)
-                .setColor(0xffd100)
+                .setColor('0xffd100')
             interaction.reply({ embeds: [warnedEmbed] })
         } else {
             const permsEmbed = new EmbedBuilder()
                 .setDescription('You do not have permission to use this command.')
-                .setColor(0xdf0000)
+                .setColor('0xdf0000')
             return interaction.reply({ embeds: [permsEmbed], ephemeral: true })
         }
 	},

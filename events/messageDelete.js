@@ -18,7 +18,7 @@ module.exports = {
 			.addFields([
 				{ name: 'Channel', value: message.channel.name},
 			])
-			.setColor(0xdf0000)
+			.setColor('0xdf0000')
 			.setTimestamp()
 		logChannel.send({ embeds: [msgDeleteEmbed] })
 	},

@@ -25,7 +25,7 @@ module.exports = {
                     { name: 'User ID: ', value: `${userToUnmute.id}`},
                     { name: 'By: ', value: `${interaction.user}`},
                 ])
-                .setColor(0x32ff25)
+                .setColor('0x32ff25')
                 .setThumbnail(userToUnmute.displayAvatarURL({ dynamic : true }))
                 .setFooter({
                     text: interaction.guild.name, 
@@ -36,7 +36,7 @@ module.exports = {
 
             const unmuteEmbed = new EmbedBuilder()
                 .setTitle(`You were unmuted in **${interaction.guild.name}**.`)
-                .setColor(0x32ff25)
+                .setColor('0x32ff25')
                 .setFooter({
                     text: interaction.guild.name, 
                     iconURL: interaction.guild.iconURL({ dynamic : true })
@@ -54,12 +54,12 @@ module.exports = {
 
             const unmutedEmbed = new EmbedBuilder()
                 .setDescription(`${userToUnmute} was unmuted.`)
-                .setColor(0x32ff25)
+                .setColor('0x32ff25')
             interaction.reply({ embeds: [unmutedEmbed] })
         } else {
             const permsEmbed = new EmbedBuilder()
                 .setDescription('You do not have permission to use this command.')
-                .setColor(0xdf0000)
+                .setColor('0xdf0000')
             return interaction.reply({ embeds: [permsEmbed], ephemeral: true })
         }
 	},
