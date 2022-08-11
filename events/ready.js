@@ -1,6 +1,6 @@
 require('dotenv').config()
 
-const { EmbedBuilder } = require('discord.js')
+const { EmbedBuilder, ActivityType } = require('discord.js')
 
 module.exports = {
 	name: 'ready',
@@ -16,7 +16,7 @@ module.exports = {
         // 'so far so good', 'isohel', 'tides', 'rushing', '$treams', '2020', 'out', 'untitled', 
         // 'Peaked', 'Cold Feet', 'Stingray', 'cant help', '🔒 (demo)', 'Modern Warfare']
         const song = 'Balling'
-        client.user.setPresence({ activities: [{ name: song, type: "LISTENING"}]})
+        client.user.setPresence({ activities: [{ name: song, type: ActivityType.Listening}]})
 
         // var updateDelay = 180
         // let currentIndex = 0
