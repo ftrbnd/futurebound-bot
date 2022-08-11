@@ -3,10 +3,10 @@ const fs = require('fs')
 
 // Discord
 
-const { Client, Collection, Intents, MessageEmbed} = require('discord.js')
+const { Client, Collection, Intents, MessageEmbed, Partials} = require('discord.js')
 const client = new Client({ 
-    intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MEMBERS, Intents.FLAGS.GUILD_BANS, Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.GUILD_VOICE_STATES, Intents.FLAGS.DIRECT_MESSAGES],
-    partials: ['CHANNEL']
+    intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMembers, GatewayIntentBits.GuildBans, GatewayIntentBits.GuildMessages, GatewayIntentBits.GuildVoiceStates, GatewayIntentBits.DirectMessages],
+    partials: [Partials.Channel]
 })
 
 client.commands = new Collection()
@@ -113,6 +113,7 @@ snooper.watcher.getPostWatcher('eden') // blank argument or 'all' looks at the e
 
 const mongoose = require('mongoose')
 const User = require('./schemas/UserSchema')
+const { GatewayIntentBits } = require('discord-api-types')
 
 mongoose.connect(process.env.MONGODB_URI)
     .then((m) => {
