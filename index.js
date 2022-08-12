@@ -83,10 +83,17 @@ snooper.watcher.getPostWatcher('askreddit') // blank argument or 'all' looks at 
     .on('post', function(post) {
         const subredditChannel = client.channels.cache.get(process.env.SUBREDDIT_CHANNEL_ID)
         console.log(post)
+
+        var postDescription;
+        if(post.data.selftext === '')
+            postDescription = 'No Description'
+        else 
+            postDescription = post.data.selftext
+
         var redditEmbed = new EmbedBuilder()
             .setTitle(post.data.title)
             .setURL(`https://reddit.com${post.data.permalink}`)
-            .setDescription(post.data.selftext)
+            .setDescription(postDescription)
             .setImage(post.data.url)
             .setColor('0xFF4500')
             .setFooter({ 
