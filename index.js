@@ -86,7 +86,7 @@ snooper.watcher.getPostWatcher('memes') // blank argument or 'all' looks at the 
 
         var postDescription;
         if(post.data.selftext === '')
-            postDescription = 'No Description'
+            postDescription = ' '
         else 
             postDescription = post.data.selftext
 
