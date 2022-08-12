@@ -91,7 +91,7 @@ snooper.watcher.getPostWatcher('askreddit') // blank argument or 'all' looks at 
             postDescription = post.data.selftext
 
         var redditEmbed = new EmbedBuilder()
-            .setTitle(post.data.title)
+            .setTitle(post.data.title.substring(0, 255))
             .setURL(`https://reddit.com${post.data.permalink}`)
             .setDescription(postDescription)
             .setImage(post.data.url)
