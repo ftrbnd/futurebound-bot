@@ -82,18 +82,12 @@ snooper = new Snooper(
 snooper.watcher.getPostWatcher('memes') // blank argument or 'all' looks at the entire website
     .on('post', function(post) {
         const subredditChannel = client.channels.cache.get(process.env.SUBREDDIT_CHANNEL_ID)
+        
         console.log(post)
-
-        var postDescription;
-        if(post.data.selftext === '')
-            postDescription = ' '
-        else 
-            postDescription = post.data.selftext
 
         var redditEmbed = new EmbedBuilder()
             .setTitle(post.data.title.substring(0, 255))
             .setURL(`https://reddit.com${post.data.permalink}`)
-            .setDescription(postDescription)
             .setImage(post.data.url)
             .setColor('0xFF4500')
             .setFooter({ 
@@ -101,6 +95,10 @@ snooper.watcher.getPostWatcher('memes') // blank argument or 'all' looks at the 
                 iconURL: 'https://logodownload.org/wp-content/uploads/2018/02/reddit-logo-16.png'
             })
             .setTimestamp()
+
+        if (post.data.selftext !== '')
+            redditEmbed.setDescription(post.data.selftext)
+
         subredditChannel.send({ embeds: [redditEmbed] })
             .then(() => subredditChannel.messages.fetch({ limit: 1 }) // fetch latest message
                 .then(messages => {
