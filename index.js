@@ -79,11 +79,11 @@ snooper = new Snooper(
     }
 )
 
-snooper.watcher.getPostWatcher('memes') // blank argument or 'all' looks at the entire website
+snooper.watcher.getPostWatcher('eden') // blank argument or 'all' looks at the entire website
     .on('post', function(post) {
         const subredditChannel = client.channels.cache.get(process.env.SUBREDDIT_CHANNEL_ID)
         
-        console.log(post)
+        // console.log(post)
 
         var redditEmbed = new EmbedBuilder()
             .setTitle(post.data.title.substring(0, 255))
