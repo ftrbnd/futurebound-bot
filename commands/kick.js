@@ -24,6 +24,12 @@ module.exports = {
             const modChannel = interaction.guild.channels.cache.get(process.env.MODERATORS_CHANNEL_ID)
             if(!modChannel) return
 
+            try {
+                interaction.guild.members.kick(userToKick, options = { reason: reasonForKick})
+            } catch(err) {
+                return console.log(err)
+            }
+
             const logEmbed = new EmbedBuilder()
                 .setTitle(userToKick.tag + ' was kicked.')
                 .addFields([
@@ -53,7 +59,7 @@ module.exports = {
             try {
                 await userToKick.send({ embeds: [kickEmbed] })
             } catch(err) {
-                console.log(err)
+                return console.log(err)
             }
                 
             const kickedEmbed = new EmbedBuilder()
@@ -61,7 +67,6 @@ module.exports = {
                 .setColor('0x32ff25')
             interaction.reply({ embeds: [kickedEmbed] })
 
-            interaction.guild.members.kick(userToKick, options = { reason: reasonForKick})
         } else {
             const permsEmbed = new EmbedBuilder()
                 .setDescription('You do not have permission to use this command.')

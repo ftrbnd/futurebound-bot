@@ -3,7 +3,7 @@ const { EmbedBuilder } = require('discord.js')
 module.exports = {
 	name: 'guildMemberAdd',
 	async execute(member) {        
-        const welcomeChannel = member.guild.channels.cache.find(channel => channel.name === "welcome")
+        const welcomeChannel = member.guild.channels.cache.get(process.env.WELCOME_CHANNEL_ID)
         if(!welcomeChannel) return
         
         const welcomeEmbed = new EmbedBuilder()

@@ -24,6 +24,12 @@ module.exports = {
             const modChannel = interaction.guild.channels.cache.get(process.env.MODERATORS_CHANNEL_ID)
             if(!modChannel) return
 
+            try {
+                interaction.guild.members.ban(userToBan, options = { reason: reasonForBan})
+            } catch(err) {
+                return console.log(err)
+            }
+
             const logEmbed = new EmbedBuilder()
                 .setTitle(userToBan.tag + ' was banned.')
                 .addFields([
@@ -53,7 +59,7 @@ module.exports = {
             try {
                 await userToBan.send({ embeds: [banEmbed] })
             } catch(err) {
-                console.log(err)
+                return console.log(err)
             }
                 
             const bannedEmbed = new EmbedBuilder()
@@ -61,7 +67,6 @@ module.exports = {
                 .setColor('0x32ff25')
             interaction.reply({ embeds: [bannedEmbed] })
 
-            interaction.guild.members.ban(userToBan, options = { reason: reasonForBan})
         } else {
             const permsEmbed = new EmbedBuilder()
                 .setDescription('You do not have permission to use this command.')

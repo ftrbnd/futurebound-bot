@@ -24,6 +24,13 @@ module.exports = {
             const modChannel = interaction.guild.channels.cache.get(process.env.MODERATORS_CHANNEL_ID)
             if(!modChannel) return
 
+            try {
+                userToMuteMember = interaction.guild.members.cache.get(`${userToMute.id}`)
+                userToMuteMember.roles.set([process.env.MUTE_ROLE_ID]) // Mute role
+            } catch(err) {
+                return console.log(err)
+            }
+
             const logEmbed = new EmbedBuilder()
                 .setTitle(userToMute.tag + ' was muted.')
                 .addFields([
@@ -53,11 +60,8 @@ module.exports = {
             try {
                 await userToMute.send({ embeds: [muteEmbed] })
             } catch(err) {
-                console.log(err)
+                return console.log(err)
             }
-            
-            userToMuteMember = interaction.guild.members.cache.get(`${userToMute.id}`)
-            userToMuteMember.roles.set([process.env.MUTE_ROLE_ID]) // Mute role
 
             const mutedEmbed = new EmbedBuilder()
                 .setDescription(`${userToMute} was muted.`)

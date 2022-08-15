@@ -19,6 +19,13 @@ module.exports = {
             const modChannel = interaction.guild.channels.cache.get(process.env.MODERATORS_CHANNEL_ID)
             if(!modChannel) return
 
+            try {
+                userToUnmuteMember = interaction.guild.members.cache.get(`${userToUnmute.id}`)
+                userToUnmuteMember.roles.set([])
+            } catch(err) {
+                return console.log(err)
+            }
+
             const logEmbed = new EmbedBuilder()
                 .setTitle(userToUnmute.tag + ' was unmuted.')
                 .addFields([
@@ -46,11 +53,8 @@ module.exports = {
             try {
                 await userToUnmute.send({ embeds: [unmuteEmbed] })
             } catch(err) {
-                console.log(err)
+                return console.log(err)
             }
-            
-            userToUnmuteMember = interaction.guild.members.cache.get(`${userToUnmute.id}`)
-            userToUnmuteMember.roles.set([])
 
             const unmutedEmbed = new EmbedBuilder()
                 .setDescription(`${userToUnmute} was unmuted.`)

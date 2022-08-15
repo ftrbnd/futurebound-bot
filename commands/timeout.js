@@ -22,13 +22,10 @@ module.exports = {
 		
 	async execute(interaction) {
         if(interaction.member.roles.cache.has(process.env.MODERATORS_ROLE_ID) || interaction.member.roles.cache.has(process.env.HELPER_ROLE_ID)) { // Moderator and Helper roles
-            console.log(interaction.options._hoistedOptions)
-            var userToTimeout = interaction.options._hoistedOptions[0].user
+            var userToTimeout = interaction.guild.members.cache.get(interaction.options._hoistedOptions[0].user.id)
             const minutes = interaction.options._hoistedOptions[1].value
             const reasonForTimeout = interaction.options._hoistedOptions[2].value
             
-            userToTimeout = interaction.guild.members.cache.get(userToTimeout.id)
-
             const modChannel = interaction.guild.channels.cache.get(process.env.MODERATORS_CHANNEL_ID)
             if(!modChannel) return
 
@@ -67,7 +64,7 @@ module.exports = {
             try {
                 await userToTimeout.send({ embeds: [timeoutEmbed] })
             } catch(err) {
-                console.log(err)
+                return console.log(err)
             }
                 
             const timedOutEmbed = new EmbedBuilder()
