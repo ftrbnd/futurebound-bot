@@ -1,11 +1,11 @@
-const { EmbedBuilder, ChannelType } = require('discord.js')
+const { EmbedBuilder, ChannelType, MessageType } = require('discord.js')
 
 module.exports = {
 	name: 'messageCreate',
 	async execute(message) {
         if(message.author.bot) return // ignore bot messages
 
-        if(message.channel.type === ChannelType.DM) { 
+        if(message.channel.type === ChannelType.DM) { // message is a DM
             const logChannel = message.client.guilds.cache.get(process.env.GUILD_ID).channels.cache.get(process.env.LOGS_CHANNEL_ID)
             if(!logChannel) return
 
@@ -22,10 +22,10 @@ module.exports = {
 
             return logChannel.send({ embeds: [dmEmbed] })
 
-        } else {
-            const welcomeChannel = message.guild.channels.cache.find(channel => channel.name === "welcome")
+        } else { // message is not a DM
+            const welcomeChannel = member.guild.channels.cache.get(process.env.WELCOME_CHANNEL_ID)
             if(!welcomeChannel) return
-            const generalChannel = message.guild.channels.cache.find(channel => channel.name === "general")
+            const generalChannel = member.guild.channels.cache.get(process.env.GENERAL_CHANNEL_ID)
             if(!generalChannel) return
 
             const boostEmbed = new EmbedBuilder()
@@ -46,25 +46,25 @@ module.exports = {
                 .setTimestamp() // when the boost happened
 
             switch(message.type) {
-                case 'USER_PREMIUM_GUILD_SUBSCRIPTION_TIER_3':
+                case MessageType.GuildBoostTier3:
                     console.log('Someone just boosted the server.')
                     boostEmbed.setDescription(`Server booster role: <@&704966097434312766>. \n**futurebound** has achieved **Level 3**!`)
                     welcomeChannel.send({ content: `${message.author}`, embeds: [boostEmbed]})
                     generalChannel.send({ embeds: [boostEmbed] })
                     break 
-                case 'USER_PREMIUM_GUILD_SUBSCRIPTION_TIER_2':
+                case MessageType.GuildBoostTier2:
                     console.log('Someone just boosted the server.')
                     boostEmbed.setDescription(`Server booster role: <@&704966097434312766>. \n**futurebound** has achieved **Level 2**!`)
                     welcomeChannel.send({ content: `${message.author}`, embeds: [boostEmbed]})
                     generalChannel.send({ embeds: [boostEmbed] })
                     break 
-                case 'USER_PREMIUM_GUILD_SUBSCRIPTION_TIER_1':
+                case MessageType.GuildBoostTier1:
                     console.log('Someone just boosted the server.')
                     boostEmbed.setDescription(`Server booster role: <@&704966097434312766>. \n**futurebound** has achieved **Level 1**!`)
                     welcomeChannel.send({ content: `${message.author}`, embeds: [boostEmbed]})
                     generalChannel.send({ embeds: [boostEmbed] })
                     break 
-                case 'USER_PREMIUM_GUILD_SUBSCRIPTION':
+                case MessageType.GuildBoost:
                     console.log('Someone just boosted the server.')
                     boostEmbed.setDescription(`Server booster role: <@&704966097434312766>.`)
                     welcomeChannel.send({ content: `${message.author}`, embeds: [boostEmbed]})
