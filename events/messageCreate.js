@@ -23,9 +23,9 @@ module.exports = {
             return logChannel.send({ embeds: [dmEmbed] })
 
         } else { // message is not a DM
-            const welcomeChannel = member.guild.channels.cache.get(process.env.WELCOME_CHANNEL_ID)
+            const welcomeChannel = message.guild.channels.cache.get(process.env.WELCOME_CHANNEL_ID)
             if(!welcomeChannel) return
-            const generalChannel = member.guild.channels.cache.get(process.env.GENERAL_CHANNEL_ID)
+            const generalChannel = message.guild.channels.cache.get(process.env.GENERAL_CHANNEL_ID)
             if(!generalChannel) return
 
             const boostEmbed = new EmbedBuilder()
