@@ -9,7 +9,7 @@ module.exports = {
             const logChannel = message.client.guilds.cache.get(process.env.GUILD_ID).channels.cache.get(process.env.LOGS_CHANNEL_ID)
             if(!logChannel) return
 
-            if(message.attachments) return // ignore any media sent to DMs
+            if(message.attachments.size > 0) return // ignore any media sent to DMs
 
             const dmEmbed = new EmbedBuilder()
                 .setAuthor({
