@@ -13,11 +13,14 @@ module.exports = {
 
             const dmEmbed = new EmbedBuilder()
                 .setAuthor({
-                    name: `${message.author.tag}`,
+                    name: `DM from ${message.author.tag}`,
                     iconURL: `${message.author.displayAvatarURL({ dynamic : true })}` // message + their avatar
                 })
                 .setDescription(message.content)
                 .setColor('0x7289da')
+                .setFooter({
+                    text: `User ID: ${message.author.id}`
+                })
                 .setTimestamp()
 
             return logChannel.send({ embeds: [dmEmbed] })
