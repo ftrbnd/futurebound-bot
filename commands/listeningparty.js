@@ -1,6 +1,6 @@
 require('dotenv').config()
 
-const { EmbedBuilder, PermissionFlagsBits, SlashCommandBuilder, ChannelType } = require('discord.js')
+const { EmbedBuilder, PermissionFlagsBits, SlashCommandBuilder, ChannelType, GuildScheduledEventPrivacyLevel, GuildScheduledEventEntityType } = require('discord.js')
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -13,6 +13,14 @@ module.exports = {
                 .addStringOption(option => 
                     option.setName('name')
                     .setDescription('The name of the listening party')
+                    .setRequired(true)))
+        .addSubcommand(subcommand =>
+            subcommand
+                .setName('announce')
+                .setDescription('Create a Discord Scheduled Event and announce it')
+                .addStringOption(option => 
+                    option.setName('event-description')
+                    .setDescription('The description of the event may vary based on album/tour etc')
                     .setRequired(true)))
         .addSubcommand(subcommand =>
             subcommand
@@ -78,11 +86,12 @@ module.exports = {
                     permissionOverwrites: [
                         {
                             id: interaction.guild.roles.everyone.id,
-                            deny: [PermissionFlagsBits.ViewChannel]
+                            allow: [PermissionFlagsBits.ViewChannel],
+                            deny: [PermissionFlagsBits.Connect]
                         },
                         {
                             id: interaction.client.user.id, // this bot itself
-                            allow: [PermissionFlagsBits.ViewChannel]
+                            allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.Connect]
                         }
                     ]
                 })
@@ -144,6 +153,81 @@ module.exports = {
                 interaction.reply(({ embeds: [confirmEmbed] }))
 
 
+            } else if(interaction.options.getSubcommand() === 'announce') {
+                const description = interaction.options._hoistedOptions[0].value
+
+                // check if the Stage channel has been created yet
+                const stageChannel = await interaction.guild.channels.cache.find(channel => channel.type === ChannelType.GuildStageVoice)
+                if(!stageChannel) {
+                    const errEmbed = new EmbedBuilder()
+                        .setDescription('Please use **/listeningparty create** before using this command')
+                        .setColor('0xdf0000')
+                    return interaction.reply({ embeds: [errEmbed]})
+                }
+                
+                const tomorrow = new Date()
+                tomorrow.setDate(tomorrow.getDate() + 1)
+
+                try {
+                    var scheduledEvent = await interaction.guild.scheduledEvents.create({
+                        name: `${stageChannel.name} Listening Party`,
+                        scheduledStartTime: tomorrow,
+                        privacyLevel: GuildScheduledEventPrivacyLevel.GuildOnly,
+                        entityType:GuildScheduledEventEntityType.StageInstance,
+                        description: description,
+                        channel: stageChannel
+                    })
+                } catch(err) {
+                    return console.log(err)
+                }
+
+                const confirmEmbed = new EmbedBuilder()
+                    .setDescription(`The **${stageChannel.name}** Event has been created!`)
+                    .setColor('0x32ff25')
+                const announcementEmbed = new EmbedBuilder()
+                    .setDescription(`Now, please enter the message that will be posted in **#announcements**`)
+                    .setColor('0xfffb25')
+                
+                // once created, ask for the announcement text
+                interaction.reply(({ embeds: [confirmEmbed, announcementEmbed] }))
+
+                // maybe: with the announcement text, add an option for the pic url, 
+                //      and set the event's banner to that img
+                // also append the event url to the final announcement
+                const filter = m => m.author === interaction.user
+                const collector = interaction.channel.createMessageCollector({ filter, time: 180000 }) // one minute to collect
+
+                collector.on('collect', m => {
+                    var announcementText = `${m.content} @everyone ${scheduledEvent.url}`
+                    const announcementChannel = interaction.guild.channels.cache.get(process.env.ANNOUNCEMENTS_CHANNEL_ID)
+
+                    announcementChannel.send({ content: announcementText })
+
+                    collector.stop()
+                })
+
+                collector.on('end', collected => {
+                    if(collected.size === 0) { // if no message was entered
+                        const couldntFindEmbed = new EmbedBuilder()
+                            .setDescription(`You did not type within 3 minutes, please use the **/say** command to post the announcement.`)
+                            .setColor('0xdf0000')
+                            .setFooter({
+                                text: interaction.guild.name, 
+                                iconURL: interaction.guild.iconURL({ dynamic : true})
+                            })
+                        interaction.followUp({ embeds: [couldntFindEmbed], ephemeral: true })
+                    } else {
+                        // do something
+                        const announcedEmbed = new EmbedBuilder()
+                            .setDescription(`The announcement was sent!`)
+                            .setColor('0x32ff25')
+                        const editDateEmbed = new EmbedBuilder()
+                            .setDescription(`Now manually edit the Event's start time.`)
+                            .setColor('0xfffb25')
+                        interaction.followUp({ embeds: [announcedEmbed, editDateEmbed] })
+                    }
+                })
+
             } else if(interaction.options.getSubcommand() === 'open') {
                 var categoryChannel = await interaction.guild.channels.cache.find(channel => channel.name === 'Listening Party')
                 categoryChannel.edit({
@@ -160,7 +244,7 @@ module.exports = {
                     permissionOverwrites: [
                         {
                             id: interaction.guild.roles.everyone.id, 
-                            allow: [PermissionFlagsBits.ViewChannel]
+                            allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.SendMessages]
                         },
                         {
                             id: interaction.guild.roles.cache.find(role => role.name === 'Bot').id,
@@ -168,7 +252,7 @@ module.exports = {
                         },
                         {
                             id: interaction.client.user.id, // this bot itself
-                            allow: [PermissionFlagsBits.ViewChannel]
+                            allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.SendMessages]
                         }
                     ]
                 })
@@ -178,11 +262,11 @@ module.exports = {
                     permissionOverwrites: [
                         {
                             id: interaction.guild.roles.everyone.id, 
-                            allow: [PermissionFlagsBits.ViewChannel]
+                            allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.Connect]
                         },
                         {
                             id: interaction.client.user.id, // this bot itself
-                            allow: [PermissionFlagsBits.ViewChannel]
+                            allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.Connect]
                         }
                     ]
                 })
