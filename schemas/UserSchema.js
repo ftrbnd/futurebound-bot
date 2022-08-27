@@ -11,12 +11,16 @@ const UserSchema = new mongoose.Schema({
     },
     birthday: {
         type: mongoose.SchemaTypes.Date,
-        require: true,
+        require: false,
     },
     timezone: {
         type: mongoose.SchemaTypes.String,
-        require: true,
+        require: false,
     },
+    warnings: {
+        type: mongoose.SchemaTypes.Number,
+        require: false
+    }
 })
 
 module.exports = mongoose.model('User', UserSchema)

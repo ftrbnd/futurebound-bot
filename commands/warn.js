@@ -1,6 +1,7 @@
 require('dotenv').config()
 
 const { EmbedBuilder, PermissionFlagsBits, SlashCommandBuilder } = require('discord.js')
+const User = require('../schemas/UserSchema')
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -24,12 +25,32 @@ module.exports = {
             const modChannel = interaction.guild.channels.cache.get(process.env.MODERATORS_CHANNEL_ID)
             if(!modChannel) return
 
+            var warnCount
+            await User.findOne({ discordId: userToWarn.id }, (err, data) => {
+                if(err) return console.log(err)
+    
+                if(!data) { // if the user isn't already in the database, add their data
+                    User.create({
+                        discordId: userToWarn.id,
+                        username: userToWarn.username,
+                        warnings: 1
+                    }).catch(err => console.log(err))
+                    warnCount = 1    
+                } else { // if they already were in the database, simply update and save
+                    data.warnings += 1
+                    data.username = userToWarn.username
+                    data.save()
+                    warnCount = data.warnings
+                }
+            }).clone()
+
             const logEmbed = new EmbedBuilder()
                 .setTitle(userToWarn.tag + ' was warned.')
                 .addFields([
                     { name: 'User ID: ', value: `${userToWarn.id}`},
                     { name: 'By: ', value: `${interaction.user}`},
                     { name: 'Reason: ', value: reasonForWarn},
+                    { name: 'Warnings: ', value: `${warnCount}`}
                 ])
                 .setColor('0xffd100')
                 .setThumbnail(userToWarn.displayAvatarURL({ dynamic : true }))
@@ -43,6 +64,9 @@ module.exports = {
             const warnEmbed = new EmbedBuilder()
                 .setTitle(`You were warned in **${interaction.guild.name}**.`)
                 .setDescription(reasonForWarn)
+                .addFields([
+                    { name: 'Warnings: ', value: `${warnCount}`}
+                ])
                 .setColor('0xffd100')
                 .setFooter({
                     text: interaction.guild.name, 
@@ -53,13 +77,14 @@ module.exports = {
             try {
                 await userToWarn.send({ embeds: [warnEmbed] })
             } catch(err) {
-                console.log(err)
+                return console.log(err)
             }
 
             const warnedEmbed = new EmbedBuilder()
                 .setDescription(`${userToWarn} was warned.`)
                 .setColor('0xffd100')
             interaction.reply({ embeds: [warnedEmbed] })
+
         } else {
             const permsEmbed = new EmbedBuilder()
                 .setDescription('You do not have permission to use this command.')

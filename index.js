@@ -139,6 +139,8 @@ setInterval(() => {
             numberEndings.set(1, 'st')
     
             data.forEach(user => {
+                if(!user.birthday) return // not all users may have birthdays - due to warn command
+
                 if(today.getMonth() === user.birthday.getMonth() && today.getDate() === user.birthday.getDate() && today.getHours() === user.birthday.getHours() && today.getMinutes() === user.birthday.getMinutes()) {
                     var age = today.getFullYear() - user.birthday.getFullYear()
     
