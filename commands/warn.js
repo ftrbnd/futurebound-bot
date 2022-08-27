@@ -37,7 +37,12 @@ module.exports = {
                     }).catch(err => console.log(err))
                     warnCount = 1    
                 } else { // if they already were in the database, simply update and save
-                    data.warnings += 1
+
+                    if(!data.warnings) {
+                        data.warnings = 1
+                    } else {
+                        data.warnings += 1
+                    }
                     data.username = userToWarn.username
                     data.save()
                     warnCount = data.warnings
