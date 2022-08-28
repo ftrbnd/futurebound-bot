@@ -128,7 +128,7 @@ setInterval(() => {
     User.find((err, data)=> { // is there a birthday today?
         if(data) {
             var today = new Date()
-            console.log(`\nChecking for birthdays... Today's date: ${today}`)
+            console.log(`\nChecking for birthdays/mutes... Today's date: ${today}`)
     
             const numberEndings = new Map()
             numberEndings.set(13, 'th')
