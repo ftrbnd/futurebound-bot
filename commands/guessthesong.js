@@ -14,7 +14,26 @@ module.exports = {
 
         const songFiles = fs.readdirSync(lyricsFolder).filter(file => file.endsWith('.txt'))
         var randomSongFile = songFiles[Math.floor(Math.random() * songFiles.length)] // choose a random song.txt
-        const songName = randomSongFile.slice(0, -4)
+        var songName = randomSongFile.slice(0, -4)
+
+        // handle ---- to ????, start--end to start//end, etc.
+        switch(songName) {
+            case "----":
+                songName = "????"
+                break
+            case "start--end":
+                songName = "start//end"
+                break
+            case "lost--found":
+                songName = "lost//found"
+                break
+            case "forever--over":
+                songName = "forever//over"
+                break
+            default:
+                // do nothing
+        }
+
 
         var lyrics = await readFile(`${lyricsFolder}/${randomSongFile}`) // get the lyrics
         lyrics = lyrics.filter(item => item) // get rid of empty strings ''
