@@ -24,11 +24,11 @@ module.exports = {
 			const command = require(`./${file}`)
 
 			if (!command.data.default_member_permissions) { // if the command has no Helper/Mod permissions required
-				everyoneCommandsList += `${file.replace('.js', '')}\n`
+				everyoneCommandsList += `/${file.replace('.js', '')}\n`
 			} else if (command.data.default_member_permissions === '268435456') { // Helper command
-				helperCommandsList += `${file.replace('.js', '')}\n`
+				helperCommandsList += `/${file.replace('.js', '')}\n`
 			} else if (command.data.default_member_permissions === '8') { // Moderator command
-				modCommandsList += `${file.replace('.js', '')}\n`
+				modCommandsList += `/${file.replace('.js', '')}\n`
 			}
 		}
 
