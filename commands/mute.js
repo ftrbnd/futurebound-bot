@@ -1,6 +1,7 @@
 require('dotenv').config()
 
 const { EmbedBuilder, PermissionFlagsBits, SlashCommandBuilder } = require('discord.js')
+const User = require('../schemas/UserSchema')
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -24,6 +25,26 @@ module.exports = {
             const modChannel = interaction.guild.channels.cache.get(process.env.MODERATORS_CHANNEL_ID)
             if(!modChannel) return
 
+            var oneWeek
+            await User.findOne({ discordId: userToMute.id }, (err, data) => {
+                if(err) return console.log(err)
+
+                oneWeek = new Date()
+                oneWeek.setDate(oneWeek.getDate() + 7)
+
+                if(!data) { // if the user isn't already in the database, add their data
+                    User.create({
+                        discordId: userToMute.id,
+                        username: userToMute.username,
+                        muteEnd: oneWeek
+                    }).catch(err => console.log(err))
+                } else { // if they already were in the database, simply update and save
+                    data.muteEnd = oneWeek
+                    data.username = userToMute.username
+                    data.save()
+                }
+            }).clone()
+
             try {
                 userToMuteMember = interaction.guild.members.cache.get(`${userToMute.id}`)
                 userToMuteMember.roles.set([process.env.MUTE_ROLE_ID]) // Mute role
@@ -32,11 +53,12 @@ module.exports = {
             }
 
             const logEmbed = new EmbedBuilder()
-                .setTitle(userToMute.tag + ' was muted.')
+                .setTitle(userToMute.tag + ' was muted for a week.')
                 .addFields([
-                    { name: 'User ID: ', value: `${userToMute.id}`},
-                    { name: 'By: ', value: `${interaction.user}`},
-                    { name: 'Reason: ', value: reasonForMute},
+                    { name: 'User ID: ', value: `${userToMute.id}` },
+                    { name: 'By: ', value: `${interaction.user}` },
+                    { name: 'Reason: ', value: reasonForMute },
+                    { name: 'Mute Ends: ', value: oneWeek.toDateString() },
                 ])
                 .setColor('0x000001')
                 .setThumbnail(userToMute.displayAvatarURL({ dynamic : true }))
@@ -48,8 +70,11 @@ module.exports = {
             modChannel.send({ embeds: [logEmbed] })
 
             const muteEmbed = new EmbedBuilder()
-                .setTitle(`You were muted in **${interaction.guild.name}**.`)
-                .setDescription(reasonForMute)
+                .setTitle(`You were muted in **${interaction.guild.name}** for a week.`)
+                .addFields([
+                    { name: 'Reason: ', value: reasonForMute },
+                    { name: 'Mute Ends: ', value: oneWeek.toDateString() },
+                ])
                 .setColor('0x000001')
                 .setFooter({
                     text: interaction.guild.name, 

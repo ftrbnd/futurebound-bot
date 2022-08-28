@@ -137,63 +137,97 @@ setInterval(() => {
             numberEndings.set(3, 'rd')
             numberEndings.set(2, 'nd')
             numberEndings.set(1, 'st')
+
+            const futureboundGuild = client.guilds.cache.get(process.env.GUILD_ID)
+            const modChannel = futureboundGuild.channels.cache.get(process.env.MODERATORS_CHANNEL_ID)
+            if(!modChannel) return
     
             data.forEach(user => {
-                if(!user.birthday) return // not all users may have birthdays - due to warn command
-
-                if(today.getMonth() === user.birthday.getMonth() && today.getDate() === user.birthday.getDate() && today.getHours() === user.birthday.getHours() && today.getMinutes() === user.birthday.getMinutes()) {
-                    var age = today.getFullYear() - user.birthday.getFullYear()
-    
-                    var ageSuffix
-                    for(const [number, suffix] of numberEndings.entries()) { // every number ends with 'th' except for numbers that end in 1, 2, or 3
-                        if(`${age}`.endsWith(`${number}`)) {
-                            ageSuffix = suffix
-                            break
-                        } else {
-                            ageSuffix = "th"
-                        }
-                    }
-    
-                    var balloons = ''
-                    for(var i = 0; i < age; i++) {
-                        balloons += '🎈'
-                    }
-    
-                    var bdayDescription
-                    // if(age < 18) {
-                    //     bdayDescription = `It's ${user.username}'s birthday today!`
-                    // } else {
-                    //     bdayDescription = `It's ${user.username}'s ${age}${ageSuffix} birthday today!`
-                    // }
-                    bdayDescription = `It's ${user.username}'s birthday today! 🥳🎈🎉`
-
-                    const birthdayPerson = client.guilds.cache.get(process.env.GUILD_ID).members.fetch(user.discordId)
-                        .then(birthdayPerson => {
-                            const birthdayEmbed = new EmbedBuilder()
-                                .setTitle(bdayDescription)
-                                .setDescription(balloons)
-                                .setColor('0xffffc5')
-                                .setThumbnail(birthdayPerson.user.displayAvatarURL({ dynamic : true }))
-                                .setFooter({
-                                    text: `Use the /birthday command to set your own birthday`, 
-                                    iconURL: `${client.guilds.cache.get(process.env.GUILD_ID).iconURL({ dynamic : true })}`
-                                })
-    
-                            try {
-                                birthdayPerson.send({ content: 'happy birthday!! 🥳' })
-                            } catch(error) {
-                                console.log(`Failed to dm ${user.username}`)
-                                console.log(error)
+                if(user.birthday) { // not all users may have birthdays due to warn command
+                    if(today.getMonth() === user.birthday.getMonth() && today.getDate() === user.birthday.getDate() && today.getHours() === user.birthday.getHours() && today.getMinutes() === user.birthday.getMinutes()) {
+                        var age = today.getFullYear() - user.birthday.getFullYear()
+        
+                        var ageSuffix
+                        for(const [number, suffix] of numberEndings.entries()) { // every number ends with 'th' except for numbers that end in 1, 2, or 3
+                            if(`${age}`.endsWith(`${number}`)) {
+                                ageSuffix = suffix
+                                break
+                            } else {
+                                ageSuffix = "th"
                             }
-                            const generalChannel = client.channels.cache.get(process.env.GENERAL_CHANNEL_ID)
-                            generalChannel.send({ embeds: [birthdayEmbed] })
-                            console.log(`It's ${user.username}'s ${age}${ageSuffix} birthday today! - ${user.birthday}`)
-                        })
-                        .catch(console.error)
+                        }
+        
+                        var balloons = ''
+                        for(var i = 0; i < age; i++) {
+                            balloons += '🎈'
+                        }
+        
+                        var bdayDescription
+                        // if(age < 18) {
+                        //     bdayDescription = `It's ${user.username}'s birthday today!`
+                        // } else {
+                        //     bdayDescription = `It's ${user.username}'s ${age}${ageSuffix} birthday today!`
+                        // }
+                        bdayDescription = `It's ${user.username}'s birthday today! 🥳🎈🎉`
+    
+                        const birthdayPerson = futureboundGuild.members.fetch(user.discordId)
+                            .then(birthdayPerson => {
+                                const birthdayEmbed = new EmbedBuilder()
+                                    .setTitle(bdayDescription)
+                                    .setDescription(balloons)
+                                    .setColor('0xffffc5')
+                                    .setThumbnail(birthdayPerson.user.displayAvatarURL({ dynamic : true }))
+                                    .setFooter({
+                                        text: `Use the /birthday command to set your own birthday`, 
+                                        iconURL: `${futureboundGuild.iconURL({ dynamic : true })}`
+                                    })
+        
+                                try {
+                                    birthdayPerson.send({ content: 'happy birthday!! 🥳' })
+                                } catch(error) {
+                                    console.log(`Failed to dm ${user.username}`)
+                                    console.log(error)
+                                }
+                                const generalChannel = client.channels.cache.get(process.env.GENERAL_CHANNEL_ID)
+                                generalChannel.send({ embeds: [birthdayEmbed] })
+                                console.log(`It's ${user.username}'s ${age}${ageSuffix} birthday today! - ${user.birthday}`)
+                            })
+                            .catch(console.error)
+                    }
+                }    
+
+                if(user.muteEnd) { // if a user has a muteEnd date != null
+                    if(today.getFullYear() === user.muteEnd.getFullYear() && today.getMonth() === user.muteEnd.getMonth() && today.getDate() === user.muteEnd.getDate()) {
+                        const userToUnmute = futureboundGuild.members.fetch(user.discordId)
+                            .then(userToUnmute => {
+                                try {
+                                    userToUnmute.roles.set([]) // remove all roles - including Muted
+                                } catch {
+                                    console.error()
+                                }
+
+                                const logEmbed = new EmbedBuilder()
+                                    .setTitle(userToUnmute.displayName + ' was unmuted after a week.')
+                                    .addFields([
+                                        { name: 'User ID: ', value: `${user.discordId}`},
+                                    ])
+                                    .setColor('0x32ff25')
+                                    // .setThumbnail(userToUnmute.avatarURL())
+                                    .setFooter({
+                                        text: futureboundGuild.name, 
+                                        iconURL: futureboundGuild.iconURL({ dynamic : true })
+                                    })
+                                    .setTimestamp()
+                                modChannel.send({ embeds: [logEmbed] })
+
+                                // remove the muteEnd date in the database so it doesn't trigger again
+                                user.muteEnd = null
+                                user.save()
+                            })
+                            .catch(console.error)
+                    }
                 }
             })
-            // console.log(`Today's date object: ${today}`)
-            // return console.log(`There is no birthay at this very minute (${today.getHours()}:${today.getMinutes()}:${today.getSeconds()})`)
         } else {
             console.log(err)
         }

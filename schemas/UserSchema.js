@@ -20,6 +20,10 @@ const UserSchema = new mongoose.Schema({
     warnings: {
         type: mongoose.SchemaTypes.Number,
         require: false
+    },
+    muteEnd: {
+        type: mongoose.SchemaTypes.Date,
+        require: false
     }
 })
 
