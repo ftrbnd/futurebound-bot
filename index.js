@@ -121,7 +121,7 @@ const User = require('./schemas/UserSchema')
 
 mongoose.connect(process.env.MONGODB_URI)
     .then((m) => {
-        console.log("Connected to database!")
+        console.log(`Connected to ${m.connections[0].name}!`)
     }).catch((err) => console.log(err))
 
 setInterval(() => {

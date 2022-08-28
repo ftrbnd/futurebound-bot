@@ -1,5 +1,6 @@
-const lyricsFinder = require('lyrics-finder')
 require('dotenv').config()
+const fs = require('fs')
+const path = require('path')
 
 const { EmbedBuilder, SlashCommandBuilder } = require('discord.js')
 
@@ -9,106 +10,81 @@ module.exports = {
 		.setDescription('Guess the song within 15 seconds!'),
 		
 	async execute(interaction) {
-        const artist = "EDEN"
-        // Can't find the lyrics to: wings, ????, Peaked, cant help
-        const songs = ['End Credits', 'Gravity', 'Nocturne', 'Interlude', 'Wake Up', 
-            'catch me if you can', 'Billie Jean', 'sex', 'drugs', 'and', 'rock + roll', 
-            'Fumes', 'XO', 'Circles', 'wrong', 'take care', 'start//end', 'icarus', 
-            'lost//found', 'crash', 'gold', 'forever//over', 'float', 'wonder', 
-            'love; not wrong (brave)', 'falling in reverse', 'about time', 'all you need is love', 
-            'nowhere else', '909', 'good morning', 'hertz', 'static', 'projector', 
-            'love, death, distraction', 'how to sleep', 'calm down', 'just saying', 'fomo', 
-            'so far so good', 'isohel', 'tides', 'rushing', '$treams', '2020', 'untitled', 
-            'Cold Feet', 'Stingray']
+        const lyricsFolder = path.resolve(__dirname, '../lyrics')
 
-        const randomSong = songs[Math.floor(Math.random() * songs.length)]
+        const songFiles = fs.readdirSync(lyricsFolder).filter(file => file.endsWith('.txt'))
+        var randomSongFile = songFiles[Math.floor(Math.random() * songFiles.length)] // choose a random song.txt
+        const songName = randomSongFile.slice(0, -4)
 
-        // log the command
-        console.log(`guessthesong command was used - Song: ${randomSong}`); // semicolon necessary here
+        var lyrics = await readFile(`${lyricsFolder}/${randomSongFile}`) // get the lyrics
+        lyrics = lyrics.filter(item => item) // get rid of empty strings ''
+        
+        randomIndex = Math.floor(Math.random() * lyrics.length)
+        if(randomIndex === lyrics.length - 1) // if the last line is selected, move back one line so we are able to select 2 lines
+            randomIndex--
+        
+        var randomLyric = lyrics[randomIndex] + "\n" + lyrics[randomIndex + 1]
 
-        var line = ''
-        await (async function(artist, randomSong) {
-            let lyrics = await lyricsFinder(artist, randomSong) || "Not Found!"
-            if(lyrics !== "Not Found!") {
-                const onlyLyrics = lyrics.split('Source:')[0] // get rid of all unnecessary text after 'Source:'
-                
-                lines = onlyLyrics.split("\n") // split into an array containing each line
-                lines = lines.filter(item => item) // get rid of empty lines ''
+        // embed that will show the song lyric
+        const guessTheSongEmbed = new EmbedBuilder()
+            .setTitle(`Guess The Song`)
+            .setThumbnail('https://i.imgur.com/rQmm1FM.png') // EDEN's logo
+            .setColor('0xfa57c1')
+            .setDescription(`${randomLyric}`)
+            .setFooter({
+                text: interaction.guild.name, 
+                iconURL: interaction.guild.iconURL({ dynamic : true})
+            })
+        interaction.reply({ embeds: [guessTheSongEmbed] })
 
-                randomIndex = Math.floor(Math.random() * lines.length)
-                if(randomIndex == lines.length - 1) // if the last line is selected, move back one line so we are able to select 2 lines
-                    randomIndex--
-                
-                line = lines[randomIndex] + "\n" + lines[randomIndex + 1]
+        const filter = m => m.content.toLowerCase().includes(songName.toLowerCase())
+        const collector = interaction.channel.createMessageCollector({ filter, time: 15_000 }) // collector stops checking after 15 seconds
 
-                // embed that will show the song lyric
-                const guessTheSongEmbed = new EmbedBuilder()
-                    .setTitle(`Guess The Song`)
-                    .setThumbnail('https://i.imgur.com/rQmm1FM.png') // EDEN's logo
-                    .setColor('0xfa57c1')
-                    .setDescription(`${line}`)
-                    .setFooter({
-                        text: interaction.guild.name, 
-                        iconURL: interaction.guild.iconURL({ dynamic : true})
-                    })
-
-                interaction.reply({ embeds: [guessTheSongEmbed] })
-
-                const filter = m => m.content.toLowerCase().includes(randomSong.toLowerCase())
-                const collector = interaction.channel.createMessageCollector({ filter, time: 15_000 }) // collector stops checking after 15 seconds
-
-                collector.on('collect', m => {
-                    const winnerEmbed = new EmbedBuilder()
-                        .setTitle(m.author.username + ' guessed the song!')
-                        .addFields([
-                            { name: 'Song', value: randomSong}
-                        ])
-                        .setDescription(`${line}`)
-                        .setThumbnail(m.author.displayAvatarURL({ dynamic : true}))
-                        .setColor('0x32ff25')
-                        .setFooter({
-                            text: m.guild.name, 
-                            iconURL: m.guild.iconURL({ dynamic : true})
-                        })
-
-                    m.reply({ embeds: [winnerEmbed] })
-                    collector.stop()
+        collector.on('collect', m => {
+            const winnerEmbed = new EmbedBuilder()
+                .setTitle(m.author.username + ' guessed the song!')
+                .addFields([
+                    { name: 'Song', value: songName}
+                ])
+                .setDescription(`${randomLyric}`)
+                .setThumbnail(m.author.displayAvatarURL({ dynamic : true}))
+                .setColor('0x32ff25')
+                .setFooter({
+                    text: m.guild.name, 
+                    iconURL: m.guild.iconURL({ dynamic : true})
                 })
 
-                collector.on('end', collected => {
-                    if(collected.size == 0) { // if no correct song was guessed (collected by the MessageCollector)
-                        const timeOutEmbed = new EmbedBuilder()
-                            .setTitle('Nobody guessed the song within 15 seconds.')
-                            .addFields([
-                                { name: 'Song', value: randomSong}
-                            ])
-                            .setDescription(`${line}`)
-                            .setColor('0xdf0000')
-                            .setFooter({
-                                text: interaction.guild.name, 
-                                iconURL: interaction.guild.iconURL({ dynamic : true})
-                            })
-                        
-                        interaction.followUp({ embeds: [timeOutEmbed] })
-                    }
-                })
-            } else {
-                console.log(`Could not find the lyrics to ${randomSong}`)
+            m.reply({ embeds: [winnerEmbed] })
+            collector.stop()
+        })
 
-                const giosalad = interaction.guild.members.cache.get(process.env.GIOSALAD_ID) // my account
-
-                const couldntFindEmbed = new EmbedBuilder()
-                    .setTitle(`Could not find the lyrics to ${randomSong}, please try again!`)
+        collector.on('end', collected => {
+            if(collected.size == 0) { // if no correct song was guessed (collected by the MessageCollector)
+                const timesUpEmbed = new EmbedBuilder()
+                    .setTitle('Nobody guessed the song within 15 seconds.')
+                    .addFields([
+                        { name: 'Song', value: songName}
+                    ])
+                    .setDescription(`${randomLyric}`)
                     .setColor('0xdf0000')
-                    .setDescription(`${line}`)
                     .setFooter({
                         text: interaction.guild.name, 
                         iconURL: interaction.guild.iconURL({ dynamic : true})
                     })
-
-                giosalad.send(`Couldn't find the lyrics to ${randomSong}`)
-                interaction.reply({ embeds: [couldntFindEmbed], ephemeral: true })
+                
+                interaction.followUp({ embeds: [timesUpEmbed] })
             }
-        })(artist, randomSong)
+        })
 	},
+}
+
+async function readFile(filename) {
+    try {
+        const contents = await fs.promises.readFile(filename, 'utf-8')
+        const arr = contents.split(/\r?\n/)
+
+        return arr
+    } catch(err) {
+        console.log(err)
+    }
 }
