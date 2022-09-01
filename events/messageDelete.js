@@ -11,7 +11,7 @@ module.exports = {
 			
 		const msgDeleteEmbed = new EmbedBuilder()
 			.setAuthor({
-				name: `Message by ${message.author.tag} was deleted.`, 
+				name: `A message by ${message.author.tag} was deleted.`, 
 				iconURL: message.author.displayAvatarURL({ dynamic : true })
 			})
 			.setDescription(message.content)
