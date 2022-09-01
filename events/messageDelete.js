@@ -16,7 +16,7 @@ module.exports = {
 			})
 			.setDescription(message.content)
 			.addFields([
-				{ name: 'Channel', value: message.channel.name},
+				{ name: 'Channel', value: `${message.channel}`},
 			])
 			.setColor('0xdf0000')
 			.setTimestamp()
