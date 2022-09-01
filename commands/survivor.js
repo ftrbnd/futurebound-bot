@@ -51,6 +51,12 @@ module.exports = {
         if(interaction.member.roles.cache.has(process.env.MODERATORS_ROLE_ID)) { // Moderator role
 
             const survivorChannel = interaction.guild.channels.cache.find(channel => channel.name === process.env.SURVIVOR_CHANNEL_NAME)
+            if(!survivorChannel) {
+                const errEmbed = new EmbedBuilder()
+                    .setDescription(`There is no channel named **${process.env.SURVIVOR_CHANNEL_NAME}** - please create one!`)
+                    .setColor('0xdf0000')
+                return interaction.reply({ embeds: [errEmbed] })
+            }
             const survivorPing = interaction.guild.roles.cache.get(process.env.SURVIVOR_ROLE_ID)
             const albumName = interaction.options.getString('album')
 
