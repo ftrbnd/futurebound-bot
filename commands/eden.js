@@ -40,7 +40,7 @@ module.exports = {
                     edenImages.push(image.link)
                 })
 
-                interaction.reply({ content: `${edenImages[Math.floor(Math.random()*(edenImages.length))]}` })
+                interaction.reply({ files: [`${edenImages[Math.floor(Math.random()*(edenImages.length))]}`] })
             })
             .catch((err) => {
                 console.error(err.message)
