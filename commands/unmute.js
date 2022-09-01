@@ -14,7 +14,7 @@ module.exports = {
 		
 	async execute(interaction) {
         if(interaction.member.roles.cache.has(process.env.MODERATORS_ROLE_ID) || interaction.member.roles.cache.has(process.env.HELPER_ROLE_ID)) { // Moderator and Helper roles
-            const userToUnmute = interaction.options._hoistedOptions[0].user
+            const userToUnmute = interaction.options.getUser('user')
 
             const modChannel = interaction.guild.channels.cache.get(process.env.MODERATORS_CHANNEL_ID)
             if(!modChannel) return

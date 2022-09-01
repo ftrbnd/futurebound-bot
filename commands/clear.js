@@ -14,7 +14,7 @@ module.exports = {
 		
 	async execute(interaction) {
         if(interaction.member.roles.cache.has(process.env.MODERATORS_ROLE_ID)) { // Moderator role
-            const amountToDelete = interaction.options._hoistedOptions[0].value
+            const amountToDelete = interaction.options.getInteger('amount')
 
             const errorEmbed = new EmbedBuilder()
                 .setDescription('Enter a value between 1-100.')

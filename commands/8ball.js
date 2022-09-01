@@ -15,7 +15,7 @@ module.exports = {
                      'Outlook not so good.', 'Outlook good.', 'Reply hazy, try again.', 'Signs point to yes.', 'Very doubtful.', 'Without a doubt.',
                     'Yes.', 'Yes – definitely.', 'You may rely on it.']
 
-        const questionAsked = interaction.options._hoistedOptions[0].value
+        const questionAsked = interaction.options.getString('question')
 
         const eightBall = new EmbedBuilder()
             .setTitle('🎱 ' + questionAsked)

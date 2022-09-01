@@ -18,8 +18,8 @@ module.exports = {
         
 	async execute(interaction) {
         if(interaction.member.roles.cache.has(process.env.MODERATORS_ROLE_ID)) { // Moderator role
-            const channel = interaction.options._hoistedOptions[0].channel
-            const emoji = interaction.options._hoistedOptions[1].value
+            const channel = interaction.options.getChannel('channel')
+            const emoji = interaction.options.getString('emoji')
 
             try {
                 channel.lastMessage.react(emoji)

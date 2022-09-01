@@ -18,8 +18,8 @@ module.exports = {
 		
 	async execute(interaction) {
         if(interaction.member.roles.cache.has(process.env.MODERATORS_ROLE_ID)) { // Moderator role
-            const targetChannel = interaction.options._hoistedOptions[0].channel
-            const seconds = interaction.options._hoistedOptions[1].value
+            const targetChannel = interaction.options.getChannel('channel')
+            const seconds = interaction.options.getInteger('seconds')
 
             targetChannel.setRateLimitPerUser(seconds)
 

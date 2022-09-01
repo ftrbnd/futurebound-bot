@@ -43,7 +43,7 @@ module.exports = {
 	async execute(interaction) {
 		if(interaction.member.roles.cache.has(process.env.MODERATORS_ROLE_ID)) { // Moderator role
             if(interaction.options.getSubcommand() === 'create') {
-                const listeningPartyName = interaction.options._hoistedOptions[0].value
+                const listeningPartyName = interaction.options.getString('name')
 
                 const categoryChannel = await interaction.guild.channels.create({
                     name: 'Listening Party',
@@ -154,7 +154,7 @@ module.exports = {
 
 
             } else if(interaction.options.getSubcommand() === 'announce') {
-                const description = interaction.options._hoistedOptions[0].value
+                const description = interaction.options.getString('event-description')
 
                 // check if the Stage channel has been created yet
                 const stageChannel = await interaction.guild.channels.cache.find(channel => channel.type === ChannelType.GuildStageVoice)

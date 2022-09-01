@@ -12,7 +12,7 @@ module.exports = {
             .setRequired(true)),
 		
 	async execute(interaction) {
-        const searchEntry = interaction.options._hoistedOptions[0].value
+        const searchEntry = interaction.options.getString('word')
         
         urbanResults = urban(searchEntry)
 

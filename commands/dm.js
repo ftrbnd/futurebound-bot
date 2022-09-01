@@ -18,8 +18,8 @@ module.exports = {
 		
 	async execute(interaction) {
         if(interaction.member.roles.cache.has(process.env.MODERATORS_ROLE_ID)) { // Moderator role
-            const targetUser = interaction.options._hoistedOptions[0].user
-            const messageToSend = interaction.options._hoistedOptions[1].value
+            const targetUser = interaction.options.getUser('user')
+            const messageToSend = interaction.options.getString('message')
             
             try {
                 const dmChannel = await targetUser.createDM()

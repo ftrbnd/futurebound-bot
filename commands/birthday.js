@@ -27,10 +27,10 @@ module.exports = {
 		
 	async execute(interaction) {
         console.log(`${interaction.user.username} used the /birthday command`)
-        var monthOption = interaction.options._hoistedOptions[0].value
-        var dayOption = interaction.options._hoistedOptions[1].value
-        var yearOption = interaction.options._hoistedOptions[2].value
-        const timezoneOption = interaction.options._hoistedOptions[3].value
+        var monthOption = interaction.options.getInteger('month')
+        var dayOption = interaction.options.getInteger('day')
+        var yearOption = interaction.options.getInteger('year')
+        const timezoneOption = interaction.options.getString('timezone')
 
         if(monthOption < 1 || 12 < monthOption) {
             const monthErrEmbed = new EmbedBuilder()
