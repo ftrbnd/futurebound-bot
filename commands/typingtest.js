@@ -1,4 +1,4 @@
-const { EmbedBuilder, SlashCommandBuilder } = require('discord.js')
+const { EmbedBuilder, SlashCommandBuilder, MessageType } = require('discord.js')
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -33,7 +33,7 @@ module.exports = {
         await interaction.reply({ embeds: [typingTestEmbed] })
 
         // using message collector, collect message that starts with the keyword
-        const filter = m => m.author === interaction.user && m.type !== 'APPLICATION_COMMAND' // without APPLICATION_COMMAND check, it would instantly calculate a WPM of 0
+        const filter = m => m.author === interaction.user && m.type !== MessageType.ChatInputCommand // without message type check, it would instantly calculate a WPM of 0
         const collector = interaction.channel.createMessageCollector({ filter, time: 60000 })
 
         var typingResult = ''
