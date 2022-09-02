@@ -33,7 +33,7 @@ module.exports = {
 
             const boostEmbed = new EmbedBuilder()
                 .setAuthor({
-                    name: `${message.member.displayName}`,
+                    name: `${message.member.displayName} just boosted the server!`,
                     iconURL: `${message.member.user.displayAvatarURL({ dynamic : true })}` // message + their avatar
                 })        
                 .setColor('0xf47fff') // pink boost color
@@ -48,31 +48,27 @@ module.exports = {
                 })
                 .setTimestamp() // when the boost happened
 
+            const futureboundRole = message.guild.roles.cache.get(process.env.FUTUREBOUND_ROLE_ID)
             switch(message.type) {
                 case MessageType.GuildBoostTier3:
-                    console.log('Someone just boosted the server.')
-                    boostEmbed.setDescription(`Server booster role: <@&704966097434312766>. \n**futurebound** has achieved **Level 3**!`)
-                    welcomeChannel.send({ content: `${message.author}`, embeds: [boostEmbed]})
-                    generalChannel.send({ embeds: [boostEmbed] })
+                    announceBoost(`\n**${message.guild.name}** has achieved **Level 3**!`)
                     break 
                 case MessageType.GuildBoostTier2:
-                    console.log('Someone just boosted the server.')
-                    boostEmbed.setDescription(`Server booster role: <@&704966097434312766>. \n**futurebound** has achieved **Level 2**!`)
-                    welcomeChannel.send({ content: `${message.author}`, embeds: [boostEmbed]})
-                    generalChannel.send({ embeds: [boostEmbed] })
+                    announceBoost(`\n**${message.guild.name}** has achieved **Level 2**!`)
                     break 
                 case MessageType.GuildBoostTier1:
-                    console.log('Someone just boosted the server.')
-                    boostEmbed.setDescription(`Server booster role: <@&704966097434312766>. \n**futurebound** has achieved **Level 1**!`)
-                    welcomeChannel.send({ content: `${message.author}`, embeds: [boostEmbed]})
-                    generalChannel.send({ embeds: [boostEmbed] })
+                    announceBoost(`\n**${message.guild.name}** has achieved **Level 1**!`)
                     break 
                 case MessageType.GuildBoost:
-                    console.log('Someone just boosted the server.')
-                    boostEmbed.setDescription(`Server booster role: <@&704966097434312766>.`)
-                    welcomeChannel.send({ content: `${message.author}`, embeds: [boostEmbed]})
-                    generalChannel.send({ embeds: [boostEmbed] })
+                    announceBoost(' ')
                     break 
+            }
+
+            function announceBoost(level) {
+                console.log('Someone just boosted the server.')
+                boostEmbed.setDescription(`Server booster role: ${futureboundRole} ${level}`)
+                welcomeChannel.send({ content: `${message.author}`, embeds: [boostEmbed]})
+                generalChannel.send({ embeds: [boostEmbed] })
             }
 
             if(message.mentions.has(message.client.user) && !message.author.bot) {
