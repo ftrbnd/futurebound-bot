@@ -1,4 +1,4 @@
-const { EmbedBuilder, ChannelType, MessageType } = require('discord.js')
+const { EmbedBuilder, ChannelType, MessageType, Message } = require('discord.js')
 
 module.exports = {
 	name: 'messageCreate',
@@ -30,6 +30,14 @@ module.exports = {
             if(!welcomeChannel) return
             const generalChannel = message.guild.channels.cache.get(process.env.GENERAL_CHANNEL_ID)
             if(!generalChannel) return
+            const introductionsChannel = message.guild.channels.cache.get(process.env.INTRODUCTIONS_CHANNEL_ID)
+            if(!introductionsChannel) return
+
+            // introductions channel
+            if(message.channel.id === process.env.INTRODUCTIONS_CHANNEL_ID) {
+                const kermitHearts = message.guild.emojis.cache.get(process.env.KERMITHEARTS_EMOJI_ID)
+                message.react(kermitHearts)
+            }
 
             const boostEmbed = new EmbedBuilder()
                 .setAuthor({
