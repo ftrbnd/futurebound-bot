@@ -25,12 +25,10 @@ module.exports = {
             const modChannel = interaction.guild.channels.cache.get(process.env.MODERATORS_CHANNEL_ID)
             if(!modChannel) return
 
-            var oneWeek
+            var oneWeek = new Date()
+            oneWeek.setDate(oneWeek.getDate() + 7)
             await User.findOne({ discordId: userToMute.id }, (err, data) => {
                 if(err) return console.log(err)
-
-                oneWeek = new Date()
-                oneWeek.setDate(oneWeek.getDate() + 7)
 
                 if(!data) { // if the user isn't already in the database, add their data
                     User.create({
