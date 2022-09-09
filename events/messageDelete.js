@@ -8,13 +8,20 @@ module.exports = {
         const logChannel = message.guild.channels.cache.get(process.env.LOGS_CHANNEL_ID)
 		if(!logChannel) return
 		if(message.author.bot) return
+
+		var content
+		if(!message.content) {
+			content = ''
+		} else {
+			content = message.content
+		}
 			
 		const msgDeleteEmbed = new EmbedBuilder()
 			.setAuthor({
 				name: `A message by ${message.author.tag} was deleted.`, 
 				iconURL: message.author.displayAvatarURL({ dynamic : true })
 			})
-			.setDescription(message.content)
+			.setDescription(content)
 			.addFields([
 				{ name: 'Channel', value: `${message.channel}`},
 			])
