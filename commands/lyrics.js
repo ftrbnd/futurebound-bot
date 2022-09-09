@@ -43,6 +43,10 @@ module.exports = {
                 const lyricsString = lyrics.join('\n')
                 song = songName
 
+                if(songName.toLowerCase() === "Fumes".toLowerCase()) {
+                    songName = "Fumes (feat. gnash)"
+                }
+
                 let lyricsEmbed = new EmbedBuilder()
                     .setTitle(songName)
                     .setDescription(lyricsString)
