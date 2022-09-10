@@ -14,14 +14,18 @@
   "author": "Giovanni Salas",
   "license": "ISC",
   "dependencies": {
+    "@discordjs/opus": "^0.8.0",
     "@discordjs/rest": "^0.1.0-canary.0",
+    "@discordjs/voice": "^0.11.0",
     "@vvo/tzdb": "^6.11.0",
     "discord-api-types": "^0.22.0",
     "discord.js": "^14.2.0",
+    "distube": "^4.0.3",
     "dotenv": "^10.0.0",
     "imgur": "^1.0.2",
     "mongoose": "^6.0.6",
     "reddit-snooper": "^1.0.1",
+    "sodium": "^3.0.2",
     "twit": "^2.2.11",
     "urban": "^0.3.4"
   }
