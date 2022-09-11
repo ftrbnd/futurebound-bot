@@ -38,49 +38,17 @@ client.DisTube = new DisTube(client, {
     emitAddListWhenCreatingQueue: true,
 })
 
-client.DisTube
-    .on('playSong', (queue, song) => {
-        const playEmbed = new EmbedBuilder()
-            .setDescription(`Now playing [${song.name}](${song.url}) [${song.user}]`)
-            .setColor(process.env.MUSIC_COLOR)
+const musicCommandFiles = fs.readdirSync('./musicCommands').filter(file => file.endsWith('.js'))  // Command handler
+for (const file of musicCommandFiles) {
+	const musicCommand = require(`./musicCommands/${file}`)
+	client.commands.set(musicCommand.data.name, musicCommand) // the commands Collection was initialized before the regular commands
+}
 
-        queue.textChannel.send({ embeds: [playEmbed] })
-    })
-    .on('addSong', (queue, song) => {
-        const playEmbed = new EmbedBuilder()
-            .setDescription(`Queued [${song.name}](${song.url}) [${song.user}]`)
-            .setColor(process.env.MUSIC_COLOR)
-
-        queue.textChannel.send({ embeds: [playEmbed] })
-    })
-    .on('addList', (queue, playlist) => {
-        const playListEmbed = new EmbedBuilder()
-            .setDescription(`Queued [${playlist.songs.length} songs](${playlist.url}) [${playlist.user}]`)
-            .setColor(process.env.MUSIC_COLOR)
-
-        queue.textChannel.send({ embeds: [playListEmbed] })
-    })
-    .on('error', (channel, error) => {
-        console.log(error)
-        const errEmbed = new EmbedBuilder()
-            .setDescription(`An error occurred.`)
-            .setColor('0xdf0000')
-        channel.send({ embeds: [errEmbed]})
-    })
-    .on('finish', queue => {
-        const finishEmbed = new EmbedBuilder()
-            .setDescription(`The queue has finished playing`)
-            .setColor(process.env.MUSIC_COLOR)
-
-        queue.textChannel.send({ embeds: [finishEmbed] })
-    })
-    .on('empty', queue => {
-        const emptyEmbed = new EmbedBuilder()
-            .setDescription(`**${queue.voiceChannel.name}** is empty - disconnecting...`)
-            .setColor(process.env.MUSIC_COLOR)
-
-        queue.textChannel.send({ embeds: [emptyEmbed] })
-    })
+const musicEventFiles = fs.readdirSync('./musicEvents').filter(file => file.endsWith('.js')) // Event handler
+for(const file of musicEventFiles) {
+	const musicEvent = require(`./musicEvents/${file}`)
+    client.DisTube.on(musicEvent.name, (...args) => musicEvent.execute(...args))
+}
 
 client.login(process.env.DISCORD_TOKEN)
 

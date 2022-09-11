@@ -4,11 +4,17 @@ const { REST } = require('@discordjs/rest')
 const { Routes } = require('discord-api-types/v9')
 
 const commands = []
-const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'))
 
+const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'))
 for(const file of commandFiles) {
     const command = require(`./commands/${file}`)
-    commands.push(command.data.toJSON()) // COMMENT THIS WHEN BOT IS OFFLINE TO HIDE IT FROM SERVER
+    commands.push(command.data.toJSON())
+}
+
+const musicCommandFiles = fs.readdirSync('./musicCommands').filter(file => file.endsWith('.js'))
+for(const file of musicCommandFiles) {
+    const musicCommand = require(`./musicCommands/${file}`)
+    commands.push(musicCommand.data.toJSON())
 }
 
 const rest = new REST({ version: '9' }).setToken(process.env.DISCORD_TOKEN); // semicolon is necessary in this line
