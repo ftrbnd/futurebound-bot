@@ -35,7 +35,7 @@ client.DisTube = new DisTube(client, {
     leaveOnEmpty: true,
     emitNewSongOnly: true,
     emitAddSongWhenCreatingQueue: false,
-    emitAddListWhenCreatingQueue: false,
+    emitAddListWhenCreatingQueue: true,
 })
 
 client.DisTube
