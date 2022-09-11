@@ -2,8 +2,8 @@ const { EmbedBuilder, SlashCommandBuilder } = require('discord.js')
 
 module.exports = {
 	data: new SlashCommandBuilder()
-		.setName('play')
-		.setDescription('Play a song')
+		.setName('playnext')
+		.setDescription('Add your song to the top of the queue')
         .addStringOption(option => 
             option.setName('song')
             .setDescription('Search query or YouTube link')
@@ -17,10 +17,11 @@ module.exports = {
             await interaction.client.DisTube.play(interaction.member.voice.channel, chosenSong, {
                 member: interaction.member,
                 textChannel: interaction.channel,
+                position: 1
             }).catch(err => {
                 console.log(err)
                 const errEmbed = new EmbedBuilder()
-                    .setDescription(`An error occurred in /play.`)
+                    .setDescription(`An error occurred in /playskip.`)
                     .setColor('0xdf0000')
                 return interaction.reply({ embeds: [errEmbed]})
             })

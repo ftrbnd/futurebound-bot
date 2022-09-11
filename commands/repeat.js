@@ -2,14 +2,24 @@ const { EmbedBuilder, SlashCommandBuilder } = require('discord.js')
 
 module.exports = {
 	data: new SlashCommandBuilder()
-		.setName('queue')
-		.setDescription('View the current queue'),
+		.setName('repeat')
+		.setDescription('Repeat the current song, queue, or turn repeat off')
+        .addIntegerOption(option => 
+            option.setName('mode')
+            .setDescription('The repeat mode')
+            .setRequired(true)
+            .addChoices(
+                { name: 'Off', value: 0 },
+                { name: 'Song', value: 1 },
+                { name: 'Queue', value: 2 },
+            )),
 		
 	async execute(interaction) {
         const voiceChannel = interaction.member.voice.channel
 
         if(voiceChannel) {
             const queue = interaction.client.DisTube.getQueue(interaction.guild)
+            var mode = interaction.options.getInteger('mode')
 
             if(!queue) {
                 const errEmbed = new EmbedBuilder()
@@ -18,12 +28,10 @@ module.exports = {
                 return interaction.reply({ embeds: [errEmbed] })
             }
 
-            const queueList = queue.songs.map((song, id) => 
-                `${id+1}) [${song.name}](${song.url}) - \`${song.formattedDuration}\``
-            ).join('\n')
+            mode = queue.setRepeatMode(mode)
 
             let repeatMode = ''
-            switch(queue.repeatMode) {
+            switch(mode) {
                 case 0:
                     repeatMode = 'Off'
                     break
@@ -35,18 +43,15 @@ module.exports = {
                     break
             }
 
-            const queueEmbed = new EmbedBuilder()
-                .setDescription(queueList)
+            const repeatEmbed = new EmbedBuilder()
+                .setDescription(`Set repeat mode to **${repeatMode}**`)
                 .setColor(process.env.MUSIC_COLOR)
-                .setFooter({
-                    text: `Repeat mode: ${repeatMode}`
-                })
-    
-            interaction.reply({ embeds: [queueEmbed] })
+            
+            interaction.reply({ embeds: [repeatEmbed] })
 
         } else {
             const errEmbed = new EmbedBuilder()
-                .setDescription(`You must join a voice channel!`)
+                .setDescription(`You aren't in a voice channel`)
                 .setColor('0xdf0000')
             return interaction.reply({ embeds: [errEmbed] })
         }

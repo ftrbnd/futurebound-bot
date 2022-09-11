@@ -2,8 +2,8 @@ const { EmbedBuilder, SlashCommandBuilder } = require('discord.js')
 
 module.exports = {
 	data: new SlashCommandBuilder()
-		.setName('skip')
-		.setDescription('Skip the current song in the queue'),
+		.setName('previous')
+		.setDescription('Play the previous song in the queue'),
 		
 	async execute(interaction) {
         const voiceChannel = interaction.member.voice.channel
@@ -19,10 +19,10 @@ module.exports = {
             }
 
             try {
-                const song = await queue.skip()
+                const song = await queue.previous()
 
                 const queueEmbed = new EmbedBuilder()
-                    .setDescription(`Skipped to **${song.name}**`)
+                    .setDescription(`Playing previous song **${song.name}**`)
                     .setColor(process.env.MUSIC_COLOR)
         
                 interaction.reply({ embeds: [queueEmbed] })
@@ -30,7 +30,7 @@ module.exports = {
             } catch(error) {
                 console.log(error)
                 const errEmbed = new EmbedBuilder()
-                    .setDescription(`An error occurred in /skip.`)
+                    .setDescription(`There is no previous song in this queue`)
                     .setColor('0xdf0000')
                 return interaction.reply({ embeds: [errEmbed] })
             }
