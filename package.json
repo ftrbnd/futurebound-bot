@@ -22,6 +22,7 @@
     "discord.js": "^14.2.0",
     "distube": "^4.0.3",
     "dotenv": "^10.0.0",
+    "ffmpeg-static": "^4.4.1",
     "imgur": "^1.0.2",
     "mongoose": "^6.0.6",
     "reddit-snooper": "^1.0.1",

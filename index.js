@@ -28,6 +28,45 @@ for(const file of eventFiles) {
 	}
 }
 
+// DisTube - music bot
+const { DisTube } = require('distube')
+client.DisTube = new DisTube(client, {
+    leaveOnStop: false,
+    emitNewSongOnly: true,
+    emitAddSongWhenCreatingQueue: false,
+    emitAddListWhenCreatingQueue: false,
+})
+
+client.DisTube
+    .on('playSong', (queue, song) => {
+        const playEmbed = new EmbedBuilder()
+            .setDescription(`Now playing [${song.name}](${song.url}) [${song.user}]`)
+            .setColor(process.env.MUSIC_COLOR)
+
+        queue.textChannel.send({ embeds: [playEmbed] })
+    })
+    .on('addSong', (queue, song) => {
+        const playEmbed = new EmbedBuilder()
+            .setDescription(`Queued [${song.name}](${song.url}) [${song.user}]`)
+            .setColor(process.env.MUSIC_COLOR)
+
+        queue.textChannel.send({ embeds: [playEmbed] })
+    })
+    .on('addList', (queue, playlist) => {
+        const playListEmbed = new EmbedBuilder()
+            .setDescription(`Queued [${playlist.songs.length} songs](${playlist.url}) [${playlist.user}]`)
+            .setColor(process.env.MUSIC_COLOR)
+
+        queue.textChannel.send({ embeds: [playListEmbed] })
+    })
+    .on('error', (channel, error) => {
+        console.error()
+        const errEmbed = new EmbedBuilder()
+            .setDescription(`An error encoutered.`)
+            .setColor('0xdf0000')
+        channel.send({ embeds: [errEmbed]})
+    })
+
 client.login(process.env.DISCORD_TOKEN)
 
 // Twitter
