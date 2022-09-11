@@ -32,6 +32,7 @@ for(const file of eventFiles) {
 const { DisTube } = require('distube')
 client.DisTube = new DisTube(client, {
     leaveOnStop: false,
+    leaveOnEmpty: true,
     emitNewSongOnly: true,
     emitAddSongWhenCreatingQueue: false,
     emitAddListWhenCreatingQueue: false,
@@ -60,11 +61,25 @@ client.DisTube
         queue.textChannel.send({ embeds: [playListEmbed] })
     })
     .on('error', (channel, error) => {
-        console.error()
+        console.log(error)
         const errEmbed = new EmbedBuilder()
-            .setDescription(`An error encoutered.`)
+            .setDescription(`An error occurred.`)
             .setColor('0xdf0000')
         channel.send({ embeds: [errEmbed]})
+    })
+    .on('finish', queue => {
+        const finishEmbed = new EmbedBuilder()
+            .setDescription(`The queue has finished playing`)
+            .setColor(process.env.MUSIC_COLOR)
+
+        queue.textChannel.send({ embeds: [finishEmbed] })
+    })
+    .on('empty', queue => {
+        const emptyEmbed = new EmbedBuilder()
+            .setDescription(`**${queue.voiceChannel.name}** is empty - disconnecting...`)
+            .setColor(process.env.MUSIC_COLOR)
+
+        queue.textChannel.send({ embeds: [emptyEmbed] })
     })
 
 client.login(process.env.DISCORD_TOKEN)
