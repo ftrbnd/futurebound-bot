@@ -14,6 +14,8 @@ module.exports = {
         const voiceChannel = interaction.member.voice.channel
 
         if(voiceChannel) {
+            await interaction.deferReply({ ephemeral: true });
+
             await interaction.client.DisTube.play(interaction.member.voice.channel, chosenSong, {
                 member: interaction.member,
                 textChannel: interaction.channel,
@@ -25,10 +27,7 @@ module.exports = {
                 return interaction.reply({ embeds: [errEmbed]})
             })
     
-            const playEmbed = new EmbedBuilder()
-                .setDescription(`Your entry: **${chosenSong}**`)
-    
-            interaction.reply({ embeds: [playEmbed], ephemeral: true })
+            await interaction.editReply(`Your entry: **${chosenSong}**`)
 
         } else {
             const errEmbed = new EmbedBuilder()
