@@ -32,19 +32,30 @@ module.exports = {
 			}
 		}
 
+		var musicCommandsList = ''
+		const musicCommandFiles = fs.readdirSync('./musicCommands').filter(file => file.endsWith('.js'))
+		for (const file of musicCommandFiles) {
+			musicCommandsList += `/${file.replace('.js', '')}\n`
+		}
+
 		if(interaction.member.roles.cache.has(process.env.MODERATORS_ROLE_ID)) { // Moderator role
 			helpEmbed.addFields([
-				{ name: 'Moderator Commands', value: modCommandsList },
-				{ name: 'Helper Commands', value: helperCommandsList },
-				{ name: '@everyone Commands', value: everyoneCommandsList }
+				{ name: 'Moderator Commands', value: modCommandsList, inline: true },
+				{ name: 'Helper Commands', value: helperCommandsList, inline: true },
+				{ name: '@everyone Commands', value: everyoneCommandsList, inline: true},
+				{ name: 'Music Commands', value: musicCommandsList, inline: true }
 			])
 		} else if(interaction.member.roles.cache.has(process.env.HELPER_ROLE_ID)) { // Helper role
 			helpEmbed.addFields([
 				{ name: 'Helper Commands', value: helperCommandsList },
-				{ name: '@everyone Commands', value: everyoneCommandsList }
+				{ name: '@everyone Commands', value: everyoneCommandsList, inline: true },
+				{ name: 'Music Commands', value: musicCommandsList, inline: true }
 			])
 		} else { // @everyone
-			helpEmbed.setDescription(everyoneCommandsList)
+			helpEmbed.addFields([
+				{ name: '@everyone Commands', value: everyoneCommandsList, inline: true },
+				{ name: 'Music Commands', value: musicCommandsList, inline: true }
+			])
 		}
 		
 		interaction.reply({ embeds: [helpEmbed] })
