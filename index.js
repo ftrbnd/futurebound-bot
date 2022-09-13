@@ -47,7 +47,11 @@ for (const file of musicCommandFiles) {
 const musicEventFiles = fs.readdirSync('./musicEvents').filter(file => file.endsWith('.js')) // Event handler
 for(const file of musicEventFiles) {
 	const musicEvent = require(`./musicEvents/${file}`)
-    client.DisTube.on(musicEvent.name, (...args) => musicEvent.execute(...args))
+    if(musicEvent.once) {
+        client.DisTube.once(musicEvent.name, (...args) => musicEvent.execute(...args))
+    } else {
+        client.DisTube.on(musicEvent.name, (...args) => musicEvent.execute(...args))
+    }
 }
 
 client.login(process.env.DISCORD_TOKEN)
