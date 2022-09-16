@@ -3,7 +3,7 @@ const fs = require('fs')
 
 // Discord
 
-const { Client, Collection, EmbedBuilder, Partials, GatewayIntentBits} = require('discord.js')
+const { Client, Collection, EmbedBuilder, Partials, GatewayIntentBits, SelectMenuOptionBuilder} = require('discord.js')
 const client = new Client({ 
     intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMembers, GatewayIntentBits.GuildBans, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent, GatewayIntentBits.GuildVoiceStates, GatewayIntentBits.DirectMessages],
     partials: [Partials.Channel]
@@ -70,7 +70,7 @@ function isReply(tweet) {
 }
 
 const stream = twitterClient.stream('statuses/filter', {
-    follow: '1598790960', // twtter used id for @iameden
+    follow: process.env.TWITTER_USER_ID, // twtter used id for @iameden
 })
 
 stream.on('tweet', tweet => {
