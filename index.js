@@ -2,7 +2,6 @@ require('dotenv').config()
 const fs = require('fs')
 
 // Discord
-
 const { Client, Collection, EmbedBuilder, Partials, GatewayIntentBits, SelectMenuOptionBuilder} = require('discord.js')
 const client = new Client({ 
     intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMembers, GatewayIntentBits.GuildBans, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent, GatewayIntentBits.GuildVoiceStates, GatewayIntentBits.DirectMessages],
@@ -57,88 +56,12 @@ for(const file of musicEventFiles) {
 client.login(process.env.DISCORD_TOKEN)
 
 // Twitter
-
-const Twitter = require('twit')
-const config = require('./config.js')
-const twitterClient = new Twitter(config)
-
-function isReply(tweet) {
-    if (tweet.retweeted_status || tweet.in_reply_to_status_id || tweet.in_reply_to_status_id_str || tweet.in_reply_to_user_id
-    || tweet.in_reply_to_user_id_str || tweet.in_reply_to_screen_name) 
-        return true
-    return false
-}
-
-const stream = twitterClient.stream('statuses/filter', {
-    follow: process.env.TWITTER_USER_ID, // twtter used id for @iameden
-})
-
-stream.on('tweet', tweet => {
-    const twitterMessage = `https://twitter.com/${tweet.user.screen_name}/status/${tweet.id_str}`
-    if(isReply(tweet) == false) {
-        const tweetChannel = client.channels.cache.get(process.env.TWEET_CHANNEL_ID)
-        const retweetEmoji = client.emojis.cache.get(process.env.RETWEET_EMOJI_ID)
-        // now get last message and react with retweet and heart
-        tweetChannel.send({ content: twitterMessage }) // send tweet
-            .then(() => tweetChannel.messages.fetch({ limit: 1 }) // fetch latest message
-            .then(messages => {
-                let lastMessage = messages.first() // message retrieved
-                lastMessage.react(retweetEmoji)     // react with retweet
-                    .then(() => lastMessage.react('❤')) // react with heart
-            })
-            .catch(console.error))
-    }
-    return false
-})
+const twitter = require('./twitter')
+twitter.execute(client)
 
 // Reddit
-
-var Snooper = require('reddit-snooper')
-
-const snooper = new Snooper(
-    {
-        app_id: process.env.APP_ID,
-        api_secret: process.env.API_SECRET,
-
-        automatic_retries: true,
-        api_requests_per_minute: 60
-    }
-)
-
-snooper.watcher.getPostWatcher('eden') // blank argument or 'all' looks at the entire website
-    .on('post', function(post) {
-        const subredditChannel = client.channels.cache.get(process.env.SUBREDDIT_CHANNEL_ID)
-        
-        // console.log(post)
-
-        var redditEmbed = new EmbedBuilder()
-            .setTitle(post.data.title.substring(0, 255))
-            .setURL(`https://reddit.com${post.data.permalink}`)
-            .setImage(post.data.url)
-            .setColor('0xFF4500')
-            .setFooter({ 
-                text: `Posted by u/${post.data.author} on r/${post.data.subreddit}`,
-                iconURL: 'https://logodownload.org/wp-content/uploads/2018/02/reddit-logo-16.png'
-            })
-            .setTimestamp()
-
-        if (post.data.selftext !== '')
-            redditEmbed.setDescription(post.data.selftext)
-
-        subredditChannel.send({ embeds: [redditEmbed] })
-            .then(() => subredditChannel.messages.fetch({ limit: 1 }) // fetch latest message
-                .then(messages => {
-                    let lastMessage = messages.first() // message retrieved
-                    const upvoteEmoji = client.emojis.cache.get(process.env.UPVOTE_EMOJI_ID)
-                    const downvoteEmoji = client.emojis.cache.get(process.env.DOWNVOTE_EMOJI_ID)
-
-                    lastMessage.react(upvoteEmoji)     // react with upvote
-                        .then(() => lastMessage.react(downvoteEmoji)) // react with downvote
-                })
-                .catch(console.error))
-
-    })
-    .on('error', console.error)
+const reddit = require('./reddit')
+reddit.execute(client)
 
 // Mongo DB
 
@@ -154,7 +77,7 @@ setInterval(() => {
     User.find((err, data)=> { // is there a birthday today?
         if(data) {
             var today = new Date()
-            console.log(`\nChecking for birthdays/mutes... Today's date: ${today}`)
+            // console.log(`\nChecking for birthdays/mutes... Today's date: ${today}`)
     
             const numberEndings = new Map()
             numberEndings.set(13, 'th')
