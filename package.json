@@ -27,7 +27,6 @@
     "mongoose": "^6.0.6",
     "reddit-snooper": "^1.0.1",
     "sodium": "^3.0.2",
-    "twit": "^2.2.11",
     "twitter-api-v2": "^1.12.7",
     "urban": "^0.3.4"
   }
