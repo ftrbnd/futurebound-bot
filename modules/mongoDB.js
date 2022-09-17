@@ -1,5 +1,5 @@
 const mongoose = require('mongoose')
-const User = require('./schemas/UserSchema')
+const User = require('../schemas/UserSchema')
 const { EmbedBuilder } = require('discord.js')
 
 module.exports = {

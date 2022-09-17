@@ -56,13 +56,13 @@ for(const file of musicEventFiles) {
 client.login(process.env.DISCORD_TOKEN)
 
 // Twitter
-// const twitter = require('./twitter')
+// const twitter = require('./modules/twitter')
 // twitter.execute(client)
 
 // Reddit
-const reddit = require('./reddit')
+const reddit = require('./modules/reddit')
 reddit.execute(client)
 
 // Mongo DB
-const mongoDB = require('./mongoDB')
+const mongoDB = require('./modules/mongoDB')
 mongoDB.execute(client)
