@@ -10,7 +10,7 @@ module.exports = {
             api_requests_per_minute: 60
         })
 
-        snooper.watcher.getPostWatcher('askreddit') // blank argument or 'all' looks at the entire website
+        snooper.watcher.getPostWatcher('eden') // blank argument or 'all' looks at the entire website
             .on('post', function(post) {
                 console.log(`New Reddit post: ${post.data.title.substring(0, 255)}`)
                 const subredditChannel = client.channels.cache.get(process.env.SUBREDDIT_CHANNEL_ID)
