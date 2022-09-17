@@ -6,6 +6,7 @@ const { EmbedBuilder } = require('discord.js')
 module.exports = {
 	name: 'voiceStateUpdate',
 	async execute(oldState, newState) {
+		if(newState.member.user.bot) return // ignore bots
 
         const logChannel = oldState.guild.channels.cache.get(process.env.LOGS_CHANNEL_ID)
 		if(!logChannel) return
@@ -15,8 +16,8 @@ module.exports = {
 		if(newState.channel !== null && newState.channel.id === process.env.JOIN_TO_CREATE_ID) { // if they join the 'join to create' vc
 			const parentCategory = newState.channel.parent
 
-			const customVoiceChannel = await newState.guild.channels.create(`${newState.member.displayName}'s channel`,
-			{
+			const customVoiceChannel = await newState.guild.channels.create({
+				name: `${newState.member.displayName}'s channel`,
 				type: ChannelType.GuildVoice,
 				parent: parentCategory,
 				PermissionOverwrites: [
@@ -28,7 +29,7 @@ module.exports = {
 			})
 			await newState.setChannel(customVoiceChannel)
 
-			helloEmbed = new EmbedBuilder()
+			const helloEmbed = new EmbedBuilder()
 				.setDescription('You just created your own voice channel! Feel free to edit the channel name to let others know what your channel is about. \nNOTE: Make sure you have **Two-Factor Authentication** enabled on your Discord account.')
 				.setColor('0x32ff25')
 				.setFooter({
@@ -52,7 +53,7 @@ module.exports = {
 		}
 
 		if(!oldState.channel) { // if they join a channel
-			joinEmbed = new EmbedBuilder()
+			const joinEmbed = new EmbedBuilder()
 				.setDescription(`${newState.member.user} joined **${newState.channel.name}**`)
 				.setColor('0x32ff25')
 				.setTimestamp()
@@ -64,7 +65,7 @@ module.exports = {
 			return logChannel.send({ embeds: [joinEmbed] })
 
 		} else if(!newState.channel) { // if they leave a channel
-			leaveEmbed = new EmbedBuilder()
+			const leaveEmbed = new EmbedBuilder()
 				.setDescription(`${oldState.member.user} left **${oldState.channel.name}**`)
 				.setColor('0xdf0000')
 				.setTimestamp()

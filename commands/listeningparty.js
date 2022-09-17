@@ -13,7 +13,15 @@ module.exports = {
                 .addStringOption(option => 
                     option.setName('name')
                     .setDescription('The name of the listening party')
-                    .setRequired(true)))
+                    .setRequired(true))
+                .addStringOption(option => 
+                    option.setName('privacy-level')
+                    .setDescription('Private for testing purposes, Public otherwise')
+                    .setRequired(true)
+                    .addChoices(
+                        { name: 'Private', value: 'private' },
+                        { name: 'Public', value: 'public' },
+                    )))
         .addSubcommand(subcommand =>
             subcommand
                 .setName('announce')
@@ -30,6 +38,18 @@ module.exports = {
             subcommand
                 .setName('open')
                 .setDescription('Allow everyone to chat and join'))
+        .addSubcommand(subcommand =>
+            subcommand
+                .setName('start')
+                .setDescription('Get the bot to join the Stage channel and start playing music')
+                .addStringOption(option => 
+                    option.setName('playlist')
+                    .setDescription('The playlist to play upon joining, likely the opener')
+                    .setRequired(true))
+                .addStringOption(option => 
+                    option.setName('topic')
+                    .setDescription('The Stage topic')
+                    .setRequired(true)))
         .addSubcommand(subcommand =>
             subcommand
                 .setName('close')
@@ -83,18 +103,37 @@ module.exports = {
                 const stageChannel = await categoryChannel.children.create({
                     name: listeningPartyName,
                     type: ChannelType.GuildStageVoice,
-                    permissionOverwrites: [
-                        {
-                            id: interaction.guild.roles.everyone.id,
-                            allow: [PermissionFlagsBits.ViewChannel],
-                            deny: [PermissionFlagsBits.Connect]
-                        },
-                        {
-                            id: interaction.client.user.id, // this bot itself
-                            allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.Connect]
-                        }
-                    ]
                 })
+
+                let privacyLevel = interaction.options.getString('privacy-level')
+                if(privacyLevel === 'private') {
+                    stageChannel.edit({
+                        permissionOverwrites: [
+                            {
+                                id: interaction.guild.roles.everyone.id,
+                                deny: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.Connect]
+                            },
+                            {
+                                id: interaction.client.user.id, // this bot itself
+                                allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.Connect]
+                            }
+                        ]
+                    })
+                } else { // privacyLevel === 'public'
+                    stageChannel.edit({
+                        permissionOverwrites: [
+                            {
+                                id: interaction.guild.roles.everyone.id,
+                                allow: [PermissionFlagsBits.ViewChannel],
+                                deny: [PermissionFlagsBits.Connect]
+                            },
+                            {
+                                id: interaction.client.user.id, // this bot itself
+                                allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.Connect]
+                            }
+                        ]
+                    })
+                }
 
                 const confirmEmbed = new EmbedBuilder()
                     .setDescription(`**${listeningPartyName}** channels have been created!`)
@@ -227,6 +266,63 @@ module.exports = {
                         interaction.followUp({ embeds: [announcedEmbed, editDateEmbed] })
                     }
                 })
+
+            } else if(interaction.options.getSubcommand() === 'start') {
+                // on joining the stage channel, change the permissions so 
+                //  only admins can use the music commands
+                const categoryChannel = await interaction.guild.channels.cache.find(channel => channel.name === 'Listening Party')
+                if(!categoryChannel) {
+                    const errEmbed = new EmbedBuilder()
+                        .setDescription(`Listening party channels don't exist!`)
+                        .setColor('0xdf0000')
+                    return interaction.reply({ embeds: [errEmbed]})
+                }
+
+                const stageChannel = await categoryChannel.children.cache.find(channel => channel.type === ChannelType.GuildStageVoice)
+
+                const voiceChannel = interaction.member.voice.channel
+
+                if(voiceChannel === stageChannel) { // if the user is in the Stage channel
+                    await interaction.client.DisTube.voices.join(stageChannel) // get the bot to join the Stage
+
+                    interaction.guild.members.me.voice.setSuppressed(false) // set bot as Stage speaker
+            
+                    const playlist = interaction.options.getString('playlist') // get the playlist
+                    const topic = interaction.options.getString('topic') // get the playlist
+
+                    await interaction.client.DisTube.play(stageChannel, playlist, { // play the playlist
+                        member: interaction.member,
+                        textChannel: interaction.channel,
+                    }).catch(err => {
+                        console.log(err)
+                        const errEmbed = new EmbedBuilder()
+                            .setDescription(`An error occurred in /play.`)
+                            .setColor('0xdf0000')
+                        return interaction.reply({ embeds: [errEmbed]})
+                    })
+
+                    if(!stageChannel.stageInstance) { // start the Stage if it doesn't exist
+                        stageChannel.createStageInstance({
+                            topic: topic,
+                            sendStartNotification: true
+                        })
+                    }
+
+                    const joinEmbed = new EmbedBuilder()
+                        .setDescription(`Joined **${voiceChannel.name}** and queued your playlist!`)
+                        .setColor(process.env.MUSIC_COLOR)
+                        .setFooter({
+                            text: "Use /play to add more songs"
+                        })
+
+                    interaction.reply({ embeds: [joinEmbed] })
+
+                } else {
+                    const errEmbed = new EmbedBuilder()
+                        .setDescription(`You must join the Stage channel!`)
+                        .setColor('0xdf0000')
+                    return interaction.reply({ embeds: [errEmbed] })
+                }
 
             } else if(interaction.options.getSubcommand() === 'open') {
                 var categoryChannel = await interaction.guild.channels.cache.find(channel => channel.name === 'Listening Party')
