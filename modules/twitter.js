@@ -9,29 +9,13 @@ module.exports = {
             accessSecret: process.env.ACCESS_TOKEN_SECRET
         })
 
-        async function tryConnection() {
-            try {
-                return await twitterClient.v1.filterStream({
-                    follow: [process.env.TWITTER_USER_ID],
-                })
-            } catch(e) {
-                console.log('Failed connecting.', e)
-                await new Promise(resolve => setTimeout(resolve, 5000)) // sleep 5 seconds
+        // idk about everything below this
 
-                return tryConnection()
-            }
-        }
+        const stream = await twitterClient.v1.filterStream({
+            follow: [process.env.TWITTER_USER_ID],
+        })
 
         try {
-            const stream = await tryConnection()
-
-            function isReply(tweet) {
-                if (tweet.retweeted_status || tweet.in_reply_to_status_id || tweet.in_reply_to_status_id_str || tweet.in_reply_to_user_id
-                || tweet.in_reply_to_user_id_str || tweet.in_reply_to_screen_name) 
-                    return true
-                return false
-            }
-
             // Awaits for a tweet
             stream.on(ETwitterStreamEvent.ConnectionError, err => {
                 console.log('Twitter connection error!', err)
@@ -61,11 +45,18 @@ module.exports = {
                 console.log('Twitter reconnect limit exceeded.')
             })
             .on(ETwitterStreamEvent.Data, eventData => {
+                function isReply(tweet) {
+                    if (tweet.retweeted_status || tweet.in_reply_to_status_id || tweet.in_reply_to_status_id_str || tweet.in_reply_to_user_id
+                    || tweet.in_reply_to_user_id_str || tweet.in_reply_to_screen_name) 
+                        return true
+                    return false
+                }
+                
                 const tweetURL = `https://twitter.com/${eventData.user.screen_name}/status/${eventData.id_str}`
                 
-                console.log('Twitter has sent something:', tweetURL)
-
                 if(!isReply(eventData)) {
+                    console.log('Twitter has sent something:', tweetURL)
+
                     const tweetChannel = client.channels.cache.get(process.env.TWEET_CHANNEL_ID)
                     const retweetEmoji = client.emojis.cache.get(process.env.RETWEET_EMOJI_ID)
 
@@ -93,7 +84,7 @@ module.exports = {
             stream.autoReconnect = true
 
         } catch(e) {
-            console.log(e)
+            console.log("Error occured in the try/catch block:", e)
         }
     }
 }
