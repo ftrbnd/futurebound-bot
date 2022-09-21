@@ -25,7 +25,7 @@ module.exports = {
             if(!modChannel) return
 
             try {
-                interaction.guild.members.ban(userToBan, options = { reason: reasonForBan})
+                await interaction.guild.members.ban(userToBan, options = { reason: reasonForBan})
             } catch(err) {
                 return console.log(err)
             }
@@ -59,7 +59,7 @@ module.exports = {
             try {
                 await userToBan.send({ embeds: [banEmbed] })
             } catch(err) {
-                return console.log(err)
+                console.log(err)
             }
                 
             const bannedEmbed = new EmbedBuilder()
