@@ -10,8 +10,8 @@ module.exports = {
 		if(message.author.bot) return
 
 		var content
-		if(!message.content) {
-			content = ''
+		if(!message.content || message.content === '') {
+			content = ' '
 		} else {
 			content = message.content
 		}
