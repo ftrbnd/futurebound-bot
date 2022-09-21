@@ -18,6 +18,16 @@ module.exports = {
                 return interaction.reply({ embeds: [errEmbed] })
             }
 
+            if(queue.songs.length == 1) {
+                const skipEndEmbed = new EmbedBuilder()
+                    .setDescription(`Skipped **${queue.songs[0].name}** and the queue is now empty`)
+                    .setColor(process.env.MUSIC_COLOR)
+
+                queue.stop()
+
+                return interaction.reply({ embeds: [skipEndEmbed] })
+            }
+
             try {
                 const song = await queue.skip()
 
