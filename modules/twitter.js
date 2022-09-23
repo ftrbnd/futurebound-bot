@@ -14,15 +14,18 @@ module.exports = {
         const stream = await twitterClient.v1.filterStream({
             follow: [process.env.TWITTER_USER_ID],
         })
+        // Enable reconnect feature
+        stream.autoReconnect = true
 
         try {
             // Awaits for a tweet
             stream.on(ETwitterStreamEvent.ConnectionError, err => {
                 console.log('Twitter connection error!', err)
             })
-            .on(ETwitterStreamEvent.ConnectionClosed, () => 
-                console.log('Twitter connection has been closed.'),
-            )
+            .on(ETwitterStreamEvent.ConnectionClosed, () => {
+                console.log('Twitter connection has been closed.')
+                stream.reconnect()
+            })
             .on(ETwitterStreamEvent.ConnectionLost, () => 
                 console.log('Twitter connection has been lost.'),
             )
@@ -79,9 +82,6 @@ module.exports = {
             .on(ETwitterStreamEvent.TweetParseError, err => 
                 console.log('Tweet parse error.', err),
             )
-
-            // Enable reconnect feature
-            stream.autoReconnect = true
 
         } catch(e) {
             console.log("Error occured in the try/catch block:", e)
