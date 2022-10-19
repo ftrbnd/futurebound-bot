@@ -78,7 +78,7 @@ module.exports = {
             const errEmbed = new EmbedBuilder()
                 .setDescription(`**${song}** is not a valid song, please try again!`)
                 .setColor('0xdf0000')
-            return interaction.reply({ embeds: [errEmbed] })
+            return interaction.reply({ embeds: [errEmbed], ephemeral: true })
         }
 	},
 }
