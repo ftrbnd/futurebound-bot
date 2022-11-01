@@ -47,18 +47,18 @@ module.exports = {
                                     balloons += '🎈'
                                 }
                 
-                                var bdayDescription
+                                // var bdayDescription
                                 // if(age < 18) {
                                 //     bdayDescription = `It's ${user.username}'s birthday today!`
                                 // } else {
                                 //     bdayDescription = `It's ${user.username}'s ${age}${ageSuffix} birthday today!`
                                 // }
-                                bdayDescription = `It's ${user.username}'s birthday today! 🥳🎈🎉`
+                                // let bdayDescription = `It's ${user.username}'s birthday today! 🥳🎈🎉`
             
                                 const birthdayPerson = futureboundGuild.members.fetch(user.discordId)
                                     .then(birthdayPerson => {
                                         const birthdayEmbed = new EmbedBuilder()
-                                            .setTitle(bdayDescription)
+                                            .setTitle(`It's ${birthdayPerson.displayName}'s birthday today! 🥳🎈🎉`)
                                             .setDescription(balloons)
                                             .setColor('0xffffc5')
                                             .setThumbnail(birthdayPerson.user.displayAvatarURL({ dynamic : true }))
