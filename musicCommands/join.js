@@ -1,4 +1,4 @@
-const { EmbedBuilder, SlashCommandBuilder } = require('discord.js')
+const { EmbedBuilder, SlashCommandBuilder, ChannelType } = require('discord.js')
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -10,6 +10,10 @@ module.exports = {
 
         if(voiceChannel) {
             interaction.client.DisTube.voices.join(voiceChannel)
+
+            if (voiceChannel.type === ChannelType.GuildStageVoice) {
+                interaction.guild.members.me.voice.setSuppressed(false) // set bot as Stage speaker
+            }
 
             const joinEmbed = new EmbedBuilder()
                 .setDescription(`Joined **${voiceChannel.name}**`)

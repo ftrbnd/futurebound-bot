@@ -1,4 +1,4 @@
-const { EmbedBuilder, SlashCommandBuilder } = require('discord.js')
+const { EmbedBuilder, SlashCommandBuilder, ChannelType } = require('discord.js')
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -16,7 +16,7 @@ module.exports = {
         if(voiceChannel) {
             await interaction.deferReply({ ephemeral: true });
 
-            await interaction.client.DisTube.play(interaction.member.voice.channel, chosenSong, {
+            await interaction.client.DisTube.play(voiceChannel, chosenSong, {
                 member: interaction.member,
                 textChannel: interaction.channel,
             }).catch(err => {
@@ -24,10 +24,17 @@ module.exports = {
                 const errEmbed = new EmbedBuilder()
                     .setDescription(`An error occurred in /play.`)
                     .setColor('0xdf0000')
-                return interaction.reply({ embeds: [errEmbed]})
+                return interaction.reply({ embeds: [errEmbed] })
             })
+
+            if (voiceChannel.type === ChannelType.GuildStageVoice) {
+                interaction.guild.members.me.voice.setSuppressed(false) // set bot as Stage speaker
+            }
     
-            await interaction.editReply(`Your entry: **${chosenSong}**`)
+            const confirmEmbed = new EmbedBuilder()
+                .setDescription('👍')
+                .setColor(process.env.MUSIC_COLOR)
+            await interaction.editReply({ embeds: [confirmEmbed] })
 
         } else {
             const errEmbed = new EmbedBuilder()
