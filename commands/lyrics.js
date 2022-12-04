@@ -52,12 +52,12 @@ module.exports = {
                     .setDescription(lyricsString)
                     .setColor('0xdf0000')
 
-                const survivorFolder = path.resolve(__dirname, '../survivor')
-                const albumFiles = fs.readdirSync(survivorFolder).filter(file => file.endsWith('.txt'))
+                const albumsFolder = path.resolve(__dirname, '../albums')
+                const albumFiles = fs.readdirSync(albumsFolder).filter(file => file.endsWith('.txt'))
                 for(let i = 0; i < albumFiles.length; i++) { // check if the song belongs to any album
                     let album = albumFiles[i]
 
-                    var albumTracks = await readFile(`${survivorFolder}/${albumFiles[i]}`) // get the album tracks
+                    var albumTracks = await readFile(`${albumsFolder}/${albumFiles[i]}`) // get the album tracks
                     const embedColor = `0x${albumTracks.pop()}`
                     const albumCover = albumTracks.pop()
                     if(albumTracks.includes(songName)) {

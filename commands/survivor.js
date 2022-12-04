@@ -3,7 +3,7 @@ const fs = require('fs')
 const path = require('path')
 
 const { EmbedBuilder, PermissionFlagsBits, SlashCommandBuilder } = require('discord.js')
-const Survivor = require('../schemas/SurvivorSchema')
+const Album = require('../schemas/AlbumSchema')
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -60,8 +60,8 @@ module.exports = {
             const survivorPing = interaction.guild.roles.cache.get(process.env.SURVIVOR_ROLE_ID)
             const albumName = interaction.options.getString('album')
 
-            const survivorFolder = path.resolve(__dirname, '../survivor')
-            var albumTracks = await readFile(`${survivorFolder}/${albumName}.txt`) // get the album tracks
+            const albumsFolder = path.resolve(__dirname, '../albums')
+            var albumTracks = await readFile(`${albumsFolder}/${albumName}.txt`) // get the album tracks
             const embedColor = `0x${albumTracks.pop()}`
             const albumCover = albumTracks.pop()
 
@@ -69,11 +69,11 @@ module.exports = {
                 const loser = interaction.options.getString('loser')
                 
                 // update the database
-                await Survivor.findOne({ album: albumName }, (err, data) => {
+                await Album.findOne({ album: albumName }, (err, data) => {
                     if(err) return console.log(err)
     
                     if(!data) { // if the survivor album isn't already in the database, add it
-                        Survivor.create({
+                        Album.create({
                             album: albumName,
                             tracks: albumTracks
                         }).catch(err => console.log(err))
@@ -162,7 +162,7 @@ module.exports = {
             } else if(interaction.options.getSubcommand() === 'winner') {
                 const winner = interaction.options.getString('song')
 
-                await Survivor.findOne({ album: albumName }, (err, data) => {
+                await Album.findOne({ album: albumName }, (err, data) => {
                     if(err) return console.log(err)
     
                     if(!data) { // if the survivor album isn't in the database, there was no survivor round; no winner possible
