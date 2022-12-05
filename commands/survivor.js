@@ -22,6 +22,7 @@ module.exports = {
                         { name: 'vertigo', value: 'vertigo' },
                         { name: 'no future', value: 'no future' },
                         { name: 'ICYMI', value: 'ICYMI' },
+                        { name: 'winners', value: 'winners' },
                     ))
                 .addStringOption(option => 
                     option.setName('loser')
@@ -40,6 +41,7 @@ module.exports = {
                         { name: 'vertigo', value: 'vertigo' },
                         { name: 'no future', value: 'no future' },
                         { name: 'ICYMI', value: 'ICYMI' },
+                        { name: 'winners', value: 'winners' },
                     ))
                 .addStringOption(option => 
                     option.setName('song')
@@ -147,11 +149,16 @@ module.exports = {
                         ])
                     }
 
-                    await survivorChannel.send({ content: `${survivorPing}`, embeds: [survivorEmbed] })
+                    survivorChannel.send({ content: `${survivorPing}`, embeds: [survivorEmbed] })
+                        .then((message) => {
+                            for(let i = 0; i < albumTracks.length; i++) {
+                                message.react(numberEmojis[i])
+                            }
+                        })
 
-                    for(let i = 0; i < albumTracks.length; i++) {
-                        survivorChannel.lastMessage.react(numberEmojis[i])
-                    }
+                    // for(let i = 0; i < albumTracks.length; i++) {
+                    //     survivorChannel.lastMessage.react(numberEmojis[i])
+                    // }
 
                     const confirmEmbed = new EmbedBuilder()
                         .setDescription(`New round of **${albumName} Survivor** sent in ${survivorChannel}`)
