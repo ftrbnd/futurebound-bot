@@ -28,14 +28,25 @@ for(const file of eventFiles) {
 }
 
 // DisTube - music bot
-const { DisTube } = require('distube')
+const { DisTube } = require('distube');
+const { SpotifyPlugin } = require('@distube/spotify');
+const { SoundCloudPlugin } = require('@distube/soundcloud');
 client.DisTube = new DisTube(client, {
     leaveOnStop: false,
     leaveOnEmpty: true,
     emitNewSongOnly: true,
     emitAddSongWhenCreatingQueue: false,
     emitAddListWhenCreatingQueue: true,
-})
+    plugins: [
+        new SpotifyPlugin({
+            api: {
+                clientId: process.env.SPOTIFY_CLIENT_ID,
+                clientSecret: process.env.SPOTIFY_CLIENT_SECRET,
+            },
+        }),
+        new SoundCloudPlugin(),
+    ],
+});
 
 const musicCommandFiles = fs.readdirSync('./musicCommands').filter(file => file.endsWith('.js'))  // Command handler
 for (const file of musicCommandFiles) {
