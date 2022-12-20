@@ -12,14 +12,14 @@ module.exports = {
             voiceChannel.leave()
 
             const leaveEmbed = new EmbedBuilder()
-                .setDescription(`Left **${voiceChannel.name}**`)
+                .setDescription(`Left **${interaction.member.voice.channel.name}**`)
                 .setColor(process.env.MUSIC_COLOR)
     
             interaction.reply({ embeds: [leaveEmbed] })
 
         } else {
             const errEmbed = new EmbedBuilder()
-                .setDescription(`You aren't in a voice channel`)
+                .setDescription(`Not in a voice channel`)
                 .setColor('0xdf0000')
             return interaction.reply({ embeds: [errEmbed] })
         }
