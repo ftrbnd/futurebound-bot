@@ -3,7 +3,7 @@ const { EmbedBuilder, SlashCommandBuilder, ChannelType } = require('discord.js')
 module.exports = {
 	data: new SlashCommandBuilder()
 		.setName('play')
-		.setDescription('Play a song using YouTube, Spotify, or SoundCloud')
+		.setDescription('Play music using YouTube, Spotify, or SoundCloud')
         .addStringOption(option => 
             option.setName('song')
             .setDescription('Search query or YouTube/Spotify/SoundCloud links')
