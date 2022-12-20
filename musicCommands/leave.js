@@ -6,10 +6,10 @@ module.exports = {
 		.setDescription('Leave your voice channel'),
 		
 	async execute(interaction) {
-        const voiceChannel = interaction.member.voice.channel
+        const voiceChannel = interaction.client.DisTube.voices.get(interaction.member.voice.channel)
 
         if(voiceChannel) {
-            interaction.client.DisTube.voices.get(voiceChannel).leave()
+            voiceChannel.leave()
 
             const leaveEmbed = new EmbedBuilder()
                 .setDescription(`Left **${voiceChannel.name}**`)
