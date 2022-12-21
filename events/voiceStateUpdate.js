@@ -86,6 +86,16 @@ module.exports = {
 			oldState.channel.delete(`**${oldState.channel.name}** was deleted after being empty.`)
 
 			logChannel.send({ embeds: [vcUpdateEmbed] })
+
+		} else if (oldState.channel.members.size === 1 && oldState.channel.members.has(process.env.CLIENT_ID) && oldState.channel.parentId === process.env.JOIN_TO_CREATE_CATEGORY_ID) { // bot is only one left in custom channel
+			const vcUpdateEmbed = new EmbedBuilder()
+				.setDescription(`**${oldState.channel.name}** was deleted after being empty.`)
+				.setColor('0xdf0000')
+				.setTimestamp()
+			
+			oldState.channel.delete(`**${oldState.channel.name}** was deleted after being empty.`)
+
+			logChannel.send({ embeds: [vcUpdateEmbed] })
 		}
 	},  
 }
