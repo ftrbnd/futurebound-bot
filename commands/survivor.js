@@ -41,7 +41,7 @@ module.exports = {
                         { name: 'vertigo', value: 'vertigo' },
                         { name: 'no future', value: 'no future' },
                         { name: 'ICYMI', value: 'ICYMI' },
-                        { name: 'winners', value: 'winners' },
+                        { name: 'Champions', value: 'Champions' },
                     ))
                 .addStringOption(option => 
                     option.setName('song')
