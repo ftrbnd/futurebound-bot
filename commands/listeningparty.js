@@ -25,7 +25,7 @@ module.exports = {
         .addSubcommand(subcommand =>
             subcommand
                 .setName('announce')
-                .setDescription('Create a Discord Scheduled Event and announce it')
+                .setDescription('Create a Discord Scheduled Event and announce it - @everyone will be tagged at the end')
                 .addStringOption(option => 
                     option.setName('event-description')
                     .setDescription('The description of the event may vary based on album/tour etc')
