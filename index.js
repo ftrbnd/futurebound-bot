@@ -34,6 +34,7 @@ const { SoundCloudPlugin } = require('@distube/soundcloud');
 client.DisTube = new DisTube(client, {
     leaveOnStop: false,
     leaveOnEmpty: true,
+    emptyCooldown: 1,
     emitNewSongOnly: true,
     emitAddSongWhenCreatingQueue: false,
     emitAddListWhenCreatingQueue: true,
