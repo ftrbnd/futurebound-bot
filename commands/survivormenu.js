@@ -20,6 +20,7 @@ module.exports = {
                 { name: 'vertigo', value: 'vertigo' },
                 { name: 'no future', value: 'no future' },
                 { name: 'ICYMI', value: 'ICYMI' },
+                { name: 'Champions', value: 'Champions' },
             ))
         .setDefaultMemberPermissions(PermissionFlagsBits.Administrator),  // only the Server Moderator role can use this command
 		
