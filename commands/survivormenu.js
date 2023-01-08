@@ -76,17 +76,24 @@ module.exports = {
                         return console.log(`No data exists for ${albumName}`);
     
                     } else { // if data exists, get votes
+                        let totalVotes = 0;
+
                         const songVotes = [];
                         data.votes.forEach((userIds, song) => { // find the song with the most votes
-                            if (data.tracks.includes(song)) // if the song hasn't been eliminated yet
+                            if (data.tracks.includes(song)) { // if the song hasn't been eliminated yet
                                 songVotes.push(`${song} - \`${userIds.length}\``);
+                                totalVotes += userIds.length;
+                            }
                         });
 
                         const standingsEmbed = new EmbedBuilder()
                             .setTitle(`**${albumName}** Survivor - Round ${data.roundNumber} Standings`)
                             .setDescription(songVotes.join("\n\n"))
                             .setThumbnail(albumCover)
-                            .setColor(embedColor);
+                            .setColor(embedColor)
+                            .setFooter({
+                                text: `${totalVotes} total votes`
+                            });
 
                         return interaction.reply({ embeds: [standingsEmbed] });
                     }
@@ -138,12 +145,14 @@ module.exports = {
     
                     } else { // if they already were in the database, compute the next round
                         // find most voted song and remove it from current tracks list
-                        let mostVotedSong, max = 0;
+                        let mostVotedSong, max = 0, totalVotes = 0;
                         data.votes.forEach((userIds, song) => { // find the song with the most votes
                             if (userIds.length > max) {
                                 max = userIds.length;
                                 mostVotedSong = song;
                             }
+                            if (data.tracks.includes(song))
+                                totalVotes += userIds.length;
                         });
     
                         data.tracks.pull(mostVotedSong); // remove the most voted song from the database
@@ -193,9 +202,13 @@ module.exports = {
                             
                             // if this isn't the first round then we have a song that was voted out
                             if (mostVotedSong) {
-                                survivorEmbed.addFields([
-                                    { name: 'Eliminated Song', value: `${mostVotedSong} (${max} votes)` }
-                                ]);
+                                survivorEmbed
+                                    .addFields([
+                                        { name: 'Eliminated Song', value: `${mostVotedSong} (${max} votes)` }
+                                    ])
+                                    .setFooter({
+                                        text: `${totalVotes} total votes`
+                                    });
                             }
     
                             const options = [];
