@@ -51,14 +51,13 @@ module.exports = {
                 return interaction.reply({ embeds: [errEmbed] });
             }
 
+            const albumName = interaction.options.getString('album');
+            const albumsFolder = path.resolve(__dirname, '../albums');
+            let albumTracks = await readFile(`${albumsFolder}/${albumName}.txt`); // get all of the album tracks
+            const embedColor = `0x${albumTracks.pop()}`;
+            const albumCover = albumTracks.pop();
+            
             if(interaction.options.getSubcommand() === 'standings') { // get current votes
-                const albumName = interaction.options.getString('album');
-
-                const albumsFolder = path.resolve(__dirname, '../albums');
-                let albumTracks = await readFile(`${albumsFolder}/${albumName}.txt`); // get all of the album tracks
-                const embedColor = `0x${albumTracks.pop()}`;
-                const albumCover = albumTracks.pop();
-
                 await SurvivorRound.findOne({ album: albumName }, (err, data) => {
                     if (err) {
                         const errEmbed = new EmbedBuilder()
@@ -107,18 +106,8 @@ module.exports = {
                     return interaction.reply({ embeds: [errEmbed], ephemeral: true });
                 }
     
-                const albumName = interaction.options.getString('album');
                 const survivorRole = interaction.guild.roles.cache.get(process.env.SURVIVOR_ROLE_ID);
-    
-                const albumsFolder = path.resolve(__dirname, '../albums');
-                let albumTracks = await readFile(`${albumsFolder}/${albumName}.txt`); // get all of the album tracks
-                const embedColor = `0x${albumTracks.pop()}`;
-                const albumCover = albumTracks.pop();
-    
-                let roundNumber;
-                let isLastRound = false;
-                    
-                let survivorEmbed, row;
+                let roundNumber, survivorEmbed, row;
     
                 // update the database
                 await SurvivorRound.findOne({ album: albumName }, (err, data) => {
@@ -131,14 +120,18 @@ module.exports = {
                     }
     
                     const songVotesMap = new Map(); // empty map with empty vote arrays for new rounds
-                    for (const track of albumTracks)
+                    for (let track of albumTracks) {
+                        if (track == "$treams") // Mongoose maps do not support keys that start with "$"
+                            track = " $treams"
                         songVotesMap.set(`${track}`, new Array());
+                    }
     
                     if (!data) { // if the survivor album isn't already in the database, add it
                         SurvivorRound.create({
                             album: albumName,
                             tracks: albumTracks,
                             votes: songVotesMap, // key:song, value: [userIds]
+                            standings: [],
                             roundNumber: 1
                         }).catch(err => console.log(err));
                         console.log(`Created a new ${albumName} document in database`);
@@ -154,20 +147,42 @@ module.exports = {
                             if (data.tracks.includes(song))
                                 totalVotes += userIds.length;
                         });
+
+                        if (mostVotedSong == " $treams") // Mongoose maps do not support keys that start with "$"
+                            mostVotedSong = "$treams";
     
                         data.tracks.pull(mostVotedSong); // remove the most voted song from the database
-                        data.votes = songVotesMap;
+                        data.standings.push(mostVotedSong); // then add it to the standings - will reverse at the end
+                        data.votes = songVotesMap; // the loser song will still remain but this doesn't affect anything since it won't appear in voting list
                         data.save();
     
                         // compute the round number
                         roundNumber = albumTracks.length - data.tracks.length + 1;
     
                         if (data.tracks.length == 1) { // announce the winner if only one song left
-                            isLastRound = true;
+                            const standings = data.standings;
+                            standings.push(data.tracks[0]); // winner song
+                            standings.reverse(); // reverse the order 
+                            standings.pop(); // remove the null element
+
+                            const numberEmojis = ['1️⃣', '2️⃣', '3️⃣', '4️⃣', '5️⃣', '6️⃣', '7️⃣', '8️⃣', '9️⃣', '🔟',
+                                '929631863549595658', '929631863440556043', '929631863520243784', '929634144667983892', 
+                                '929634144777031690', '929634144588288020', '929634144537944064', '929634144491819018', 
+                                '929634144487612416'];
+
+                            standings[0] = `👑 **${standings[0]}**`;
+                            for (let i = 1; i < standings.length; i++) {
+                                if(numberEmojis[i].length === 18) { // length of a Discord emoji id
+                                    const emoji = interaction.guild.emojis.cache.get(numberEmojis[i]);
+                                    standings[i] = `${emoji} ${standings[i]}`;
+                                } else {
+                                    standings[i] = `${numberEmojis[i]} ${standings[i]}`;
+                                }
+                            }
     
                             survivorEmbed = new EmbedBuilder()
                                 .setTitle(`**${albumName}** Survivor - Winner!`)
-                                .setDescription(`👑 ${data.tracks[0]}`)
+                                .setDescription(standings.join('\n\n'))
                                 .setThumbnail(albumCover)
                                 .setColor(embedColor)
                                 .setFooter({
@@ -183,9 +198,8 @@ module.exports = {
                                 });
     
                             data.tracks = albumTracks; // reset the database tracks
-                            data.votes.forEach((userIds) => {
-                                userIds = []; // clear all votes for next year's round
-                            });
+                            data.votes.forEach((userIds) => { userIds = [] }); // clear all votes for next year's round
+                            data.standings = []; // reset setandings
     
                         } else { // compute the next round
                             // create the list of surviving songs for the next round embed description
@@ -236,7 +250,7 @@ module.exports = {
                         }
                     }
 
-                    const description = roundNumber > 0 ? `Started round ${roundNumber} in ${survivorChannel}` : `Reset **${albumName}** document in database - use **/survivormenu** again`;    
+                    const description = roundNumber > 0 ? `✅ ${survivorChannel}` : `Reset **${albumName}** document in database - use **/survivormenu** again`;    
                     const confirmEmbed = new EmbedBuilder()
                         .setColor(embedColor)
                         .setDescription(description);

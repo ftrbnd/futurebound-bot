@@ -14,6 +14,10 @@ const SurvivorRoundSchema = new mongoose.Schema({
         of: mongoose.SchemaTypes.Array,
         required: true,
     },
+    standings: {
+        type: mongoose.SchemaTypes.Array,
+        required: false,
+    },
     lastMessageId: {
         type: mongoose.SchemaTypes.String,
         required: false,

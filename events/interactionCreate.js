@@ -27,7 +27,10 @@ module.exports = {
 }
 
 async function handleSurvivorVote(interaction) {
-    const selectedSong = interaction.values[0];
+    let selectedSong = interaction.values[0];
+    if (selectedSong == "$treams")
+        selectedSong = " $treams"; // Mongoose maps do not support keys that start with "$"
+
     const albumName = interaction.message.embeds[0].data.title.split('**')[1];
 
     let userChangedSong = false, originalVote = '';
