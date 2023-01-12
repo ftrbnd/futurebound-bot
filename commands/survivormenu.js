@@ -235,13 +235,13 @@ module.exports = {
                                 });
                         }
                     }
+
+                    const description = roundNumber > 0 ? `Started round ${roundNumber} in ${survivorChannel}` : `Reset **${albumName}** document in database - use **/survivormenu** again`;    
+                    const confirmEmbed = new EmbedBuilder()
+                        .setColor(embedColor)
+                        .setDescription(description);
+                    return interaction.reply({ embeds: [confirmEmbed] });
                 }).clone();
-    
-                const description = roundNumber > 0 ? `Started round ${roundNumber} in ${survivorChannel}` : `Reset **${albumName}** document in database - use **/survivormenu** again`;    
-                const confirmEmbed = new EmbedBuilder()
-                    .setColor(embedColor)
-                    .setDescription(description);
-                return interaction.reply({ embeds: [confirmEmbed] });
             }
         } else {
             const permsEmbed = new EmbedBuilder()
