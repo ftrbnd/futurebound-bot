@@ -13,7 +13,7 @@ module.exports = {
             User.find((err, data)=> { // is there a birthday today?
                 if(data) {
                     var today = new Date()
-                    console.log(`Checking for birthdays/mutes - today's date: ${today}`)
+                    // console.log(`Checking for birthdays/mutes - today's date: ${today}`)
             
                     const numberEndings = new Map()
                     numberEndings.set(13, 'th')
