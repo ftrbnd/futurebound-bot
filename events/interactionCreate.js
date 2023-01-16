@@ -5,7 +5,7 @@ const SurvivorRound = require('../schemas/SurvivorRoundSchema');
 module.exports = {
 	name: 'interactionCreate',
 	async execute(interaction) {
-        if (interaction.isSelectMenu() && interaction.channel.name == process.env.SURVIVOR_CHANNEL_NAME) {
+        if (interaction.isStringSelectMenu() && interaction.channel.name == process.env.SURVIVOR_CHANNEL_NAME) {
             await handleSurvivorVote(interaction); // handle menu interactions from /survivor
         }
 
