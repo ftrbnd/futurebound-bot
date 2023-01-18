@@ -48,15 +48,22 @@ async function handleSurvivorVote(interaction) {
         } else {
             if (interaction.message.id == data.lastMessageId) { // users have to vote in the most recent poll in the survivor channel
                 // collect all user ids who have voted
-                let currentVotes = [];
+                let allVotes = [];
                 for (const song of data.votes.keys()) {
-                    currentVotes.push(...data.votes.get(song));
+                    allVotes.push(...data.votes.get(song));
                 }
 
                 // get all the votes for the song that the user selected
-                const songVotes = data.votes.get(selectedSong);
+                const selectedSongVotes = data.votes.get(selectedSong);
 
-                if (currentVotes.includes(interaction.user.id)) { // if the user has already voted for a song
+                if (selectedSongVotes.includes(interaction.user.id)) { // happens if app client restarts or switch devices
+                    console.log(`Invalid vote: ${interaction.user.tag} voted for the same song`);
+                    const errorEmbed = new EmbedBuilder()
+                        .setDescription(`You already selected **${selectedSong}**!`)
+                        .setColor('0xdf0000');
+                    return interaction.reply({ embeds: [errorEmbed], ephemeral: true });
+                    
+                } else if (allVotes.includes(interaction.user.id)) { // if the user has already voted for a song
                     // remove their original vote
                     data.votes.forEach((userIds, song) => {
                         if (userIds.includes(interaction.user.id)) {
@@ -67,8 +74,8 @@ async function handleSurvivorVote(interaction) {
                     });
                 }
 
-                songVotes.push(interaction.user.id); // add their vote once it's confirmed that their original vote has been removed
-                data.votes.set(selectedSong, songVotes); // add the new votes list to the database
+                selectedSongVotes.push(interaction.user.id); // add their vote once it's confirmed that their original vote has been removed
+                data.votes.set(selectedSong, selectedSongVotes); // add the new votes list to the database
                 data.save();
             } else {
                 console.log(`Invalid vote: ${interaction.user.tag} voted in an old round`);
