@@ -9,6 +9,6 @@ const AlbumSchema = new mongoose.Schema({
         type: mongoose.SchemaTypes.Array,
         required: true,
     }
-})
+}, { versionKey: false })
 
 module.exports = mongoose.model('Album', AlbumSchema)

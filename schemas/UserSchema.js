@@ -25,6 +25,6 @@ const UserSchema = new mongoose.Schema({
         type: mongoose.SchemaTypes.Date,
         require: false
     }
-})
+}, { versionKey: false })
 
 module.exports = mongoose.model('User', UserSchema)
