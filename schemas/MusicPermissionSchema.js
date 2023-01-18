@@ -1,18 +1,14 @@
 const mongoose = require('mongoose')
 
-const RoleSchema = new mongoose.Schema({
-    name: {
+const MusicPermissionSchema = new mongoose.Schema({
+    roleName: {
         type: mongoose.SchemaTypes.String,
         required: true,
     },
-    id: {
+    roleId: {
         type: mongoose.SchemaTypes.String,
-        required: true,
-    },
-    musicPermission: {
-        type: mongoose.SchemaTypes.Boolean,
         required: true,
     }
 }, { versionKey: false })
 
-module.exports = mongoose.model('Role', RoleSchema)
+module.exports = mongoose.model('MusicPermission', MusicPermissionSchema)
