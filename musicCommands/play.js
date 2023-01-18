@@ -10,37 +10,47 @@ module.exports = {
             .setRequired(true)),
 		
 	async execute(interaction) {
-        const chosenSong = interaction.options.getString('song')
-        const voiceChannel = interaction.member.voice.channel
+        const getAllowedRoleId = require('../helperFunctions/getAllowedRoleId');
+        const allowedRoleId = await getAllowedRoleId.execute(interaction);
 
-        if(voiceChannel) {
-            await interaction.deferReply({ ephemeral: true });
+        if (interaction.member._roles.includes(allowedRoleId) || allowedRoleId == interaction.guild.roles.everyone.id) {
+            const chosenSong = interaction.options.getString('song')
+            const voiceChannel = interaction.member.voice.channel
 
-            await interaction.client.DisTube.play(voiceChannel, chosenSong, {
-                member: interaction.member,
-                textChannel: interaction.channel,
-            }).catch(err => {
-                console.log(err)
+            if(voiceChannel) {
+                await interaction.deferReply({ ephemeral: true });
+
+                await interaction.client.DisTube.play(voiceChannel, chosenSong, {
+                    member: interaction.member,
+                    textChannel: interaction.channel,
+                }).catch(err => {
+                    console.log(err)
+                    const errEmbed = new EmbedBuilder()
+                        .setDescription(`An error occurred in /play.`)
+                        .setColor('0xdf0000')
+                    return interaction.reply({ embeds: [errEmbed] })
+                })
+
+                if (voiceChannel.type === ChannelType.GuildStageVoice) {
+                    interaction.guild.members.me.voice.setSuppressed(false) // set bot as Stage speaker
+                }
+        
+                const confirmEmbed = new EmbedBuilder()
+                    .setDescription('👍')
+                    .setColor(process.env.MUSIC_COLOR)
+                await interaction.editReply({ embeds: [confirmEmbed] })
+
+            } else {
                 const errEmbed = new EmbedBuilder()
-                    .setDescription(`An error occurred in /play.`)
+                    .setDescription(`You must join a voice channel!`)
                     .setColor('0xdf0000')
                 return interaction.reply({ embeds: [errEmbed] })
-            })
-
-            if (voiceChannel.type === ChannelType.GuildStageVoice) {
-                interaction.guild.members.me.voice.setSuppressed(false) // set bot as Stage speaker
             }
-    
-            const confirmEmbed = new EmbedBuilder()
-                .setDescription('👍')
-                .setColor(process.env.MUSIC_COLOR)
-            await interaction.editReply({ embeds: [confirmEmbed] })
-
         } else {
             const errEmbed = new EmbedBuilder()
-                .setDescription(`You must join a voice channel!`)
+                .setDescription(`You do not have permission to use music commands right now!`)
                 .setColor('0xdf0000')
-            return interaction.reply({ embeds: [errEmbed] })
+            interaction.reply({ embeds: [errEmbed] })
         }
 	},
 }

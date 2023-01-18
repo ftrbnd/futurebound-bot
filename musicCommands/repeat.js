@@ -15,45 +15,55 @@ module.exports = {
             )),
 		
 	async execute(interaction) {
-        const voiceChannel = interaction.member.voice.channel
+        const getAllowedRoleId = require('../helperFunctions/getAllowedRoleId');
+        const allowedRoleId = await getAllowedRoleId.execute(interaction);
 
-        if(voiceChannel) {
-            const queue = interaction.client.DisTube.getQueue(interaction.guild)
-            var mode = interaction.options.getInteger('mode')
+        if (interaction.member._roles.includes(allowedRoleId) || allowedRoleId == interaction.guild.roles.everyone.id) {
+            const voiceChannel = interaction.member.voice.channel
 
-            if(!queue) {
+            if(voiceChannel) {
+                const queue = interaction.client.DisTube.getQueue(interaction.guild)
+                var mode = interaction.options.getInteger('mode')
+
+                if(!queue) {
+                    const errEmbed = new EmbedBuilder()
+                        .setDescription(`The queue is empty`)
+                        .setColor('0xdf0000')
+                    return interaction.reply({ embeds: [errEmbed] })
+                }
+
+                mode = queue.setRepeatMode(mode)
+
+                let repeatMode = ''
+                switch(mode) {
+                    case 0:
+                        repeatMode = 'Off'
+                        break
+                    case 1:
+                        repeatMode = 'Song'
+                        break
+                    case 2:
+                        repeatMode = 'Queue'
+                        break
+                }
+
+                const repeatEmbed = new EmbedBuilder()
+                    .setDescription(`Set repeat mode to **${repeatMode}**`)
+                    .setColor(process.env.MUSIC_COLOR)
+                
+                interaction.reply({ embeds: [repeatEmbed] })
+
+            } else {
                 const errEmbed = new EmbedBuilder()
-                    .setDescription(`The queue is empty`)
+                    .setDescription(`You aren't in a voice channel`)
                     .setColor('0xdf0000')
                 return interaction.reply({ embeds: [errEmbed] })
             }
-
-            mode = queue.setRepeatMode(mode)
-
-            let repeatMode = ''
-            switch(mode) {
-                case 0:
-                    repeatMode = 'Off'
-                    break
-                case 1:
-                    repeatMode = 'Song'
-                    break
-                case 2:
-                    repeatMode = 'Queue'
-                    break
-            }
-
-            const repeatEmbed = new EmbedBuilder()
-                .setDescription(`Set repeat mode to **${repeatMode}**`)
-                .setColor(process.env.MUSIC_COLOR)
-            
-            interaction.reply({ embeds: [repeatEmbed] })
-
         } else {
             const errEmbed = new EmbedBuilder()
-                .setDescription(`You aren't in a voice channel`)
+                .setDescription(`You do not have permission to use music commands right now!`)
                 .setColor('0xdf0000')
-            return interaction.reply({ embeds: [errEmbed] })
+            interaction.reply({ embeds: [errEmbed] })
         }
 	},
 }
