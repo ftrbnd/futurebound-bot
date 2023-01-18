@@ -73,9 +73,9 @@ module.exports = {
                         .catch(console.error))
                 }
             })
-            .on(ETwitterStreamEvent.DataKeepAlive, () => 
-                console.log('Twitter has a keep-alive packet.'),
-            )
+            .on(ETwitterStreamEvent.DataKeepAlive, () => {
+                // console.log('Twitter has a keep-alive packet.'),
+            })
             .on(ETwitterStreamEvent.DataError, err => 
                 console.log('Twitter data error.', err),
             )
