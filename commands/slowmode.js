@@ -13,6 +13,8 @@ module.exports = {
         .addIntegerOption(option => 
             option.setName('seconds')
             .setDescription('The interval of seconds')
+            .setMinValue(0)
+            .setMaxValue(3600)
             .setRequired(true))
         .setDefaultMemberPermissions(PermissionFlagsBits.Administrator),  // only the Server Moderator role can use this command
 		

@@ -1,6 +1,6 @@
 require('dotenv').config()
 
-const { EmbedBuilder, PermissionFlagsBits, SlashCommandBuilder } = require('discord.js')
+const { EmbedBuilder, PermissionFlagsBits, SlashCommandBuilder, ChannelType } = require('discord.js')
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -9,6 +9,7 @@ module.exports = {
         .addChannelOption(option => 
             option.setName('channel')
             .setDescription('The name of the channel')
+            .addChannelTypes(ChannelType.GuildText, ChannelType.GuildAnnouncement)
             .setRequired(true))
         .addStringOption(option => 
             option.setName('emoji')

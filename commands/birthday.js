@@ -1,8 +1,6 @@
 const { EmbedBuilder, SlashCommandBuilder } = require('discord.js')
-
+const { getTimeZones, timeZonesNames } = require("@vvo/tzdb")
 const User = require('../schemas/UserSchema')
-
-const { getTimeZones, rawTimeZones, timeZonesNames } = require("@vvo/tzdb")
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -11,14 +9,20 @@ module.exports = {
         .addIntegerOption(option => 
             option.setName('month')
             .setDescription(`The month you were born`)
+            .setMinValue(1)
+            .setMaxValue(12)
             .setRequired(true))
         .addIntegerOption(option => 
             option.setName('day')
             .setDescription(`The day you were born`)
+            .setMinValue(1)
+            .setMaxValue(31)
             .setRequired(true))
         .addIntegerOption(option => 
             option.setName('year')
             .setDescription(`The year you were born`)
+            .setMinValue(1900)
+            .setMaxValue(new Date().getFullYear() - 1)
             .setRequired(true))
         .addStringOption(option => 
             option.setName('timezone')
@@ -31,22 +35,6 @@ module.exports = {
         var dayOption = interaction.options.getInteger('day')
         var yearOption = interaction.options.getInteger('year')
         const timezoneOption = interaction.options.getString('timezone')
-
-        if(monthOption < 1 || 12 < monthOption) {
-            const monthErrEmbed = new EmbedBuilder()
-                .setDescription('Please enter a valid month number (1-12)')
-                .setColor('0xdf0000')
-
-            return interaction.reply({ embeds: [monthErrEmbed], ephemeral: true })
-        }
-
-        if(dayOption < 1 || 31 < dayOption) {
-            const dayErrEmbed = new EmbedBuilder()
-                .setDescription('Please enter a valid day number (1-31)')
-                .setColor('0xdf0000')
-
-            return interaction.reply({ embeds: [dayErrEmbed], ephemeral: true })
-        }
 
         if(!timeZonesNames.includes(timezoneOption)) {
             const tzErrEmbed = new EmbedBuilder()

@@ -3,7 +3,7 @@ const { EmbedBuilder, SlashCommandBuilder, MessageType } = require('discord.js')
 module.exports = {
 	data: new SlashCommandBuilder()
 		.setName('typingtest')
-		.setDescription('Test your WPM by typing EDEN lyrics!'),
+		.setDescription('Test your WPM by typing EDEN songs!'),
 		
 	async execute(interaction) {
         const words = ['02:09', 'End Credits', 'Gravity', 'Nocturne', 'Interlude', 'Wake Up', 'catch me if you can', 'Billie Jean',

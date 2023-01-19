@@ -7,6 +7,8 @@ module.exports = {
         .addNumberOption(option => 
             option.setName('percent')
             .setDescription('The volume percentage')
+            .setMinValue(0)
+            .setMaxValue(200)
             .setRequired(true)),
 		
 	async execute(interaction) {
@@ -14,15 +16,8 @@ module.exports = {
         const allowedRoleId = await getAllowedRoleId.execute(interaction);
 
         if (interaction.member._roles.includes(allowedRoleId) || allowedRoleId == interaction.guild.roles.everyone.id) {
-            const voiceChannel = interaction.client.DisTube.voices.get(interaction.member.voice.channel);
+            const voiceChannel = interaction.member.voice.channel;
             const percent = interaction.options.getNumber('percent');
-
-            if (percent < 0 || percent > 200) {
-                const errEmbed = new EmbedBuilder()
-                    .setDescription(`Volume must be between 0 and 200`)
-                    .setColor('0xdf0000');
-                return interaction.reply({ embeds: [errEmbed] });
-            }
 
             if(voiceChannel) {
                 interaction.client.DisTube.setVolume(interaction.guild, percent);
