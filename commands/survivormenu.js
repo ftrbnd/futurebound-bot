@@ -2,7 +2,7 @@ require('dotenv').config();
 const fs = require('fs');
 const path = require('path');
 
-const { EmbedBuilder, PermissionFlagsBits, SlashCommandBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, SelectMenuBuilder } = require('discord.js');
+const { EmbedBuilder, PermissionFlagsBits, SlashCommandBuilder, ActionRowBuilder, StringSelectMenuBuilder } = require('discord.js');
 const SurvivorRound = require('../schemas/SurvivorRoundSchema');
 
 module.exports = {
@@ -235,7 +235,7 @@ module.exports = {
                             }
     
                             row = new ActionRowBuilder()
-                                .addComponents(new SelectMenuBuilder()
+                                .addComponents(new StringSelectMenuBuilder()
                                     .setCustomId('select')
                                     .setPlaceholder('Vote for your LEAST favorite song!')
                                     .addOptions(options)
