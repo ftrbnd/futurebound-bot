@@ -12,7 +12,7 @@ module.exports = {
             .setRequired(true)),
         
 	async execute(interaction) {
-        if(!interaction.member.roles.cache.has(process.env.MODERATORS_ROLE_ID)) {
+        if(!interaction.member.roles.cache.has(process.env.SUBSCRIBER_ROLE_ID)) {
             const permsEmbed = new EmbedBuilder()
                 .setTitle('You are not a Server Subscriber!')
                 .setDescription(`https://discord.com/channels/${interaction.guild.id}/role-subscriptions`)
