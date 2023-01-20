@@ -31,6 +31,7 @@
     "reddit-snooper": "^1.0.1",
     "sodium": "^3.0.2",
     "twitter-api-v2": "^1.12.7",
-    "urban": "^0.3.4"
+    "urban": "^0.3.4",
+    "validate-color": "^2.2.1"
   }
 }
