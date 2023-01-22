@@ -63,7 +63,7 @@ module.exports = {
                                             .setColor('0xffffc5')
                                             .setThumbnail(birthdayPerson.user.displayAvatarURL({ dynamic : true }))
                                             .setFooter({
-                                                text: `Use the /birthday command to set your own birthday`, 
+                                                text: `Use /birthday in #bots to set your own birthday`, 
                                                 iconURL: `${futureboundGuild.iconURL({ dynamic : true })}`
                                             })
                 
