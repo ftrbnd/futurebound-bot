@@ -122,7 +122,7 @@ module.exports = {
                     const songVotesMap = new Map(); // empty map with empty vote arrays for new rounds
                     for (let track of albumTracks) {
                         if (track == "$treams") // Mongoose maps do not support keys that start with "$"
-                            track = " $treams"
+                            track = " $treams";
                         songVotesMap.set(`${track}`, new Array());
                     }
     
@@ -133,7 +133,7 @@ module.exports = {
                             votes: songVotesMap, // key:song, value: [userIds]
                             standings: [],
                             roundNumber: 1
-                        }).catch(err => console.log(err));
+                        }).catch(err => console.error(err));
                         console.log(`Created a new ${albumName} document in database`);
     
                     } else { // if they already were in the database, compute the next round
@@ -188,7 +188,7 @@ module.exports = {
                                 .setFooter({
                                     text: `Runner-up: ${mostVotedSong} (${max} votes)`, 
                                     iconURL: interaction.guild.iconURL({ dynamic : true})
-                                })
+                                });
     
                             survivorChannel.send({ content: `${survivorRole}`, embeds: [survivorEmbed] })
                                 .then((message) => {
