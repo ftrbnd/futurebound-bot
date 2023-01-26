@@ -1,4 +1,4 @@
-const { EmbedBuilder, SlashCommandBuilder } = require('discord.js')
+const { EmbedBuilder, SlashCommandBuilder } = require('discord.js');
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -6,7 +6,7 @@ module.exports = {
 		.setDescription(`Get basic info about this server`),
 		
 	async execute(interaction) {
-        const owner = interaction.guild.members.cache.get(interaction.guild.ownerId)
+        const owner = interaction.guild.members.cache.get(interaction.guild.ownerId);
 
         const serverInfo = new EmbedBuilder()
             .setTitle(`***${interaction.guild}*** Server Information`)
@@ -19,8 +19,8 @@ module.exports = {
                 { name: 'Member Count', value: `${interaction.guild.memberCount}` },
                 { name: 'Server Level', value: `${interaction.guild.premiumTier}` }, // remove 'TIER_' from 'TIER_#'
                 { name: 'Server Boosts', value: `${interaction.guild.premiumSubscriptionCount}` },     
-            ])
+            ]);
 
-		return interaction.reply({ embeds: [serverInfo] })
+		return interaction.reply({ embeds: [serverInfo] });
 	},
 }
