@@ -1,6 +1,5 @@
-const urban = require('urban')
-
-const { EmbedBuilder, SlashCommandBuilder } = require('discord.js')
+const urban = require('urban');
+const { EmbedBuilder, SlashCommandBuilder } = require('discord.js');
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -12,20 +11,20 @@ module.exports = {
             .setRequired(true)),
 		
 	async execute(interaction) {
-        const searchEntry = interaction.options.getString('word')
+        const searchEntry = interaction.options.getString('word');
         
-        urbanResults = urban(searchEntry)
+        const urbanResults = urban(searchEntry);
 
         urbanResults.first(function(json) {
-            var jsonDefinition = json.definition
-            jsonDefinition = jsonDefinition.split('[').join('')
-            jsonDefinition = jsonDefinition.split(']').join('')
+            let jsonDefinition = json.definition;
+            jsonDefinition = jsonDefinition.split('[').join('');
+            jsonDefinition = jsonDefinition.split(']').join('');
             // want to get rid of brackets in json.definition and json.example
-            var jsonExample = json.example
-            jsonExample = jsonExample.split('[').join('')
-            jsonExample = jsonExample.split(']').join('')
+            let jsonExample = json.example;
+            jsonExample = jsonExample.split('[').join('');
+            jsonExample = jsonExample.split(']').join('');
 
-            var jsonDate = json.written_on.toString().slice(0, 10); // make the date more reader-friendly
+            let jsonDate = json.written_on.toString().slice(0, 10); // make the date more reader-friendly
         
             const urbanEmbed = new EmbedBuilder()
                 .setTitle(json.word.toUpperCase())
@@ -46,9 +45,9 @@ module.exports = {
                 ])
                 .setFooter({
                     text: 'by ' + json.author + ' on ' + jsonDate
-                })
+                });
 
-            interaction.reply({ embeds: [urbanEmbed] })
+            interaction.reply({ embeds: [urbanEmbed] });
         })
 	},
 }
