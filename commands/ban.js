@@ -57,7 +57,11 @@ module.exports = {
         try {
             await userToBan.send({ embeds: [banEmbed] });
         } catch(err) {
-            console.error(error);
+            console.error(err);
+            const msgFailEmbed = new EmbedBuilder()
+                .setDescription(`Failed to send message to ${userToBan}.`)
+                .setColor('0x32ff25');
+            modChannel.reply({ embeds: [msgFailEmbed] });
         }
             
         const bannedEmbed = new EmbedBuilder()
