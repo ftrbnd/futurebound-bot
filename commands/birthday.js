@@ -1,6 +1,6 @@
-const { EmbedBuilder, SlashCommandBuilder } = require('discord.js')
-const { getTimeZones, timeZonesNames } = require("@vvo/tzdb")
-const User = require('../schemas/UserSchema')
+const { EmbedBuilder, SlashCommandBuilder } = require('discord.js');
+const { getTimeZones, timeZonesNames } = require("@vvo/tzdb");
+const User = require('../schemas/UserSchema');
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -30,66 +30,58 @@ module.exports = {
             .setRequired(true)),
 		
 	async execute(interaction) {
-        console.log(`${interaction.user.username} used the /birthday command`)
-        var monthOption = interaction.options.getInteger('month')
-        var dayOption = interaction.options.getInteger('day')
-        var yearOption = interaction.options.getInteger('year')
-        const timezoneOption = interaction.options.getString('timezone')
+        let monthOption = interaction.options.getInteger('month');
+        let dayOption = interaction.options.getInteger('day');
+        let yearOption = interaction.options.getInteger('year');
+        const timezoneOption = interaction.options.getString('timezone');
 
         if(!timeZonesNames.includes(timezoneOption)) {
             const tzErrEmbed = new EmbedBuilder()
                 .setDescription('Please enter a valid TZ database name. More info can be found here: https://en.wikipedia.org/wiki/List_of_tz_database_time_zones#List \nExample: **America/Los_Angeles**')
-                .setColor('0xdf0000')
+                .setColor('0xdf0000');
 
-            return interaction.reply({ embeds: [tzErrEmbed], ephemeral: true })
+            return interaction.reply({ embeds: [tzErrEmbed], ephemeral: true });
         }
 
         // adjust their timezone to PST (Note: Heroku doesn't run on PST, but we're sticking to the variable names)
         const pstOffset = (getTimeZones().find(tz => tz.name === timezoneOption).rawOffsetInMinutes + 60) / 60 // hours behind or ahead of PST; add 480 after rawOffsetInMinutes before dividing by 60 for PST/60 for Heroku's timezone
-        // console.log(timezoneOption, "is", pstOffset, "hours ahead of PST")
-        var midnightPST
-        if(pstOffset != 0) {
-            midnightPST = (24 - pstOffset) % 24
-        } else {
-            midnightPST = 0
-        }
-        // console.log(`Midnight there is at ${midnightPST}:00 PST`)
+        let midnightPST = pstOffset != 0 ? (24 - pstOffset) % 24 : 0;
 
         // if it's a birthday, for example: May 25th EST at midnight
         // we want a 9PM PST time
         // but right now, although we get the time, the date is still the 25th
         // so they wouldn't get a notification until May 25th, 9PM PST - almost a full day later
-        const monthDaysAmt = new Map() // if a birthday is on the 1st, we have to set the date to the 31st/30th/28th
-        monthDaysAmt.set(1, '31')
-        monthDaysAmt.set(2, '28')
-        monthDaysAmt.set(3, '31')
-        monthDaysAmt.set(4, '30')
-        monthDaysAmt.set(5, '31')
-        monthDaysAmt.set(6, '30')
-        monthDaysAmt.set(7, '31')
-        monthDaysAmt.set(8, '31')
-        monthDaysAmt.set(9, '30')
-        monthDaysAmt.set(10, '31')
-        monthDaysAmt.set(11, '30')
-        monthDaysAmt.set(12, '31')
+        const monthDaysAmt = new Map(); // if a birthday is on the 1st, we have to set the date to the 31st/30th/28th
+        monthDaysAmt.set(1, '31');
+        monthDaysAmt.set(2, '28');
+        monthDaysAmt.set(3, '31');
+        monthDaysAmt.set(4, '30');
+        monthDaysAmt.set(5, '31');
+        monthDaysAmt.set(6, '30');
+        monthDaysAmt.set(7, '31');
+        monthDaysAmt.set(8, '31');
+        monthDaysAmt.set(9, '30');
+        monthDaysAmt.set(10, '31');
+        monthDaysAmt.set(11, '30');
+        monthDaysAmt.set(12, '31');
 
         if(pstOffset > 0) { // if the timezone is ahead of PST
             if(((yearOption % 4 == 0) && (yearOption % 100 != 0)) || (yearOption % 400 == 0)) // leap year
-                monthDaysAmt.set(2, '29')
+                monthDaysAmt.set(2, '29');
 
             if(dayOption == 1) {
-                monthOption-1==0 ? monthOption=12 : monthOption-=1 // if the month is January, set it to December, otherwise just move back one month
-                monthOption==12 ? yearOption-=1 : yearOption=yearOption
-                dayOption = monthDaysAmt.get(monthOption)
+                monthOption = monthOption - 1 == 0 ? monthOption = 12 : monthOption -= 1; // if the month is January, set it to December, otherwise just move back one month
+                yearOption = monthOption == 12 ? yearOption - 1 : yearOption;
+                dayOption = monthDaysAmt.get(monthOption);
             } else {
-                dayOption -= 1
+                dayOption -= 1;
             }
         }
         
-        const birthdayAttempt = new Date(`${monthOption} ${dayOption} ${yearOption} ${midnightPST}:00`)
+        const birthdayAttempt = new Date(`${monthOption} ${dayOption} ${yearOption} ${midnightPST}:00`);
 
-        logChannel = interaction.guild.channels.cache.get(process.env.LOGS_CHANNEL_ID)
-        var birthdayEmbed = new EmbedBuilder()
+        const logChannel = interaction.guild.channels.cache.get(process.env.LOGS_CHANNEL_ID);
+        const birthdayEmbed = new EmbedBuilder()
             .setColor('0x32ff25')
             .addFields([
                 { name: 'Timezone', value: timezoneOption}
@@ -97,9 +89,9 @@ module.exports = {
             .setFooter({
                 text: interaction.guild.name, 
                 iconURL: interaction.guild.iconURL({ dynamic : true })
-            })
+            });
 
-        var personalEmbed = new EmbedBuilder()
+        const personalEmbed = new EmbedBuilder()
             .setColor('0x32ff25')
             .addFields([
                 { name: 'Timezone', value: timezoneOption}
@@ -107,53 +99,53 @@ module.exports = {
             .setFooter({
                 text: interaction.guild.name, 
                 iconURL: interaction.guild.iconURL({ dynamic : true })
-            })
+            });
 
-        const theirBirthday = new Date(`${interaction.options._hoistedOptions[0].value} ${interaction.options._hoistedOptions[1].value} ${interaction.options._hoistedOptions[2].value}`)
+        const theirBirthday = new Date(`${monthOption} ${dayOption} ${yearOption}`);
         
-        User.findOne({ discordId: interaction.user.id }, { upsert: true }, (err, data) => {
-            if(err) return console.log(err)
+        await User.findOne({ discordId: interaction.user.id }, { upsert: true }, (err, data) => {
+            if(err) return console.error(err);
 
             if(!data) { // if the user isn't already in the database, add their data
-                const newUser = User.create({
+                User.create({
                     discordId: interaction.user.id,
                     username: interaction.user.username,
                     birthday: birthdayAttempt,
                     timezone: timezoneOption
-                }).catch(err => console.log(err))
+                }).catch(err => console.error(err));
                 
-                console.log(`${interaction.user.username} set their birthday to ${theirBirthday.toLocaleDateString()}: ${birthdayAttempt}`)
+                console.log(`${interaction.user.username} set their birthday to ${theirBirthday.toLocaleDateString()}: ${birthdayAttempt}`);
                 
                 birthdayEmbed.setAuthor({
                     name: `${interaction.user.username} set their birthday to ${theirBirthday.toLocaleDateString()}`, 
                     iconURL: interaction.user.displayAvatarURL({ dynamic : true })
-                })
-                logChannel.send({ embeds: [birthdayEmbed] })
+                });
+                logChannel.send({ embeds: [birthdayEmbed] });
 
                 personalEmbed.setAuthor({
                     name: `You have set your birthday to ${theirBirthday.toLocaleDateString()}`
-                })
-                return interaction.reply({ embeds: [personalEmbed], ephemeral: true })
+                });
+                return interaction.reply({ embeds: [personalEmbed], ephemeral: true });
 
             } else { // if they already were in the database, simply update and save
-                data.username = interaction.user.username
-                data.birthday = birthdayAttempt
-                data.timezone = timezoneOption
-                data.save()
+                data.username = interaction.user.username;
+                data.birthday = birthdayAttempt;
+                data.timezone = timezoneOption;
+                data.save();
 
-                console.log(`${interaction.user.username} updated their birthday to ${theirBirthday.toLocaleDateString()}: ${birthdayAttempt}`)
+                console.log(`${interaction.user.username} updated their birthday to ${theirBirthday.toLocaleDateString()}: ${birthdayAttempt}`);
 
                 birthdayEmbed.setAuthor({
                     name: `${interaction.user.username} updated their birthday to ${theirBirthday.toLocaleDateString()}`, 
                     iconURL: interaction.user.displayAvatarURL({ dynamic : true })
-                })
-                logChannel.send({ embeds: [birthdayEmbed] })
+                });
+                logChannel.send({ embeds: [birthdayEmbed] });
 
                 personalEmbed.setAuthor({
                     name: `You have updated your birthday to ${theirBirthday.toLocaleDateString()}`
-                })
-                return interaction.reply({ embeds: [personalEmbed], ephemeral: true })
+                });
+                return interaction.reply({ embeds: [personalEmbed], ephemeral: true });
             }
-        })
+        }).clone();
 	},
 }
