@@ -1,4 +1,4 @@
-const { EmbedBuilder, SlashCommandBuilder, MessageType } = require('discord.js')
+const { EmbedBuilder, SlashCommandBuilder, MessageType } = require('discord.js');
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -12,12 +12,12 @@ module.exports = {
                 'falling in reverse', 'about time', 'stutter', 'all you need is love', 'nowhere else', '909', 'no future', 'good morning',
                 'in', 'hertz', 'static', 'projector', 'love, death, distraction', 'how to sleep', 'calm down', 'just saying',
                 'fomo', 'so far so good', 'isohel', '????', 'tides', 'rushing', '$treams', '2020', 'out', 'untitled', 'Peaked',
-                'Cold Feet', 'Stingray']
+                'Cold Feet', 'Stingray'];
 
         // adding words to the random quote
-        var textToType = words[Math.floor(Math.random()*(words.length))]
+        let textToType = words[Math.floor(Math.random()*(words.length))];
         for(var i = 0; i < 9; i++)
-            textToType += ' ' + words[Math.floor(Math.random()*(words.length))]
+            textToType += ' ' + words[Math.floor(Math.random()*(words.length))];
         
         // embed that will show the quote
         const typingTestEmbed = new EmbedBuilder()
@@ -30,19 +30,19 @@ module.exports = {
                 iconURL: interaction.user.displayAvatarURL({ dynamic : true })
             });
 
-        await interaction.reply({ embeds: [typingTestEmbed] })
+        await interaction.reply({ embeds: [typingTestEmbed] });
 
         // using message collector, collect message that starts with the keyword
-        const filter = m => m.author === interaction.user && m.type !== MessageType.ChatInputCommand // without message type check, it would instantly calculate a WPM of 0
-        const collector = interaction.channel.createMessageCollector({ filter, time: 60000 })
+        const filter = m => m.author === interaction.user && m.type !== MessageType.ChatInputCommand; // without message type check, it would instantly calculate a WPM of 0
+        const collector = interaction.channel.createMessageCollector({ filter, time: 60000 });
 
-        var typingResult = ''
-        const start = new Date()
-        var messageToReply
+        let typingResult = '';
+        const start = new Date();
+        let messageToReply;
         collector.on('collect', m => {
-            typingResult += m.content // once message is collected, add the typed words to a variable
-            messageToReply = m
-            collector.stop()
+            typingResult += m.content; // once message is collected, add the typed words to a variable
+            messageToReply = m;
+            collector.stop();
         })
 
         collector.on('end', collected => {
@@ -53,40 +53,40 @@ module.exports = {
                     .setFooter({
                         text: interaction.guild.name, 
                         iconURL: interaction.guild.iconURL({ dynamic : true})
-                    })
+                    });
 
-                interaction.followUp({ embeds: [couldntFindEmbed], ephemeral: true })
+                interaction.followUp({ embeds: [couldntFindEmbed], ephemeral: true });
             } else {
-                const end = new Date()
+                const end = new Date();
         
-                const diffSeconds = (Math.abs(end - start)) / 1000 // calculate time difference in seconds
-                const numChars = typingResult.length
-                const wpm = (((numChars / 5) / diffSeconds) * 60).toFixed(2) // keep to 2 decimal places
+                const diffSeconds = (Math.abs(end - start)) / 1000; // calculate time difference in seconds
+                const numChars = typingResult.length;
+                const wpm = (((numChars / 5) / diffSeconds) * 60).toFixed(2); // keep to 2 decimal places
         
                 // accuracy calculation
-                var accuracyCount = 0
-                textToType.split(' ') // make into arrays
-                typingResult.split(' ')
-                for(var i = 0; i < textToType.length; i++)
+                let accuracyCount = 0;
+                textToType.split(' '); // make into arrays
+                typingResult.split(' ');
+                for(let i = 0; i < textToType.length; i++)
                     if(textToType[i] === typingResult[i])
-                        accuracyCount++
+                        accuracyCount++;
                 
-                accuracyCount /= textToType.length
-                accuracyCount = (accuracyCount * 100).toFixed(2)
+                accuracyCount /= textToType.length;
+                accuracyCount = (accuracyCount * 100).toFixed(2);
         
-                var color
+                let color;
                 if(wpm >= 100)
-                    color = '0x8000db'
+                    color = '0x8000db';
                 else if(90 <= wpm && wpm < 100)
-                    color = '0x34eb43'
+                    color = '0x34eb43';
                 else if(80 <= wpm && wpm < 90)
-                    color = '0x9ceb34'
+                    color = '0x9ceb34';
                 else if(70 <= wpm && wpm < 80)
-                    color = '0xf5e431'
+                    color = '0xf5e431';
                 else if(60 <= wpm && wpm < 70)
-                    color = '0xff9100'
+                    color = '0xff9100';
                 else
-                    color = '0xe30e0e'
+                    color = '0xe30e0e';
         
                 const wpmEmbed = new EmbedBuilder()
                     .setTitle('Typing Test Results')
@@ -98,9 +98,9 @@ module.exports = {
                     .setFooter({
                         text: interaction.user.username, 
                         iconURL: interaction.user.displayAvatarURL({ dynamic : true })
-                    })
+                    });
         
-                messageToReply.reply({ embeds: [wpmEmbed] })
+                messageToReply.reply({ embeds: [wpmEmbed] });
             }
         })
 	},
