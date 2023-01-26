@@ -1,7 +1,6 @@
-require('dotenv').config()
-
-const { EmbedBuilder, PermissionFlagsBits, SlashCommandBuilder } = require('discord.js')
-const User = require('../schemas/UserSchema')
+require('dotenv').config();
+const { EmbedBuilder, PermissionFlagsBits, SlashCommandBuilder } = require('discord.js');
+const User = require('../schemas/UserSchema');
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -18,36 +17,34 @@ module.exports = {
         .setDefaultMemberPermissions(PermissionFlagsBits.ManageRoles), // any permission that the Helper role has access to should work
 		
 	async execute(interaction) {
-        if(interaction.member.roles.cache.has(process.env.MODERATORS_ROLE_ID) || interaction.member.roles.cache.has(process.env.HELPER_ROLE_ID)) { // Moderator and Helper roles
-            const userToWarn = interaction.options.getUser('user')
-            const reasonForWarn = interaction.options.getString('reason')
-            const modChannel = interaction.guild.channels.cache.get(process.env.MODERATORS_CHANNEL_ID)
-            if(!modChannel) return
+        const userToWarn = interaction.options.getUser('user');
+        const reasonForWarn = interaction.options.getString('reason');
+        const modChannel = interaction.guild.channels.cache.get(process.env.MODERATORS_CHANNEL_ID);
+        if(!modChannel) return;
 
-            var warnCount
-            await User.findOne({ discordId: userToWarn.id }, (err, data) => {
-                if(err) return console.log(err)
-    
-                if(!data) { // if the user isn't already in the database, add their data
-                    User.create({
-                        discordId: userToWarn.id,
-                        username: userToWarn.username,
-                        warnings: 1
-                    }).catch(err => console.log(err))
-                    warnCount = 1    
-                } else { // if they already were in the database, simply update and save
+        let warnCount;
+        await User.findOne({ discordId: userToWarn.id }, (err, data) => {
+            if(err) return console.error(err);
 
-                    if(!data.warnings) {
-                        data.warnings = 1
-                    } else {
-                        data.warnings += 1
-                    }
-                    data.username = userToWarn.username
-                    data.save()
-                    warnCount = data.warnings
+            if(!data) { // if the user isn't already in the database, add their data
+                User.create({
+                    discordId: userToWarn.id,
+                    username: userToWarn.username,
+                    warnings: 1
+                }).catch(err => console.log(err));
+                warnCount = 1;
+
+            } else { // if they already were in the database, simply update and save
+                if(!data.warnings) {
+                    data.warnings = 1;
+                } else {
+                    data.warnings += 1;
                 }
-            }).clone()
-
+                data.username = userToWarn.username;
+                data.save();
+                warnCount = data.warnings;
+            }
+            
             const logEmbed = new EmbedBuilder()
                 .setTitle(userToWarn.tag + ' was warned.')
                 .addFields([
@@ -62,8 +59,8 @@ module.exports = {
                     text: interaction.guild.name, 
                     iconURL: interaction.guild.iconURL({ dynamic : true })
                 })
-                .setTimestamp()
-            modChannel.send({ embeds: [logEmbed] })
+                .setTimestamp();
+            modChannel.send({ embeds: [logEmbed] });
 
             const warnEmbed = new EmbedBuilder()
                 .setTitle(`You were warned in **${interaction.guild.name}**.`)
@@ -76,24 +73,18 @@ module.exports = {
                     text: interaction.guild.name, 
                     iconURL: interaction.guild.iconURL({ dynamic : true })
                 })
-                .setTimestamp()
+                .setTimestamp();
             
             try {
-                await userToWarn.send({ embeds: [warnEmbed] })
+                userToWarn.send({ embeds: [warnEmbed] });
             } catch(err) {
-                return console.log(err)
+                return console.error(err);
             }
 
             const warnedEmbed = new EmbedBuilder()
                 .setDescription(`${userToWarn} was warned.`)
-                .setColor('0xffd100')
-            interaction.reply({ embeds: [warnedEmbed] })
-
-        } else {
-            const permsEmbed = new EmbedBuilder()
-                .setDescription('You do not have permission to use this command.')
-                .setColor('0xdf0000')
-            return interaction.reply({ embeds: [permsEmbed], ephemeral: true })
-        }
+                .setColor('0xffd100');
+            interaction.reply({ embeds: [warnedEmbed] });
+        }).clone()
 	},
 }
