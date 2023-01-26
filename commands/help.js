@@ -1,6 +1,5 @@
-const fs = require('fs')
-
-const { EmbedBuilder, SlashCommandBuilder, ActivityFlagsBitField } = require('discord.js')
+const fs = require('fs');
+const { EmbedBuilder, SlashCommandBuilder, ActivityFlagsBitField } = require('discord.js');
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -8,34 +7,32 @@ module.exports = {
 		.setDescription('Get a list of the commands for this bot'),
 		
 	async execute(interaction) {
-		var helpEmbed = new EmbedBuilder()
+		const helpEmbed = new EmbedBuilder()
 			.setTitle(`Commands for ***${interaction.client.user.tag}***`)
 			.setFooter({
 				text: interaction.guild.name, 
 				iconURL: interaction.guild.iconURL({ dynamic : true})
 			})
-			.setColor('0xf03200')
+			.setColor('0xf03200');
 		
-		var everyoneCommandsList = ''
-		var helperCommandsList = ''
-		var modCommandsList = ''
-		const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'))
+		let everyoneCommandsList = '', helperCommandsList = '', modCommandsList = '';
+		const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
 		for (const file of commandFiles) {
-			const command = require(`./${file}`)
+			const command = require(`./${file}`);
 
 			if (!command.data.default_member_permissions) { // if the command has no Helper/Mod permissions required
-				everyoneCommandsList += `/${file.replace('.js', '')}\n`
+				everyoneCommandsList += `/${file.replace('.js', '')}\n`;
 			} else if (command.data.default_member_permissions === '268435456') { // Helper command
-				helperCommandsList += `/${file.replace('.js', '')}\n`
+				helperCommandsList += `/${file.replace('.js', '')}\n`;
 			} else if (command.data.default_member_permissions === '8') { // Moderator command
-				modCommandsList += `/${file.replace('.js', '')}\n`
+				modCommandsList += `/${file.replace('.js', '')}\n`;
 			}
 		}
 
-		var musicCommandsList = ''
-		const musicCommandFiles = fs.readdirSync('./musicCommands').filter(file => file.endsWith('.js'))
+		let musicCommandsList = '';
+		const musicCommandFiles = fs.readdirSync('./musicCommands').filter(file => file.endsWith('.js'));
 		for (const file of musicCommandFiles) {
-			musicCommandsList += `/${file.replace('.js', '')}\n`
+			musicCommandsList += `/${file.replace('.js', '')}\n`;
 		}
 
 		if(interaction.member.roles.cache.has(process.env.MODERATORS_ROLE_ID)) { // Moderator role
@@ -44,20 +41,20 @@ module.exports = {
 				{ name: 'Helper Commands', value: helperCommandsList, inline: true },
 				{ name: '@everyone Commands', value: everyoneCommandsList, inline: true},
 				{ name: 'Music Commands', value: musicCommandsList, inline: true }
-			])
+			]);
 		} else if(interaction.member.roles.cache.has(process.env.HELPER_ROLE_ID)) { // Helper role
 			helpEmbed.addFields([
 				{ name: 'Helper Commands', value: helperCommandsList },
 				{ name: '@everyone Commands', value: everyoneCommandsList, inline: true },
 				{ name: 'Music Commands', value: musicCommandsList, inline: true }
-			])
+			]);
 		} else { // @everyone
 			helpEmbed.addFields([
 				{ name: '@everyone Commands', value: everyoneCommandsList, inline: true },
 				{ name: 'Music Commands', value: musicCommandsList, inline: true }
-			])
+			]);
 		}
 		
-		interaction.reply({ embeds: [helpEmbed] })
+		interaction.reply({ embeds: [helpEmbed] });
 	},
 }
