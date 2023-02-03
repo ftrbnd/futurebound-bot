@@ -154,7 +154,6 @@ module.exports = {
                         data.tracks.pull(mostVotedSong); // remove the most voted song from the database
                         data.standings.push(mostVotedSong); // then add it to the standings - will reverse at the end
                         data.votes = songVotesMap; // the loser song will still remain but this doesn't affect anything since it won't appear in voting list
-                        data.save();
     
                         // compute the round number
                         roundNumber = albumTracks.length - data.tracks.length + 1;
