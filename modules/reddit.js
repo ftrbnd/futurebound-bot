@@ -1,5 +1,5 @@
-const Snooper = require('reddit-snooper')
-const { EmbedBuilder } = require('discord.js')
+const Snooper = require('reddit-snooper');
+const { EmbedBuilder } = require('discord.js');
 
 module.exports = {
 	async execute(client) {
@@ -8,17 +8,15 @@ module.exports = {
             api_secret: process.env.API_SECRET,
             automatic_retries: true,
             api_requests_per_minute: 60
-        })
+        });
 
         try {
             snooper.watcher.getPostWatcher('eden') // blank argument or 'all' looks at the entire website
             .on('post', function(post) {
-                console.log(`New Reddit post: ${post.data.title.substring(0, 255)}`)
-                const subredditChannel = client.channels.cache.get(process.env.SUBREDDIT_CHANNEL_ID)
+                console.log(`New Reddit post: ${post.data.title.substring(0, 255)}`);
+                const subredditChannel = client.channels.cache.get(process.env.SUBREDDIT_CHANNEL_ID);
                 
-                // console.log(post)
-
-                var redditEmbed = new EmbedBuilder()
+                const redditEmbed = new EmbedBuilder()
                     .setTitle(post.data.title.substring(0, 255))
                     .setURL(`https://reddit.com${post.data.permalink}`)
                     .setImage(post.data.url)
@@ -27,28 +25,28 @@ module.exports = {
                         text: `Posted by u/${post.data.author} on r/${post.data.subreddit}`,
                         iconURL: 'https://logodownload.org/wp-content/uploads/2018/02/reddit-logo-16.png'
                     })
-                    .setTimestamp()
+                    .setTimestamp();
 
                 if (post.data.selftext !== '')
-                    redditEmbed.setDescription(post.data.selftext)
+                    redditEmbed.setDescription(post.data.selftext);
 
                 subredditChannel.send({ embeds: [redditEmbed] })
                     .then(() => subredditChannel.messages.fetch({ limit: 1 }) // fetch latest message
                         .then(messages => {
-                            let lastMessage = messages.first() // message retrieved
-                            const upvoteEmoji = client.emojis.cache.get(process.env.UPVOTE_EMOJI_ID)
-                            const downvoteEmoji = client.emojis.cache.get(process.env.DOWNVOTE_EMOJI_ID)
+                            let lastMessage = messages.first(); // message retrieved
+                            const upvoteEmoji = client.emojis.cache.get(process.env.UPVOTE_EMOJI_ID);
+                            const downvoteEmoji = client.emojis.cache.get(process.env.DOWNVOTE_EMOJI_ID);
 
                             lastMessage.react(upvoteEmoji)     // react with upvote
-                                .then(() => lastMessage.react(downvoteEmoji)) // react with downvote
+                                .then(() => lastMessage.react(downvoteEmoji)); // react with downvote
                         })
-                        .catch(console.error))
+                        .catch(console.error));
 
             })
-            .on('error', console.error)
+            .on('error', console.error);
 
         } catch(error) {
-            console.log(error)
+            console.log(error);
         }
     }
 }

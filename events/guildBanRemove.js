@@ -1,14 +1,13 @@
-require('dotenv').config()
-
-const { EmbedBuilder } = require('discord.js')
+require('dotenv').config();
+const { EmbedBuilder } = require('discord.js');
 
 module.exports = {
 	name: 'guildBanRemove',
 	async execute(ban) {
-        const modChannel = ban.guild.channels.cache.get(process.env.MODERATORS_CHANNEL_ID)
-		if(!modChannel) return
+        const modChannel = ban.guild.channels.cache.get(process.env.MODERATORS_CHANNEL_ID);
+		if(!modChannel) return;
 
-        var log = new EmbedBuilder()
+        const logEmbed = new EmbedBuilder()
             .setTitle(`${ban.user.username} was unbanned.`)
             .addFields([
                 { name: 'User: ', value: `${ban.user}`},
@@ -20,7 +19,8 @@ module.exports = {
                 text: ban.guild.name, 
                 iconURL: ban.guild.iconURL({ dynamic : true })
             })
-            .setTimestamp()
-        modChannel.send({ embeds: [log] })
+            .setTimestamp();
+            
+        modChannel.send({ embeds: [logEmbed] });
 	},
 }

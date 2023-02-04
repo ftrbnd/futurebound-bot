@@ -1,12 +1,11 @@
-require('dotenv').config()
-
-const { EmbedBuilder } = require('discord.js')
+require('dotenv').config();
+const { EmbedBuilder } = require('discord.js');
 
 module.exports = {
 	name: 'guildMemberRemove',
 	async execute(member) {
-        const logChannel = member.guild.channels.cache.get(process.env.LOGS_CHANNEL_ID)
-        if(!logChannel) return
+        const logChannel = member.guild.channels.cache.get(process.env.LOGS_CHANNEL_ID);
+        if(!logChannel) return;
 
         const leaveEmbed = new EmbedBuilder()
             .setAuthor({
@@ -22,8 +21,8 @@ module.exports = {
                 text: member.guild.name, 
                 iconURL: member.guild.iconURL({ dynamic : true})
             })
-            .setTimestamp()
+            .setTimestamp();
 
-        logChannel.send({ embeds: [leaveEmbed] })
+        logChannel.send({ embeds: [leaveEmbed] });
 	},
 }

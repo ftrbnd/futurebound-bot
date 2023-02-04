@@ -1,12 +1,13 @@
-const { EmbedBuilder } = require('discord.js')
+require('dotenv').config();
+const { EmbedBuilder } = require('discord.js');
 
 module.exports = {
 	name: 'guildMemberAdd',
 	async execute(member) {        
-        const welcomeChannel = member.guild.channels.cache.get(process.env.WELCOME_CHANNEL_ID)
-        if(!welcomeChannel) return
-        const rolesChannel = member.guild.channels.cache.get(process.env.ROLES_CHANNEL_ID)
-        if(!rolesChannel) return
+        const welcomeChannel = member.guild.channels.cache.get(process.env.WELCOME_CHANNEL_ID);
+        if(!welcomeChannel) return;
+        const rolesChannel = member.guild.channels.cache.get(process.env.ROLES_CHANNEL_ID);
+        if(!rolesChannel) return;
         
         const welcomeEmbed = new EmbedBuilder()
             .setAuthor({
@@ -20,7 +21,8 @@ module.exports = {
                 text: member.guild.name, 
                 iconURL: member.guild.iconURL({ dynamic : true})
             })
-            .setTimestamp()
-        return welcomeChannel.send({ content: `${member}`, embeds: [welcomeEmbed] })
+            .setTimestamp();
+            
+        welcomeChannel.send({ content: `${member}`, embeds: [welcomeEmbed] });
 	},
 }

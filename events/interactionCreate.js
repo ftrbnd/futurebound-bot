@@ -1,5 +1,5 @@
 // Interactions: slash commands, buttons, select menus
-const { EmbedBuilder, InteractionType } = require('discord.js')
+const { EmbedBuilder, InteractionType } = require('discord.js');
 const SurvivorRound = require('../schemas/SurvivorRoundSchema');
 
 module.exports = {
