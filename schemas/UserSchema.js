@@ -1,4 +1,4 @@
-const mongoose = require('mongoose')
+const mongoose = require('mongoose');
 
 const UserSchema = new mongoose.Schema({
     discordId: {
@@ -25,6 +25,6 @@ const UserSchema = new mongoose.Schema({
         type: mongoose.SchemaTypes.Date,
         require: false
     }
-}, { versionKey: false })
+}, { versionKey: false });
 
-module.exports = mongoose.model('User', UserSchema)
+module.exports = mongoose.model('User', UserSchema);

@@ -1,4 +1,4 @@
-const mongoose = require('mongoose')
+const mongoose = require('mongoose');
 
 const PlaylistSchema = new mongoose.Schema({
     name: {
@@ -9,6 +9,6 @@ const PlaylistSchema = new mongoose.Schema({
         type: mongoose.SchemaTypes.String,
         required: true,
     }
-}, { versionKey: false })
+}, { versionKey: false });
 
-module.exports = mongoose.model('Playlist', PlaylistSchema)
+module.exports = mongoose.model('Playlist', PlaylistSchema);

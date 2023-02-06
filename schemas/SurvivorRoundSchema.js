@@ -1,4 +1,4 @@
-const mongoose = require('mongoose')
+const mongoose = require('mongoose');
 
 const SurvivorRoundSchema = new mongoose.Schema({
     album: {
@@ -26,6 +26,6 @@ const SurvivorRoundSchema = new mongoose.Schema({
         type: mongoose.SchemaTypes.Number,
         required: false,
     }
-}, { versionKey: false })
+}, { versionKey: false });
 
-module.exports = mongoose.model('SurvivorRound', SurvivorRoundSchema)
+module.exports = mongoose.model('SurvivorRound', SurvivorRoundSchema);

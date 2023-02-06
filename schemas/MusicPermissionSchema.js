@@ -1,4 +1,4 @@
-const mongoose = require('mongoose')
+const mongoose = require('mongoose');
 
 const MusicPermissionSchema = new mongoose.Schema({
     roleName: {
@@ -9,6 +9,6 @@ const MusicPermissionSchema = new mongoose.Schema({
         type: mongoose.SchemaTypes.String,
         required: true,
     }
-}, { versionKey: false })
+}, { versionKey: false });
 
-module.exports = mongoose.model('MusicPermission', MusicPermissionSchema)
+module.exports = mongoose.model('MusicPermission', MusicPermissionSchema);
