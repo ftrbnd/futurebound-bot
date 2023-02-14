@@ -68,12 +68,12 @@ for(const file of musicEventFiles) {
 client.login(process.env.DISCORD_TOKEN);
 
 // Twitter
-// const twitter = require('./modules/twitter');
-// twitter.execute(client);
+const twitter = require('./modules/twitter');
+twitter.execute(client);
 
-// // Reddit
-// const reddit = require('./modules/reddit');
-// reddit.execute(client);
+// Reddit
+const reddit = require('./modules/reddit');
+reddit.execute(client);
 
 // Mongo DB
 const mongoDB = require('./modules/mongoDB');
