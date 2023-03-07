@@ -1,6 +1,5 @@
 require('dotenv').config();
-const { PermissionFlagsBits, ChannelType } = require('discord-api-types/v9');
-const { EmbedBuilder } = require('discord.js');
+const { EmbedBuilder, PermissionFlagsBits, ChannelType } = require('discord.js');
 
 module.exports = {
 	name: 'voiceStateUpdate',

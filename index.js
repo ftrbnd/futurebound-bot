@@ -4,7 +4,10 @@ const fs = require('fs');
 // Discord
 const { Client, Collection, Partials, GatewayIntentBits} = require('discord.js');
 const client = new Client({ 
-    intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMembers, GatewayIntentBits.GuildBans, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent, GatewayIntentBits.GuildVoiceStates, GatewayIntentBits.DirectMessages],
+    intents: [GatewayIntentBits.Guilds,
+        GatewayIntentBits.GuildMembers, GatewayIntentBits.GuildModeration,
+        GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent,
+        GatewayIntentBits.GuildVoiceStates, GatewayIntentBits.DirectMessages],
     partials: [Partials.Channel]
 });
 
@@ -68,8 +71,8 @@ for(const file of musicEventFiles) {
 client.login(process.env.DISCORD_TOKEN);
 
 // Twitter
-const twitter = require('./modules/twitter');
-twitter.execute(client);
+// const twitter = require('./modules/twitter');
+// twitter.execute(client);
 
 // Reddit
 const reddit = require('./modules/reddit');

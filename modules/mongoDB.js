@@ -8,6 +8,8 @@ module.exports = {
             .then((m) => {
                 console.log(`Connected to ${m.connections[0].name}!`)
             }).catch((err) => console.log(err));
+        
+        mongoose.set('strictQuery', true);
 
         setInterval(() => {
             User.find((err, data)=> { // is there a birthday today?
