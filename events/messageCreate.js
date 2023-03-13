@@ -159,33 +159,25 @@ function handleServerSubscriptions(message) {
         "1048015470168637440", // Final Call
         "1048015082191335488", // Bipolar Paradise
         "1048014115567837188", // Entrance
-    ]
+    ];
+    const premiumRole = message.guild.roles.cache.get(premiumRoles.find(roleId => member._roles.includes(roleId)));
 
-    for (const roleId of message.member._roles) {
-        if (premiumRoles.includes(roleId)) {
-            var premiumRole = message.guild.roles.cache.get(roleId);
-        }
-    }
-
-    // create a map to store premium roles and their color and tier number
-    const roleColorsTiers = new Map();
-    roleColorsTiers.set('Final Call', ['9f5be9', '3']);
-    roleColorsTiers.set('Bipolar Paradise', ['f8833d', '2']);
-    roleColorsTiers.set('Entrance', ['0db81e', 1]);
+    const action = message.roleSubscriptionData.isRenewal ? 'renewed' : 'joined';
+    const monthPlural = message.roleSubscriptionData.totalMonthsSubscribed > 1 ? 'months' : 'month';
 
     const subscriptionEmbed = new EmbedBuilder()
         .setAuthor({
-            name: `${message.member.displayName} just subscribed to the server!`,
-            iconURL: `${message.member.displayAvatarURL({ dynamic : true })}`
-        })        
-        .setColor(roleColorsTiers.get(premiumRole.name)[0]) // tier 3 role color
-        .setDescription(`Tier ${roleColorsTiers.get(premiumRole.name)[1]} role: ${premiumRole}`)
+            name: `${message.member.displayName} ${action} ${message.roleSubscriptionData.tierName} and has been a subscriber of ${message.guild.name} for ${message.roleSubscriptionData.totalMonthsSubscribed} ${monthPlural}!`,
+            iconURL: message.author.displayAvatarURL({ dynamic : true})
+        })
+        .setDescription(`[${message.roleSubscriptionData.tierName} role: ${premiumRole}](https://discord.com/channels/655655072885374987/role-subscriptions)`)
+        .setColor(premiumRole.hexColor)
         .setThumbnail('https://i.imgur.com/kzhphkQ.png') // eden logo
         .setFooter({
-            text: `${message.guild.name}`, // server name
+            text: `${message.guild.name}`,
             iconURL: `${message.guild.iconURL({ dynamic : true })}`
         })
-        .setTimestamp(); // when the subscription happened
+        .setTimestamp();
 
     generalChannel.send({ content: `${message.author}`, embeds: [subscriptionEmbed] });
 }
