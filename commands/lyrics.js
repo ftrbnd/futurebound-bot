@@ -46,13 +46,13 @@ module.exports = {
                 let lyricsEmbed = new EmbedBuilder()
                     .setTitle(songName)
                     .setDescription(lyricsString)
-                    .setColor('0xdf0000');
+                    .setColor('df0000');
 
                 const albumsFolder = path.resolve(__dirname, '../albums');
                 const albumFiles = fs.readdirSync(albumsFolder).filter(file => file.endsWith('.txt'));
                 for(let i = 0; i < albumFiles.length; i++) { // check if the song belongs to any album
                     const albumTracks = await readFile(`${albumsFolder}/${albumFiles[i]}`);
-                    const embedColor = `0x${albumTracks.pop()}`;
+                    const embedColor = `${albumTracks.pop()}`;
                     const albumCover = albumTracks.pop();
                     if(albumTracks.includes(songName)) {
                         lyricsEmbed.setColor(embedColor);
@@ -71,7 +71,7 @@ module.exports = {
         if(!songFiles.includes(song)) {
             const errEmbed = new EmbedBuilder()
                 .setDescription(`**${song}** is not a valid song, please try again!`)
-                .setColor('0xdf0000');
+                .setColor('df0000');
             return interaction.reply({ embeds: [errEmbed], ephemeral: true });
         }
 	},

@@ -47,14 +47,14 @@ module.exports = {
             if(!survivorChannel) {
                 const errEmbed = new EmbedBuilder()
                     .setDescription(`There is no channel named **${process.env.SURVIVOR_CHANNEL_NAME}** - please create one!`)
-                    .setColor('0xdf0000');
+                    .setColor('df0000');
                 return interaction.reply({ embeds: [errEmbed] });
             }
 
             const albumName = interaction.options.getString('album');
             const albumsFolder = path.resolve(__dirname, '../albums');
             let albumTracks = await readFile(`${albumsFolder}/${albumName}.txt`); // get all of the album tracks
-            const embedColor = `0x${albumTracks.pop()}`;
+            const embedColor = `${albumTracks.pop()}`;
             const albumCover = albumTracks.pop();
             
             if(interaction.options.getSubcommand() === 'standings') { // get current votes
@@ -62,7 +62,7 @@ module.exports = {
                     if (err) {
                         const errEmbed = new EmbedBuilder()
                             .setDescription('An error occured.')
-                            .setColor('0xdf0000');
+                            .setColor('df0000');
                         interaction.reply({ embeds: [errEmbed] });
                         return console.log(err);
                     }
@@ -70,7 +70,7 @@ module.exports = {
                     if (!data) {
                         const errEmbed = new EmbedBuilder()
                             .setDescription(`No data exists for **${albumName}**`)
-                            .setColor('0xdf0000');
+                            .setColor('df0000');
                         interaction.reply({ embeds: [errEmbed] });
                         return console.log(`No data exists for ${albumName}`);
     
@@ -102,7 +102,7 @@ module.exports = {
                 if (interaction.channel == survivorChannel) {
                     const errEmbed = new EmbedBuilder()
                         .setDescription(`Please use this command in ${interaction.guild.channels.cache.get(process.env.COMMANDS_CHANNEL_ID)}`)
-                        .setColor('0xdf0000');
+                        .setColor('df0000');
                     return interaction.reply({ embeds: [errEmbed], ephemeral: true });
                 }
     
@@ -114,7 +114,7 @@ module.exports = {
                     if (err) {
                         const errEmbed = new EmbedBuilder()
                             .setDescription('An error occured.')
-                            .setColor('0xdf0000');
+                            .setColor('df0000');
                         interaction.reply({ embeds: [errEmbed] });
                         return console.log(err);
                     }
@@ -259,7 +259,7 @@ module.exports = {
         } else {
             const permsEmbed = new EmbedBuilder()
                 .setDescription('You do not have permission to use this command.')
-                .setColor('0xdf0000');
+                .setColor('df0000');
             return interaction.reply({ embeds: [permsEmbed], ephemeral: true });
         }
 	},

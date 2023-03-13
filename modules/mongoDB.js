@@ -62,7 +62,7 @@ module.exports = {
                                         const birthdayEmbed = new EmbedBuilder()
                                             .setTitle(`It's ${birthdayPerson.displayName}'s birthday today! 🥳🎈🎉`)
                                             .setDescription(balloons)
-                                            .setColor('0xffffc5')
+                                            .setColor('ffffc5')
                                             .setThumbnail(birthdayPerson.user.displayAvatarURL({ dynamic : true }))
                                             .setFooter({
                                                 text: `Use /birthday in #bots to set your own birthday`, 
@@ -99,7 +99,7 @@ module.exports = {
                                             .addFields([
                                                 { name: 'User ID: ', value: `${user.discordId}`},
                                             ])
-                                            .setColor('0x32ff25')
+                                            .setColor('32ff25')
                                             // .setThumbnail(userToUnmute.avatarURL())
                                             .setFooter({
                                                 text: futureboundGuild.name, 

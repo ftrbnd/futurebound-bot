@@ -12,7 +12,7 @@ module.exports = {
             .setTitle(`***${interaction.guild}*** Server Information`)
             .setDescription(interaction.guild.description)
             .setThumbnail(interaction.guild.iconURL({ dynamic : true}))
-            .setColor('0xf03200')
+            .setColor('f03200')
             .addFields([
                 { name: 'Owner', value: `${owner}` },
                 { name: 'Date Created', value: interaction.guild.createdAt.toDateString() },

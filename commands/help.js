@@ -13,7 +13,7 @@ module.exports = {
 				text: interaction.guild.name, 
 				iconURL: interaction.guild.iconURL({ dynamic : true})
 			})
-			.setColor('0xf03200');
+			.setColor('f03200');
 		
 		let everyoneCommandsList = '', helperCommandsList = '', modCommandsList = '';
 		const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));

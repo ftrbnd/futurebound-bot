@@ -20,7 +20,7 @@ module.exports = {
                     .setTitle(post.data.title.substring(0, 255))
                     .setURL(`https://reddit.com${post.data.permalink}`)
                     .setImage(post.data.url)
-                    .setColor('0xFF4500')
+                    .setColor('FF4500')
                     .setFooter({ 
                         text: `Posted by u/${post.data.author} on r/${post.data.subreddit}`,
                         iconURL: 'https://logodownload.org/wp-content/uploads/2018/02/reddit-logo-16.png'

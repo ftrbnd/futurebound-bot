@@ -22,7 +22,7 @@ module.exports = {
             if (err) {
                 const errEmbed = new EmbedBuilder()
                     .setDescription('An error occured.')
-                    .setColor('0xdf0000');
+                    .setColor('df0000');
                 interaction.reply({ embeds: [errEmbed] });
                 return console.log(err);
             }

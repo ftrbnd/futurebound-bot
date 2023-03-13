@@ -29,7 +29,7 @@ module.exports = {
         
         const sentEmbed = new EmbedBuilder()
             .setDescription(`Sent **"${messageToSend}"** to ${targetUser}`)
-            .setColor('0x32ff25');
+            .setColor('32ff25');
 
         return interaction.reply({ embeds: [sentEmbed] });
 	},

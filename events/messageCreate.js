@@ -52,7 +52,7 @@ function handleDirectMessage(message) {
             iconURL: `${message.author.displayAvatarURL({ dynamic : true })}` // message + their avatar
         })
         .setDescription(message.content)
-        .setColor('0x7289da')
+        .setColor('7289da')
         .setFooter({
             text: `User ID: ${message.author.id}`
         })
@@ -72,7 +72,7 @@ function handleServerBoosts(message, level) {
             name: `${message.member.displayName} just boosted the server!`,
             iconURL: `${message.member.user.displayAvatarURL({ dynamic : true })}` // message + their avatar
         })        
-        .setColor('0xf47fff') // pink boost color
+        .setColor('f47fff') // pink boost color
         .setThumbnail('https://emoji.gg/assets/emoji/1819_boostingtop.gif') // nitro boost gif
         .addFields([
             { name: 'Server Level', value: `${message.guild.premiumTier}`, inline: true },
@@ -169,9 +169,9 @@ function handleServerSubscriptions(message) {
 
     // create a map to store premium roles and their color and tier number
     const roleColorsTiers = new Map();
-    roleColorsTiers.set('Final Call', ['0x9f5be9', '3']);
-    roleColorsTiers.set('Bipolar Paradise', ['0xf8833d', '2']);
-    roleColorsTiers.set('Entrance', ['0x0db81e', 1]);
+    roleColorsTiers.set('Final Call', ['9f5be9', '3']);
+    roleColorsTiers.set('Bipolar Paradise', ['f8833d', '2']);
+    roleColorsTiers.set('Entrance', ['0db81e', 1]);
 
     const subscriptionEmbed = new EmbedBuilder()
         .setAuthor({

@@ -34,7 +34,7 @@ module.exports = {
 
             const confirmEmbed = new EmbedBuilder()
                 .setDescription(`**${interaction.guild.name}** is now on lockdown.`)
-                .setColor('0xdf0000');
+                .setColor('df0000');
             interaction.reply({ embeds: [confirmEmbed] });
 
         } else if(interaction.options.getSubcommand() === 'open') { // Open all text channels
@@ -51,7 +51,7 @@ module.exports = {
 
             const confirmEmbed = new EmbedBuilder()
                 .setDescription(`**${interaction.guild.name}** is now open!`)
-                .setColor('0x32ff25');
+                .setColor('32ff25');
             interaction.reply({ embeds: [confirmEmbed] });
         }
 	},

@@ -136,7 +136,7 @@ module.exports = {
 
             const confirmEmbed = new EmbedBuilder()
                 .setDescription(`**${listeningPartyName}** channels have been created!`)
-                .setColor('0x32ff25');
+                .setColor('32ff25');
             return interaction.reply({ embeds: [confirmEmbed] });
 
         } else if(interaction.options.getSubcommand() === 'preview') {
@@ -187,7 +187,7 @@ module.exports = {
 
             const confirmEmbed = new EmbedBuilder()
                 .setDescription(`**${stageChannel.name}** channels are now public but locked.`)
-                .setColor('0x32ff25');
+                .setColor('32ff25');
             interaction.reply(({ embeds: [confirmEmbed] }));
 
 
@@ -199,7 +199,7 @@ module.exports = {
             if(!stageChannel) {
                 const errEmbed = new EmbedBuilder()
                     .setDescription('Please use **/listeningparty create** before using this command')
-                    .setColor('0xdf0000');
+                    .setColor('df0000');
                 return interaction.reply({ embeds: [errEmbed]});
             }
             
@@ -221,10 +221,10 @@ module.exports = {
 
             const confirmEmbed = new EmbedBuilder()
                 .setDescription(`The **${stageChannel.name}** Event has been created!`)
-                .setColor('0x32ff25');
+                .setColor('32ff25');
             const announcementEmbed = new EmbedBuilder()
                 .setDescription(`Now, please enter the message that will be posted in **#announcements** without mentioning @everyone`)
-                .setColor('0xfffb25');
+                .setColor('fffb25');
             
             // once created, ask for the announcement text
             interaction.reply(({ embeds: [confirmEmbed, announcementEmbed] }));
@@ -248,7 +248,7 @@ module.exports = {
                 if(collected.size === 0) { // if no message was entered
                     const couldntFindEmbed = new EmbedBuilder()
                         .setDescription(`You did not type within 3 minutes, please use the **/say** command to post the announcement.`)
-                        .setColor('0xdf0000')
+                        .setColor('df0000')
                         .setFooter({
                             text: interaction.guild.name, 
                             iconURL: interaction.guild.iconURL({ dynamic : true})
@@ -257,10 +257,10 @@ module.exports = {
                 } else {
                     const announcedEmbed = new EmbedBuilder()
                         .setDescription(`The announcement was sent!`)
-                        .setColor('0x32ff25');
+                        .setColor('32ff25');
                     const editDateEmbed = new EmbedBuilder()
                         .setDescription(`Now manually edit the Event's start time.`)
-                        .setColor('0xfffb25');
+                        .setColor('fffb25');
                     interaction.followUp({ embeds: [announcedEmbed, editDateEmbed] });
                 }
             })
@@ -271,7 +271,7 @@ module.exports = {
             if(!categoryChannel) {
                 const errEmbed = new EmbedBuilder()
                     .setDescription(`Listening party channels don't exist!`)
-                    .setColor('0xdf0000');
+                    .setColor('df0000');
                 return interaction.reply({ embeds: [errEmbed]});
             }
 
@@ -293,7 +293,7 @@ module.exports = {
                     console.error(err)
                     const errEmbed = new EmbedBuilder()
                         .setDescription(`An error occurred in /play.`)
-                        .setColor('0xdf0000');
+                        .setColor('df0000');
                     return interaction.reply({ embeds: [errEmbed]});
                 });
 
@@ -316,7 +316,7 @@ module.exports = {
             } else {
                 const errEmbed = new EmbedBuilder()
                     .setDescription(`You must join the Stage channel!`)
-                    .setColor('0xdf0000');
+                    .setColor('df0000');
                 return interaction.reply({ embeds: [errEmbed] });
             }
 
@@ -366,7 +366,7 @@ module.exports = {
 
             const confirmEmbed = new EmbedBuilder()
                 .setDescription(`**${stageChannel.name}** channels have been opened to everyone!`)
-                .setColor('0x32ff25');
+                .setColor('32ff25');
             interaction.reply(({ embeds: [confirmEmbed] }));
 
         } else if(interaction.options.getSubcommand() === 'close') {
@@ -418,7 +418,7 @@ module.exports = {
 
             const confirmEmbed = new EmbedBuilder()
                 .setDescription(`**${stageChannel.name}** channels have been closed.`)
-                .setColor('0x32ff25');
+                .setColor('32ff25');
             interaction.reply(({ embeds: [confirmEmbed] }));
 
         } else if(interaction.options.getSubcommand() === 'archive') {
@@ -436,7 +436,7 @@ module.exports = {
 
             const confirmEmbed = new EmbedBuilder()
                 .setDescription(`**${listeningPartyChat.name}** has been archived.`)
-                .setColor('0x32ff25');
+                .setColor('32ff25');
             interaction.reply(({ embeds: [confirmEmbed] }));
             
         }

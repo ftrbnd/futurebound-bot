@@ -38,7 +38,7 @@ module.exports = {
         if(!timeZonesNames.includes(timezoneOption)) {
             const tzErrEmbed = new EmbedBuilder()
                 .setDescription('Please enter a valid TZ database name. More info can be found here: https://en.wikipedia.org/wiki/List_of_tz_database_time_zones#List \nExample: **America/Los_Angeles**')
-                .setColor('0xdf0000');
+                .setColor('df0000');
 
             return interaction.reply({ embeds: [tzErrEmbed], ephemeral: true });
         }
@@ -82,7 +82,7 @@ module.exports = {
 
         const logChannel = interaction.guild.channels.cache.get(process.env.LOGS_CHANNEL_ID);
         const birthdayEmbed = new EmbedBuilder()
-            .setColor('0x32ff25')
+            .setColor('32ff25')
             .addFields([
                 { name: 'Timezone', value: timezoneOption}
             ])
@@ -92,7 +92,7 @@ module.exports = {
             });
 
         const personalEmbed = new EmbedBuilder()
-            .setColor('0x32ff25')
+            .setColor('32ff25')
             .addFields([
                 { name: 'Timezone', value: timezoneOption}
             ])

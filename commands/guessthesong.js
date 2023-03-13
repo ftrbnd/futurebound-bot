@@ -43,7 +43,7 @@ module.exports = {
         const guessTheSongEmbed = new EmbedBuilder()
             .setTitle(`Guess The Song`)
             .setThumbnail('https://i.imgur.com/rQmm1FM.png') // EDEN's logo
-            .setColor('0xfa57c1')
+            .setColor('fa57c1')
             .setDescription(`${randomLyric}`)
             .setFooter({
                 text: interaction.guild.name, 
@@ -62,7 +62,7 @@ module.exports = {
                 ])
                 .setDescription(`${randomLyric}`)
                 .setThumbnail(m.author.displayAvatarURL({ dynamic : true}))
-                .setColor('0x32ff25')
+                .setColor('32ff25')
                 .setFooter({
                     text: m.guild.name, 
                     iconURL: m.guild.iconURL({ dynamic : true})
@@ -80,7 +80,7 @@ module.exports = {
                         { name: 'Song', value: songName}
                     ])
                     .setDescription(`${randomLyric}`)
-                    .setColor('0xdf0000')
+                    .setColor('df0000')
                     .setFooter({
                         text: interaction.guild.name, 
                         iconURL: interaction.guild.iconURL({ dynamic : true})

@@ -53,7 +53,7 @@ module.exports = {
         if(!survivorChannel) {
             const errEmbed = new EmbedBuilder()
                 .setDescription(`There is no channel named **${process.env.SURVIVOR_CHANNEL_NAME}** - please create one!`)
-                .setColor('0xdf0000');
+                .setColor('df0000');
             return interaction.reply({ embeds: [errEmbed] });
         }
 
@@ -62,7 +62,7 @@ module.exports = {
 
         const albumsFolder = path.resolve(__dirname, '../albums');
         let albumTracks = await readFile(`${albumsFolder}/${albumName}.txt`);
-        const embedColor = `0x${albumTracks.pop()}`;
+        const embedColor = `${albumTracks.pop()}`;
         const albumCover = albumTracks.pop();
 
         if(interaction.options.getSubcommand() === 'round') {
@@ -84,21 +84,21 @@ module.exports = {
                         if(!albumTracks.includes(loser)) {
                             const errEmbed = new EmbedBuilder()
                                 .setDescription(`**${loser}** is not a song in **${albumName}**, please try again!`)
-                                .setColor('0xdf0000');
+                                .setColor('df0000');
                             return interaction.reply({ embeds: [errEmbed] });
                         }
 
                         if(data.tracks.length == 2) {
                             const errEmbed = new EmbedBuilder()
                                 .setDescription(`There are only 2 songs left - use **/survivor winner**!`)
-                                .setColor('0xdf0000');
+                                .setColor('df0000');
                             return interaction.reply({ embeds: [errEmbed] });
                         }
                         
                         if(!data.tracks.includes(loser)) {
                             const errEmbed = new EmbedBuilder()
                                 .setDescription(`**${loser}** was already eliminated!`)
-                                .setColor('0xdf0000');
+                                .setColor('df0000');
                             return interaction.reply({ embeds: [errEmbed] });
                         } 
                         
@@ -111,7 +111,7 @@ module.exports = {
                         if(data.tracks.length < albumTracks.length) {
                             const errEmbed = new EmbedBuilder()
                                 .setDescription(`There is already a round of **${albumName}** Survivor!`)
-                                .setColor('0xdf0000');
+                                .setColor('df0000');
                             return interaction.reply({ embeds: [errEmbed] });
                         }
                         createSurvivorEmbed(albumTracks, true);
@@ -160,7 +160,7 @@ module.exports = {
 
                 const confirmEmbed = new EmbedBuilder()
                     .setDescription(`New round of **${albumName} Survivor** sent in ${survivorChannel}`)
-                    .setColor('0x32ff25');
+                    .setColor('32ff25');
                 interaction.reply({ embeds: [confirmEmbed] });
             }
         } else if(interaction.options.getSubcommand() === 'winner') {
@@ -172,28 +172,28 @@ module.exports = {
                 if(!data) { // if the survivor album isn't in the database, there was no survivor round; no winner possible
                     const errEmbed = new EmbedBuilder()
                         .setDescription(`There is no current round of **${albumName}** Survivor.`)
-                        .setColor('0xdf0000');
+                        .setColor('df0000');
                     return interaction.reply({ embeds: [errEmbed] });
                     
                 } else { // if the album was already in the database, announce the winner and delete the survivor album from the database
                     if(!albumTracks.includes(winner)) {
                         const errEmbed = new EmbedBuilder()
                             .setDescription(`**${winner}** is not a song in **${albumName}**, please try again!`)
-                            .setColor('0xdf0000');
+                            .setColor('df0000');
                         return interaction.reply({ embeds: [errEmbed] });
                     } 
                     
                     if(!data.tracks.includes(winner)) {
                         const errEmbed = new EmbedBuilder()
                             .setDescription(`**${winner}** was already eliminated, please try again!`)
-                            .setColor('0xdf0000');
+                            .setColor('df0000');
                         return interaction.reply({ embeds: [errEmbed] });
                     } 
                     
                     if(data.tracks.length > 2) {
                         const errEmbed = new EmbedBuilder()
                             .setDescription(`There are still more than 2 songs left!`)
-                            .setColor('0xdf0000');
+                            .setColor('df0000');
                         return interaction.reply({ embeds: [errEmbed] });
                     } 
                     
@@ -214,7 +214,7 @@ module.exports = {
 
                     const confirmEmbed = new EmbedBuilder()
                         .setDescription(`Winner of **${albumName} Survivor** sent in ${survivorChannel}`)
-                        .setColor('0x32ff25');
+                        .setColor('32ff25');
                     return interaction.reply({ embeds: [confirmEmbed] });
                 }
             }).clone();

@@ -23,7 +23,7 @@ module.exports = {
             
         const clearEmbed = new EmbedBuilder()
             .setDescription(amountDescription)
-            .setColor('0x32ff25');
+            .setColor('32ff25');
         interaction.reply({ embeds: [clearEmbed], ephemeral: true });
 	},
 }

@@ -25,7 +25,7 @@ module.exports = {
 
         const slowmodeEmbed = new EmbedBuilder()
             .setDescription(`Enabled slowmode in ${targetChannel} for ${seconds} seconds`)
-            .setColor('0x32ff25');
+            .setColor('32ff25');
 
         interaction.reply({ embeds: [slowmodeEmbed], ephemeral: true });
 	},

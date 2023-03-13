@@ -16,7 +16,7 @@ module.exports = {
             const permsEmbed = new EmbedBuilder()
                 .setTitle('You are not a Server Subscriber!')
                 .setDescription(`https://discord.com/channels/${interaction.guild.id}/role-subscriptions`)
-                .setColor('0xdf0000')
+                .setColor('df0000')
             return interaction.reply({ embeds: [permsEmbed], ephemeral: true })
         }
 
@@ -27,7 +27,7 @@ module.exports = {
         if (!validateHTMLColorHex(color)) {
             const permsEmbed = new EmbedBuilder()
                 .setDescription('Please enter a valid hex color code.')
-                .setColor('0xdf0000');
+                .setColor('df0000');
             return interaction.reply({ embeds: [permsEmbed], ephemeral: true });
         }
 

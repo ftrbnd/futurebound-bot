@@ -53,7 +53,7 @@ module.exports = {
                     { name: 'Reason: ', value: reasonForWarn},
                     { name: 'Warnings: ', value: `${warnCount}`}
                 ])
-                .setColor('0xffd100')
+                .setColor('ffd100')
                 .setThumbnail(userToWarn.displayAvatarURL({ dynamic : true }))
                 .setFooter({
                     text: interaction.guild.name, 
@@ -68,7 +68,7 @@ module.exports = {
                 .addFields([
                     { name: 'Warnings: ', value: `${warnCount}`}
                 ])
-                .setColor('0xffd100')
+                .setColor('ffd100')
                 .setFooter({
                     text: interaction.guild.name, 
                     iconURL: interaction.guild.iconURL({ dynamic : true })
@@ -83,7 +83,7 @@ module.exports = {
 
             const warnedEmbed = new EmbedBuilder()
                 .setDescription(`${userToWarn} was warned.`)
-                .setColor('0xffd100');
+                .setColor('ffd100');
             interaction.reply({ embeds: [warnedEmbed] });
         }).clone()
 	},

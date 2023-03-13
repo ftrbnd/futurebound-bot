@@ -14,7 +14,7 @@ module.exports = {
                     { name: 'User: ', value: `${newMember.user}`},
                     { name: 'ID: ', value: `${newMember.user.id}`},
                 ])
-                .setColor('0xdf0000')
+                .setColor('df0000')
                 .setThumbnail(newMember.user.displayAvatarURL({ dynamic : true}))
                 .setFooter({
                     text: newMember.guild.name, 
@@ -31,7 +31,7 @@ module.exports = {
                     { name: 'User: ', value: `${newMember.user}`},
                     { name: 'ID: ', value: `${newMember.user.id}`},
                 ])
-                .setColor('0x32ff25')
+                .setColor('32ff25')
                 .setThumbnail(newMember.user.displayAvatarURL({ dynamic : true}))
                 .setFooter({
                     text: newMember.guild.name, 

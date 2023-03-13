@@ -8,7 +8,7 @@ module.exports = {
         
         const errEmbed = new EmbedBuilder()
             .setDescription(`An error occurred.`)
-            .setColor('0xdf0000');
+            .setColor('df0000');
 
         channel.send({ embeds: [errEmbed]});
 	},

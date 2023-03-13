@@ -56,7 +56,7 @@ module.exports = {
                 { name: 'Reason: ', value: reasonForMute },
                 { name: 'Mute Ends: ', value: oneWeek.toDateString() },
             ])
-            .setColor('0x000001')
+            .setColor('000001')
             .setThumbnail(userToMute.displayAvatarURL({ dynamic : true }))
             .setFooter({
                 text: interaction.guild.name, 
@@ -71,7 +71,7 @@ module.exports = {
                 { name: 'Reason: ', value: reasonForMute },
                 { name: 'Mute Ends: ', value: oneWeek.toDateString() },
             ])
-            .setColor('0x000001')
+            .setColor('000001')
             .setFooter({
                 text: interaction.guild.name, 
                 iconURL: interaction.guild.iconURL({ dynamic : true })

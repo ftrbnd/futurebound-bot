@@ -20,7 +20,7 @@ module.exports = {
             console.error(error);
             const errorEmbed = new EmbedBuilder()
                 .setDescription('There was an error while executing this command!')
-                .setColor('0xdf0000');
+                .setColor('df0000');
             await interaction.reply({ embeds: [errorEmbed], ephemeral: true });
         }
 	},
@@ -42,7 +42,7 @@ async function handleSurvivorVote(interaction) {
             console.log('No survivor round data available.');
             const errEmbed = new EmbedBuilder()
                 .setDescription('An error occured.')
-                .setColor('0xdf0000');
+                .setColor('df0000');
             return interaction.reply({ embeds: [errEmbed], ephemeral: true });
             
         } else {
@@ -60,7 +60,7 @@ async function handleSurvivorVote(interaction) {
                     console.log(`Invalid vote: ${interaction.user.tag} voted for the same song`);
                     const errorEmbed = new EmbedBuilder()
                         .setDescription(`You already selected **${selectedSong}**!`)
-                        .setColor('0xdf0000');
+                        .setColor('df0000');
                     return interaction.reply({ embeds: [errorEmbed], ephemeral: true });
                     
                 } else if (allVotes.includes(interaction.user.id)) { // if the user has already voted for a song
@@ -81,12 +81,12 @@ async function handleSurvivorVote(interaction) {
                 console.log(`Invalid vote: ${interaction.user.tag} voted in an old round`);
                 const errorEmbed = new EmbedBuilder()
                     .setDescription('Please vote in the most recent poll!')
-                    .setColor('0xdf0000');
+                    .setColor('df0000');
                 return interaction.reply({ embeds: [errorEmbed], ephemeral: true });
             }
 
             const userConfirmEmbed = new EmbedBuilder()
-                .setColor('0x32ff25');
+                .setColor('32ff25');
     
             if (userChangedSong) {
                 console.log(`${interaction.user.tag} updated their vote from ${originalVote} to ${selectedSong}`);
