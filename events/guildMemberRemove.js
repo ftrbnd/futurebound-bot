@@ -15,7 +15,7 @@ module.exports = {
             .addFields([
                 { name: 'User ID: ', value: `${member.user.id}`},
             ])
-            .setColor('df0000')
+            .setColor(process.env.ERROR_COLOR)
             .setThumbnail(member.user.displayAvatarURL({ dynamic : true}))
             .setFooter({
                 text: member.guild.name, 

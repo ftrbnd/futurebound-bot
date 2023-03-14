@@ -35,7 +35,7 @@ module.exports = {
                 { name: 'By: ', value: `${interaction.user}`},
                 { name: 'Reason: ', value: reasonForBan},
             ])
-            .setColor('0xdf0000')
+            .setColor(process.env.ERROR_COLOR)
             .setThumbnail(userToBan.displayAvatarURL({ dynamic : true }))
             .setFooter({
                 text: interaction.guild.name, 
@@ -47,7 +47,7 @@ module.exports = {
         const banEmbed = new EmbedBuilder()
             .setTitle(`You were banned from **${interaction.guild.name}**.`)
             .setDescription(reasonForBan)
-            .setColor('df0000')
+            .setColor(process.env.ERROR_COLOR)
             .setFooter({
                 text: interaction.guild.name, 
                 iconURL: interaction.guild.iconURL({ dynamic : true })
@@ -60,13 +60,13 @@ module.exports = {
             console.error(err);
             const msgFailEmbed = new EmbedBuilder()
                 .setDescription(`Failed to send message to ${userToBan}.`)
-                .setColor('32ff25');
+                .setColor(process.env.CONFIRM_COLOR);
             modChannel.reply({ embeds: [msgFailEmbed] });
         }
             
         const bannedEmbed = new EmbedBuilder()
             .setDescription(`${userToBan} was banned.`)
-            .setColor('32ff25');
+            .setColor(process.env.CONFIRM_COLOR);
         interaction.reply({ embeds: [bannedEmbed] });
     }
 }

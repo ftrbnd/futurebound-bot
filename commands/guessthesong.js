@@ -62,7 +62,7 @@ module.exports = {
                 ])
                 .setDescription(`${randomLyric}`)
                 .setThumbnail(m.author.displayAvatarURL({ dynamic : true}))
-                .setColor('32ff25')
+                .setColor(process.env.CONFIRM_COLOR)
                 .setFooter({
                     text: m.guild.name, 
                     iconURL: m.guild.iconURL({ dynamic : true})
@@ -80,7 +80,7 @@ module.exports = {
                         { name: 'Song', value: songName}
                     ])
                     .setDescription(`${randomLyric}`)
-                    .setColor('df0000')
+                    .setColor(process.env.ERROR_EMBED)
                     .setFooter({
                         text: interaction.guild.name, 
                         iconURL: interaction.guild.iconURL({ dynamic : true})

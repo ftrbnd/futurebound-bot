@@ -46,7 +46,7 @@ module.exports = {
                 let lyricsEmbed = new EmbedBuilder()
                     .setTitle(songName)
                     .setDescription(lyricsString)
-                    .setColor('df0000');
+                    .setColor(process.env.ERROR_COLOR);
 
                 const albumsFolder = path.resolve(__dirname, '../albums');
                 const albumFiles = fs.readdirSync(albumsFolder).filter(file => file.endsWith('.txt'));
@@ -71,7 +71,7 @@ module.exports = {
         if(!songFiles.includes(song)) {
             const errEmbed = new EmbedBuilder()
                 .setDescription(`**${song}** is not a valid song, please try again!`)
-                .setColor('df0000');
+                .setColor(process.env.ERROR_COLOR);
             return interaction.reply({ embeds: [errEmbed], ephemeral: true });
         }
 	},

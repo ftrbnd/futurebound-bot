@@ -23,7 +23,7 @@ module.exports = {
 
         const sentEmbed = new EmbedBuilder()
             .setDescription(`Said **"${messageToSend}"** in ${targetChannel}`)
-            .setColor('32ff25');
+            .setColor(process.env.CONFIRM_COLOR);
 
         interaction.reply({ embeds: [sentEmbed] });
 },

@@ -86,7 +86,7 @@ module.exports = {
 
         const mutedEmbed = new EmbedBuilder()
             .setDescription(`${userToMute} was muted.`)
-            .setColor('0x32ff25');
+            .setColor(process.env.CONFIRM_COLOR);
         interaction.reply({ embeds: [mutedEmbed] });
 	},
 }

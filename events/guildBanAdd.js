@@ -13,7 +13,7 @@ module.exports = {
                 { name: 'User: ', value: `${ban.user}`},
                 { name: 'ID: ', value: `${ban.user.id}`},
             ])
-            .setColor('df0000')
+            .setColor(process.env.ERROR_COLOR)
             .setThumbnail(ban.user.displayAvatarURL({ dynamic : true }))
             .setFooter({
                 text: ban.guild.name, 

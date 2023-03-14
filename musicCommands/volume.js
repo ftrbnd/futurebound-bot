@@ -17,7 +17,7 @@ module.exports = {
         if (!interaction.member._roles.includes(allowedRoleId) && allowedRoleId != interaction.guild.roles.everyone.id) {
             const errEmbed = new EmbedBuilder()
                 .setDescription(`You do not have permission to use music commands right now!`)
-                .setColor('df0000');
+                .setColor(process.env.ERROR_COLOR);
             return interaction.reply({ embeds: [errEmbed] });
         }
 
@@ -25,7 +25,7 @@ module.exports = {
         if(!voiceChannel) {
             const errEmbed = new EmbedBuilder()
                 .setDescription(`You must join a voice channel!`)
-                .setColor('df0000');
+                .setColor(process.env.ERROR_COLOR);
             return interaction.reply({ embeds: [errEmbed] });
         }
 

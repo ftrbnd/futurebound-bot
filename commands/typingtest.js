@@ -49,7 +49,7 @@ module.exports = {
             if(collected.size === 0) { // if no message was entered
                 const couldntFindEmbed = new EmbedBuilder()
                     .setDescription(`You did not type within a minute, please try again!`)
-                    .setColor('df0000')
+                    .setColor(process.env.ERROR_COLOR)
                     .setFooter({
                         text: interaction.guild.name, 
                         iconURL: interaction.guild.iconURL({ dynamic : true})

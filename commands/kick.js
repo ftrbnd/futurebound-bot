@@ -35,7 +35,7 @@ module.exports = {
                 { name: 'By: ', value: `${interaction.user}`},
                 { name: 'Reason: ', value: reasonForKick},
             ])
-            .setColor('df0000')
+            .setColor(process.env.ERROR_COLOR)
             .setThumbnail(userToKick.displayAvatarURL({ dynamic : true }))
             .setFooter({
                 text: interaction.guild.name, 
@@ -47,7 +47,7 @@ module.exports = {
         const kickEmbed = new EmbedBuilder()
             .setTitle(`You were kicked from **${interaction.guild.name}**.`)
             .setDescription(reasonForKick)
-            .setColor('df0000')
+            .setColor(process.env.ERROR_COLOR)
             .setFooter({
                 text: interaction.guild.name, 
                 iconURL: interaction.guild.iconURL({ dynamic : true })
@@ -62,7 +62,7 @@ module.exports = {
             
         const kickedEmbed = new EmbedBuilder()
             .setDescription(`${userToKick} was kicked.`)
-            .setColor('32ff25');
+            .setColor(process.env.CONFIRM_COLOR);
         interaction.reply({ embeds: [kickedEmbed] });
     }
 }

@@ -99,7 +99,7 @@ module.exports = {
                                             .addFields([
                                                 { name: 'User ID: ', value: `${user.discordId}`},
                                             ])
-                                            .setColor('32ff25')
+                                            .setColor(process.env.CONFIRM_COLOR)
                                             // .setThumbnail(userToUnmute.avatarURL())
                                             .setFooter({
                                                 text: futureboundGuild.name, 

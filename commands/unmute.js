@@ -30,7 +30,7 @@ module.exports = {
                 { name: 'User ID: ', value: `${userToUnmute.id}`},
                 { name: 'By: ', value: `${interaction.user}`},
             ])
-            .setColor('32ff25')
+            .setColor(process.env.CONFIRM_COLOR)
             .setThumbnail(userToUnmute.displayAvatarURL({ dynamic : true }))
             .setFooter({
                 text: interaction.guild.name, 
@@ -41,7 +41,7 @@ module.exports = {
 
         const unmuteEmbed = new EmbedBuilder()
             .setTitle(`You were unmuted in **${interaction.guild.name}**.`)
-            .setColor('32ff25')
+            .setColor(process.env.CONFIRM_COLOR)
             .setFooter({
                 text: interaction.guild.name, 
                 iconURL: interaction.guild.iconURL({ dynamic : true })
@@ -56,7 +56,7 @@ module.exports = {
 
         const unmutedEmbed = new EmbedBuilder()
             .setDescription(`${userToUnmute} was unmuted.`)
-            .setColor('32ff25');
+            .setColor(process.env.CONFIRM_COLOR);
         interaction.reply({ embeds: [unmutedEmbed] });
 	},
 }

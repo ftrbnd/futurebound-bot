@@ -25,13 +25,13 @@ module.exports = {
 
             const confirmEmbed = new EmbedBuilder()
                 .setDescription(`Reacted to ${channel.lastMessage} with ${emoji}`)
-                .setColor('32ff25');
+                .setColor(process.env.CONFIRM_COLOR);
             interaction.reply({ embeds: [confirmEmbed], ephemeral: true });
         } catch(err) {
             console.error(err);
             const errorEmbed = new EmbedBuilder()
                 .setDescription(`Failed to react with ${emoji}`)
-                .setColor('df0000');
+                .setColor(process.env.ERROR_COLOR);
             interaction.reply({ embeds: [errorEmbed], ephemeral: true });
         }
 	},

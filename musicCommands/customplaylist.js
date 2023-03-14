@@ -37,7 +37,7 @@ module.exports = {
                 if (err) {
                     const errEmbed = new EmbedBuilder()
                         .setDescription('An error occured.')
-                        .setColor('df0000');
+                        .setColor(process.env.ERROR_COLOR);
                     interaction.reply({ embeds: [errEmbed] });
                     return console.log(err);
                 }
@@ -82,7 +82,7 @@ module.exports = {
                     if (err) {
                         const errEmbed = new EmbedBuilder()
                             .setDescription('An error occured.')
-                            .setColor('df0000');
+                            .setColor(process.env.ERROR_COLOR);
                         interaction.reply({ embeds: [errEmbed] });
                         return console.log(err);
                     }
@@ -90,7 +90,7 @@ module.exports = {
                     if (!data) {
                         const dataEmbed = new EmbedBuilder()
                             .setDescription(`**${playlist}** custom playlist does not exist`)
-                            .setColor('df0000');
+                            .setColor(process.env.ERROR_COLOR);
                         return interaction.reply({ embeds: [dataEmbed] });
 
                     } else {
@@ -104,7 +104,7 @@ module.exports = {
                                 console.log(err);
                                 const errEmbed = new EmbedBuilder()
                                     .setDescription(`An error occurred in /customplaylist.`)
-                                    .setColor('df0000');
+                                    .setColor(process.env.ERROR_COLOR);
                                 return interaction.reply({ embeds: [errEmbed] });
                             })
 
@@ -120,7 +120,7 @@ module.exports = {
                         } else {
                             const errEmbed = new EmbedBuilder()
                                 .setDescription(`You must join a voice channel!`)
-                                .setColor('df0000');
+                                .setColor(process.env.ERROR_COLOR);
                             return interaction.reply({ embeds: [errEmbed] });
                         }
                     }

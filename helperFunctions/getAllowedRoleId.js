@@ -6,8 +6,8 @@ module.exports = {
         const roleData = await MusicPermission.find({}, (err, data) => {
             if (err) {
                 const errEmbed = new EmbedBuilder()
-                    .setDescription('An error occured.')
-                    .setColor('df0000');
+                    .setDescription('An error occurred.')
+                    .setColor(process.env.ERROR_COLOR);
                 interaction.reply({ embeds: [errEmbed] });
                 return console.log(err);
             }
@@ -15,7 +15,7 @@ module.exports = {
             if (!data) {
                 const errEmbed = new EmbedBuilder()
                     .setDescription('No data found.')
-                    .setColor('df0000');
+                    .setColor(process.env.ERROR_COLOR);
                 return interaction.reply({ embeds: [errEmbed] });
     
             } else {

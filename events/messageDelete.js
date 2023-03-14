@@ -16,7 +16,7 @@ module.exports = {
 			.addFields([
 				{ name: 'Channel', value: `${message.channel}`},
 			])
-			.setColor('df0000')
+			.setColor(process.env.ERROR_COLOR)
 			.setTimestamp();
 
 		if(message.attachments.size > 0) {
@@ -31,7 +31,7 @@ module.exports = {
 				const attachmentEmbed = new EmbedBuilder()
 					.setTitle(`Deleted attachment from ${message.author.tag}`)
 					.setImage(attachment.url)
-					.setColor('df0000');
+					.setColor(process.env.ERROR_COLOR);
 
 				await embedMessage.reply({ embeds: [attachmentEmbed] });
 			})

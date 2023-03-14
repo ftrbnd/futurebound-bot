@@ -14,7 +14,7 @@ module.exports = {
                 name: member.displayName + ' just joined the server!', 
                 iconURL: member.user.displayAvatarURL({ dynamic : true})
             })
-            .setColor('32ff25')
+            .setColor(process.env.CONFIRM_COLOR)
             .setThumbnail(member.user.displayAvatarURL({ dynamic : true}))
             .setDescription(`Go to ${rolesChannel} to pick your favorite EP/album, and a color will be added to your name.`)
             .setFooter({

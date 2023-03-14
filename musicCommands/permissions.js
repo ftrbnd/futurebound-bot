@@ -21,8 +21,8 @@ module.exports = {
         await MusicPermission.findOne({ role: chosenRole.id }, (err, data) => {
             if (err) {
                 const errEmbed = new EmbedBuilder()
-                    .setDescription('An error occured.')
-                    .setColor('df0000');
+                    .setDescription('An error occurred.')
+                    .setColor(process.env.ERROR_COLOR);
                 interaction.reply({ embeds: [errEmbed] });
                 return console.log(err);
             }

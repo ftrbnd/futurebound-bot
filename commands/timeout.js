@@ -40,7 +40,7 @@ module.exports = {
         } catch(err) {
             const errEmbed = new EmbedBuilder()
                 .setDescription('Error in timing out user.')
-                .setColor('df0000');
+                .setColor(process.env.ERROR_COLOR);
             interaction.reply({ embeds: [errEmbed] });
             return console.log(err);
         }
@@ -61,7 +61,7 @@ module.exports = {
                 { name: 'By: ', value: `${interaction.user}`},
                 { name: 'Reason: ', value: reasonForTimeout},
             ])
-            .setColor('df0000')
+            .setColor(process.env.ERROR_COLOR)
             .setThumbnail(userToTimeout.displayAvatarURL({ dynamic : true }))
             .setFooter({
                 text: interaction.guild.name, 
@@ -73,7 +73,7 @@ module.exports = {
         const timeoutEmbed = new EmbedBuilder()
             .setTitle(`You were timed out from **${interaction.guild.name}** for ${millisecondsToDuration.get(duration)}.`)
             .setDescription(reasonForTimeout)
-            .setColor('df0000')
+            .setColor(process.env.ERROR_COLOR)
             .setFooter({
                 text: interaction.guild.name, 
                 iconURL: interaction.guild.iconURL({ dynamic : true })
@@ -85,14 +85,14 @@ module.exports = {
         } catch(err) {
             const errEmbed = new EmbedBuilder()
                 .setDescription('Error in sending message to user.')
-                .setColor('df0000');
+                .setColor(process.env.ERROR_COLOR);
             interaction.reply({ embeds: [errEmbed] });
             console.log(err);
         }
             
         const timedOutEmbed = new EmbedBuilder()
             .setDescription(`${userToTimeout} was timed out for ${millisecondsToDuration.get(duration)}.`)
-            .setColor('32ff25');
+            .setColor(process.env.CONFIRM_COLOR);
         interaction.reply({ embeds: [timedOutEmbed] });
     }
 }

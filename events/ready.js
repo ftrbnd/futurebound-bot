@@ -37,7 +37,7 @@ module.exports = {
         if(logChannel) {
             const readyEmbed = new EmbedBuilder()
                 .setDescription(`**${client.user.tag}** has restarted and is now online`)
-                .setColor('32ff25');
+                .setColor(process.env.CONFIRM_COLOR);
             logChannel.send({ embeds: [readyEmbed] });
         }
 
