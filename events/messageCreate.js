@@ -160,7 +160,7 @@ function handleServerSubscriptions(message) {
         "1048015082191335488", // Bipolar Paradise
         "1048014115567837188", // Entrance
     ];
-    const premiumRole = message.guild.roles.cache.get(premiumRoles.find(roleId => member._roles.includes(roleId)));
+    const premiumRole = message.guild.roles.cache.get(premiumRoles.find(roleId => message.member._roles.includes(roleId)));
 
     const action = message.roleSubscriptionData.isRenewal ? 'renewed' : 'joined';
     const monthPlural = message.roleSubscriptionData.totalMonthsSubscribed > 1 ? 'months' : 'month';
