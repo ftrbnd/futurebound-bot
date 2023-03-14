@@ -15,7 +15,7 @@ module.exports = {
             return interaction.reply({ embeds: [errEmbed] });
         }
 
-        const voiceChannel = interaction.client.DisTube.voices.get(interaction.member.voice.channel);
+        const voiceChannel = interaction.member.voice.channel;
         if(!voiceChannel) {
             const errEmbed = new EmbedBuilder()
                 .setDescription(`Not in a voice channel`)
