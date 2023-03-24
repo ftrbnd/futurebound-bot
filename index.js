@@ -75,8 +75,8 @@ client.login(process.env.DISCORD_TOKEN);
 // twitter.execute(client);
 
 // Reddit
-const reddit = require('./modules/reddit');
-reddit.execute(client);
+// const reddit = require('./modules/reddit');
+// reddit.execute(client);
 
 // Mongo DB
 const mongoDB = require('./modules/mongoDB');
