@@ -1,23 +1,24 @@
 const { EmbedBuilder, ChannelType, MessageType, Message } = require('discord.js');
+const Gpt = require('../schemas/GptSchema');
 
 module.exports = {
 	name: 'messageCreate',
 	async execute(message) {
         if(message.author.bot) return; // ignore bot messages
 
-        if(message.channel.type === ChannelType.DM) {
+        if (message.channel.type === ChannelType.DM) {
             handleDirectMessage(message);
 
         } else {
             const introductionsChannel = message.guild.channels.cache.get(process.env.INTRODUCTIONS_CHANNEL_ID);
-            if(!introductionsChannel) return;
+            if (!introductionsChannel) return;
             // react to messages in introductions channel
-            if(message.channel.id === process.env.INTRODUCTIONS_CHANNEL_ID) {
+            if (message.channel.id === process.env.INTRODUCTIONS_CHANNEL_ID) {
                 const kermitHearts = message.guild.emojis.cache.get(process.env.KERMITHEARTS_EMOJI_ID);
                 message.react(kermitHearts);
             }
 
-            switch(message.type) {
+            switch (message.type) {
                 case MessageType.GuildBoostTier3:
                     handleServerBoosts(message, 3);
                     break;
@@ -35,7 +36,9 @@ module.exports = {
                     break;
             }
 
-            handleMentions(message);
+            if (message.mentions.has(message.client.user) && !message.author.bot) {
+                handleMentions(message);
+            }
         }
 	},
 }
@@ -95,60 +98,62 @@ function handleServerBoosts(message, level) {
     generalChannel.send({ content: `${message.author}`, embeds: [boostEmbed] });
 }
 
-function handleMentions(message) {
-    if(message.mentions.has(message.client.user) && !message.author.bot) {
-        if(message.content.includes('good morning') || message.content.includes('gomo') || message.content.includes('Gomo') || message.content.includes('Morning') || message.content.includes('morning') || message.content.includes('gm') || message.content.includes('Good Morning') || message.content.includes('Good morning') || message.content.includes('GOOD MORNING')) {
-            const messages = ['GOOD MORNING!', 'good morning x', 'goooood morning', 'mornin', 'gomo'];
-            var randomMessage = messages[Math.floor(Math.random() * messages.length)];
-            message.reply({ content: randomMessage});
-        }
-        else if(message.content.includes('good night') || message.content.includes('goodnight') || message.content.includes('nini') || message.content.includes('gn') || message.content.includes('night')) {
-            const messages = ['nini', 'night night', 'gn x', 'good night x', 'dont let the bed bugs bite x'];
-            var randomMessage = messages[Math.floor(Math.random() * messages.length)];
-            message.reply({ content: randomMessage});
-        }
-        else if(message.content.includes('hey') || message.content.includes('hi') || message.content.includes('hello') || message.content.includes('Hi') || message.content.includes('Hello') || message.content.includes('Hey')) {
-            const messages = ['hello x', 'hey', 'hi x'];
-            var randomMessage = messages[Math.floor(Math.random() * messages.length)];
-            message.reply({ content: randomMessage});
-        }
-        else if(message.content.includes('how are you') || message.content.includes('how are u') || message.content.includes('how r u')) {
-            const messages = ['i am ok', 'just vibing', 'im good !', ':/'];
-            var randomMessage = messages[Math.floor(Math.random() * messages.length)];
-            message.reply({ content: randomMessage});
-        }
-        else if(message.content.includes('what\'s up') || message.content.includes('whats up') || message.content.includes('sup') || message.content.includes('What\'s up') || message.content.includes('Sup')) {
-            const messages = ['nothing much', 'just vibing', 'been looking at the sky', 'sup'];
-            var randomMessage = messages[Math.floor(Math.random() * messages.length)];
-            message.reply({ content: randomMessage});
-        }
-        else if(message.content.includes('sex') || message.content.includes('catching feelings')) {
-            message.channel.send(`catching feelings > sex`);
-        }
-        else if(message.content.includes('love') || message.content.includes('ily')) {
-            const messages = ['i love you too x', 'ily2 x'];
-            var randomMessage = messages[Math.floor(Math.random() * messages.length)];
-            message.reply({ content: randomMessage});
-        }
-        else if(message.content.includes('miss you') || message.content.includes('miss u')) {
-            const messages = ['i miss you too :((', 'miss u 2 x'];
-            var randomMessage = messages[Math.floor(Math.random() * messages.length)];
-            message.reply({ content: randomMessage});
-        }
-        else if(message.content.includes('how old are you') || message.content.includes('how old are u') || message.content.includes('how old')) {
-            const messages = ['i am 26', '26']; 
-            var randomMessage = messages[Math.floor(Math.random() * messages.length)]; 
-            message.reply({ content: randomMessage});
-        }
-        else if(message.content.includes('grape')) {
-            const messages = ['shut up you grape lookin 🍇', '🍇'];
-            var randomMessage = messages[Math.floor(Math.random() * messages.length)];
-            message.reply({ content: randomMessage});
-        }
-        else if(message.content.includes('oh no')) {
-            message.reply({ content: `i think i'm catching feelings`});
-        }
+async function handleMentions(message) {
+    await message.channel.sendTyping();
+
+    if(message.content.includes('good morning') || message.content.includes('gomo') || message.content.includes('Gomo') || message.content.includes('Morning') || message.content.includes('morning') || message.content.includes('gm') || message.content.includes('Good Morning') || message.content.includes('Good morning') || message.content.includes('GOOD MORNING')) {
+        const messages = ['GOOD MORNING!', 'good morning x', 'goooood morning', 'mornin', 'gomo'];
+        const randomMessage = messages[Math.floor(Math.random() * messages.length)];
+        return message.reply({ content: randomMessage});
     }
+    else if(message.content.includes('good night') || message.content.includes('goodnight') || message.content.includes('nini') || message.content.includes('gn') || message.content.includes('night')) {
+        const messages = ['nini', 'night night', 'gn x', 'good night x', 'dont let the bed bugs bite x'];
+        const randomMessage = messages[Math.floor(Math.random() * messages.length)];
+        return message.reply({ content: randomMessage});
+    }
+    else if(message.content.includes('hey') || message.content.includes('hi') || message.content.includes('hello') || message.content.includes('Hi') || message.content.includes('Hello') || message.content.includes('Hey')) {
+        const messages = ['hello x', 'hey', 'hi x'];
+        const randomMessage = messages[Math.floor(Math.random() * messages.length)];
+        return message.reply({ content: randomMessage});
+    }
+    else if(message.content.includes('how are you') || message.content.includes('how are u') || message.content.includes('how r u')) {
+        const messages = ['i am ok', 'just vibing', 'im good !', ':/'];
+        const randomMessage = messages[Math.floor(Math.random() * messages.length)];
+        return message.reply({ content: randomMessage});
+    }
+    else if(message.content.includes('what\'s up') || message.content.includes('whats up') || message.content.includes('sup') || message.content.includes('What\'s up') || message.content.includes('Sup')) {
+        const messages = ['nothing much', 'just vibing', 'been looking at the sky', 'sup'];
+        const randomMessage = messages[Math.floor(Math.random() * messages.length)];
+        return message.reply({ content: randomMessage});
+    }
+    else if(message.content.includes('sex') || message.content.includes('catching feelings')) {
+        return message.channel.send(`catching feelings > sex`);
+    }
+    else if(message.content.includes('love') || message.content.includes('ily')) {
+        const messages = ['i love you too x', 'ily2 x'];
+        const randomMessage = messages[Math.floor(Math.random() * messages.length)];
+        return message.reply({ content: randomMessage});
+    }
+    else if(message.content.includes('miss you') || message.content.includes('miss u')) {
+        const messages = ['i miss you too :((', 'miss u 2 x'];
+        const randomMessage = messages[Math.floor(Math.random() * messages.length)];
+        return message.reply({ content: randomMessage});
+    }
+    else if(message.content.includes('how old are you') || message.content.includes('how old are u') || message.content.includes('how old')) {
+        const messages = ['i am 26', '26']; 
+        const randomMessage = messages[Math.floor(Math.random() * messages.length)]; 
+        return message.reply({ content: randomMessage});
+    }
+    else if(message.content.includes('grape')) {
+        const messages = ['shut up you grape lookin 🍇', '🍇'];
+        const randomMessage = messages[Math.floor(Math.random() * messages.length)];
+        return message.reply({ content: randomMessage});
+    }
+    else if(message.content.includes('oh no')) {
+        return message.reply({ content: `i think i'm catching feelings`});
+    }
+
+    await handleGPTMessage(message);
 }
 
 function handleServerSubscriptions(message) {
@@ -180,4 +185,48 @@ function handleServerSubscriptions(message) {
         .setTimestamp();
 
     generalChannel.send({ content: `${message.author}`, embeds: [subscriptionEmbed] });
+}
+
+async function handleGPTMessage(message) {
+    const { ChatGPTUnofficialProxyAPI } = await import('chatgpt');
+
+    const api = new ChatGPTUnofficialProxyAPI({
+        accessToken: process.env.OPENAI_ACCESS_TOKEN,
+        apiReverseProxyUrl: 'https://bypass.duti.tech/api/conversation'
+    });
+
+    await Gpt.find((err, data) => {
+        if (err) {
+            const errEmbed = new EmbedBuilder()
+                .setDescription('An error occurred.')
+                .setColor(process.env.ERROR_COLOR);
+            message.reply({ embeds: [errEmbed] });
+            return console.log(err);``
+        }
+
+        if (!data || data.length == 0) {
+            api.sendMessage(message.content)
+                .then(res => {
+                    message.reply({ content: res.text.toLowerCase() });
+
+                    Gpt.create({
+                        parentMessageId: res.id,
+                        conversationId: res.conversationId
+                    }).catch(err => console.error(err));
+
+                    return console.log(`Created a new GPT document in database with parentMessageId ${res.id}`);
+                });
+        } else { // if data exists, get votes
+            api.sendMessage(message.content, {
+                parentMessageId: data[0].parentMessageId,
+                conversationId: data[0].conversationId
+            }).then(res => {
+                data[0].parentMessageId = res.id;
+                data[0].conversationId = res.conversationId;
+                data[0].save();
+
+                return message.reply({ content: res.text.toLowerCase() });
+            })
+        }
+    }).clone();
 }

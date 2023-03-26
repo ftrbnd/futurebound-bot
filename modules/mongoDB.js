@@ -1,4 +1,6 @@
 const mongoose = require('mongoose');
+mongoose.set('strictQuery', true);
+
 const User = require('../schemas/UserSchema');
 const { EmbedBuilder } = require('discord.js');
 
@@ -9,8 +11,6 @@ module.exports = {
                 console.log(`Connected to ${m.connections[0].name}!`)
             }).catch((err) => console.log(err));
         
-        mongoose.set('strictQuery', true);
-
         setInterval(() => {
             User.find((err, data)=> { // is there a birthday today?
                 if(data) {
