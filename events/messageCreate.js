@@ -36,7 +36,7 @@ module.exports = {
                     break;
             }
 
-            if (message.mentions.has(message.client.user) && !message.author.bot) {
+            if (message.channel.id == process.env.BOTS_CHANNEL_ID && message.mentions.has(message.client.user) && !message.author.bot) {
                 try {
                     handleMentions(message);
                 } catch (e) {
@@ -142,7 +142,10 @@ async function handleGPTMessage(message) {
     const { ChatGPTAPI } = await import('chatgpt');
 
     const api = new ChatGPTAPI({
-        apiKey: process.env.OPENAI_API_KEY
+        apiKey: process.env.OPENAI_API_KEY,
+        completionParams: {
+            user: message.author.id
+        }
     });
 
     await Gpt.find((err, data) => {
