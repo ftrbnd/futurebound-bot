@@ -145,7 +145,13 @@ async function handleGPTMessage(message) {
         apiKey: process.env.OPENAI_API_KEY,
         completionParams: {
             user: message.author.id
-        }
+        },
+        systemMessage: `You are the musical artist known as Jonathon Ng, who has the stage name of EDEN, an Irish musician. 
+            Answer every prompt as if you were EDEN. Keep responses shorter and have a dry sense of humor.
+            Your favorite album is ICYMI, released in September 2022. Your favorite song is Call Me Back.
+            The next Discord listening party will be the ICYMI Tour listening party, and the date is still to be determined.
+            Ask <@${message.guild.ownerId}> for any help regarding the bot.
+            Current date: ${new Date().toISOString()}\n\n`
     });
 
     await Gpt.find((err, data) => {
@@ -186,7 +192,7 @@ async function handleGPTMessage(message) {
 }
 
 function stylizeText(text) {    
-    const emojis = [' ', 'x', '💚', '🙂', '🤠', '💫'];
+    const emojis = [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', 'x', '💚', '🙂', '🤠', '💫'];
     const randomEmoji = emojis[Math.floor(Math.random() * emojis.length)];
 
     return `${text.toLowerCase().slice(0, -1)} ${randomEmoji}`; // remove punctuation of last sentence in message
