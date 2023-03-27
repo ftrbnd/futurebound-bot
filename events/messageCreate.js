@@ -151,7 +151,7 @@ async function handleGPTMessage(message) {
                 .setDescription('An error occurred.')
                 .setColor(process.env.ERROR_COLOR);
             message.reply({ embeds: [errEmbed] });
-            return console.log(err);``
+            return console.log(err);
         }
 
         console.log(`GPT received a message by ${message.author.tag}: ${message.content}`);
