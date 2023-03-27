@@ -37,7 +37,11 @@ module.exports = {
             }
 
             if (message.mentions.has(message.client.user) && !message.author.bot) {
-                handleMentions(message);
+                try {
+                    handleMentions(message);
+                } catch (e) {
+                    console.error(e);
+                }
             }
         }
 	},
@@ -100,59 +104,6 @@ function handleServerBoosts(message, level) {
 
 async function handleMentions(message) {
     await message.channel.sendTyping();
-
-    if(message.content.includes('good morning') || message.content.includes('gomo') || message.content.includes('Gomo') || message.content.includes('Morning') || message.content.includes('morning') || message.content.includes('gm') || message.content.includes('Good Morning') || message.content.includes('Good morning') || message.content.includes('GOOD MORNING')) {
-        const messages = ['GOOD MORNING!', 'good morning x', 'goooood morning', 'mornin', 'gomo'];
-        const randomMessage = messages[Math.floor(Math.random() * messages.length)];
-        return message.reply({ content: randomMessage});
-    }
-    else if(message.content.includes('good night') || message.content.includes('goodnight') || message.content.includes('nini') || message.content.includes('gn') || message.content.includes('night')) {
-        const messages = ['nini', 'night night', 'gn x', 'good night x', 'dont let the bed bugs bite x'];
-        const randomMessage = messages[Math.floor(Math.random() * messages.length)];
-        return message.reply({ content: randomMessage});
-    }
-    else if(message.content.includes('hey') || message.content.includes('hi') || message.content.includes('hello') || message.content.includes('Hi') || message.content.includes('Hello') || message.content.includes('Hey')) {
-        const messages = ['hello x', 'hey', 'hi x'];
-        const randomMessage = messages[Math.floor(Math.random() * messages.length)];
-        return message.reply({ content: randomMessage});
-    }
-    else if(message.content.includes('how are you') || message.content.includes('how are u') || message.content.includes('how r u')) {
-        const messages = ['i am ok', 'just vibing', 'im good !', ':/'];
-        const randomMessage = messages[Math.floor(Math.random() * messages.length)];
-        return message.reply({ content: randomMessage});
-    }
-    else if(message.content.includes('what\'s up') || message.content.includes('whats up') || message.content.includes('sup') || message.content.includes('What\'s up') || message.content.includes('Sup')) {
-        const messages = ['nothing much', 'just vibing', 'been looking at the sky', 'sup'];
-        const randomMessage = messages[Math.floor(Math.random() * messages.length)];
-        return message.reply({ content: randomMessage});
-    }
-    else if(message.content.includes('sex') || message.content.includes('catching feelings')) {
-        return message.channel.send(`catching feelings > sex`);
-    }
-    else if(message.content.includes('love') || message.content.includes('ily')) {
-        const messages = ['i love you too x', 'ily2 x'];
-        const randomMessage = messages[Math.floor(Math.random() * messages.length)];
-        return message.reply({ content: randomMessage});
-    }
-    else if(message.content.includes('miss you') || message.content.includes('miss u')) {
-        const messages = ['i miss you too :((', 'miss u 2 x'];
-        const randomMessage = messages[Math.floor(Math.random() * messages.length)];
-        return message.reply({ content: randomMessage});
-    }
-    else if(message.content.includes('how old are you') || message.content.includes('how old are u') || message.content.includes('how old')) {
-        const messages = ['i am 26', '26']; 
-        const randomMessage = messages[Math.floor(Math.random() * messages.length)]; 
-        return message.reply({ content: randomMessage});
-    }
-    else if(message.content.includes('grape')) {
-        const messages = ['shut up you grape lookin 🍇', '🍇'];
-        const randomMessage = messages[Math.floor(Math.random() * messages.length)];
-        return message.reply({ content: randomMessage});
-    }
-    else if(message.content.includes('oh no')) {
-        return message.reply({ content: `i think i'm catching feelings`});
-    }
-
     await handleGPTMessage(message);
 }
 
@@ -188,11 +139,10 @@ function handleServerSubscriptions(message) {
 }
 
 async function handleGPTMessage(message) {
-    const { ChatGPTUnofficialProxyAPI } = await import('chatgpt');
+    const { ChatGPTAPI } = await import('chatgpt');
 
-    const api = new ChatGPTUnofficialProxyAPI({
-        accessToken: process.env.OPENAI_ACCESS_TOKEN,
-        apiReverseProxyUrl: 'https://bypass.duti.tech/api/conversation'
+    const api = new ChatGPTAPI({
+        apiKey: process.env.OPENAI_API_KEY
     });
 
     await Gpt.find((err, data) => {
@@ -204,29 +154,37 @@ async function handleGPTMessage(message) {
             return console.log(err);``
         }
 
+        console.log(`GPT received a message by ${message.author.tag}: ${message.content}`);
+
         if (!data || data.length == 0) {
             api.sendMessage(message.content)
                 .then(res => {
-                    message.reply({ content: res.text.toLowerCase() });
+                    message.reply({ content: stylizeText(res.text) });
 
                     Gpt.create({
-                        parentMessageId: res.id,
-                        conversationId: res.conversationId
+                        parentMessageId: res.id
                     }).catch(err => console.error(err));
 
-                    console.log(`Created a new GPT document in database with parentMessageId ${res.id}`);
+                    console.log('GPT replied: ', res);
                 });
         } else { 
             api.sendMessage(message.content, {
-                parentMessageId: data[0].parentMessageId,
-                conversationId: data[0].conversationId
+                parentMessageId: data[0].parentMessageId
             }).then(res => {
                 data[0].parentMessageId = res.id;
-                data[0].conversationId = res.conversationId;
                 data[0].save();
 
-                message.reply({ content: res.text.toLowerCase() });
+                console.log('GPT replied: ', res);
+
+                message.reply({ content: stylizeText(res.text) });
             })
         }
     }).clone();
+}
+
+function stylizeText(text) {    
+    const emojis = [' ', 'x', '💚', '🙂', '🤠', '💫'];
+    const randomEmoji = emojis[Math.floor(Math.random() * emojis.length)];
+
+    return `${text.toLowerCase().slice(0, -1)} ${randomEmoji}`; // remove punctuation of last sentence in message
 }
