@@ -36,7 +36,7 @@ module.exports = {
                     break;
             }
 
-            if (message.channel.id == process.env.BOTS_CHANNEL_ID && message.mentions.has(message.client.user) && !message.author.bot) {
+            if ((message.channel.id == process.env.BOTS_CHANNEL_ID || message.member.roles.cache.has(process.env.MODERATORS_ROLE_ID)) && message.mentions.has(message.client.user) && !message.author.bot) {
                 try {
                     handleMentions(message);
                 } catch (e) {
