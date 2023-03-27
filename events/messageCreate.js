@@ -214,9 +214,9 @@ async function handleGPTMessage(message) {
                         conversationId: res.conversationId
                     }).catch(err => console.error(err));
 
-                    return console.log(`Created a new GPT document in database with parentMessageId ${res.id}`);
+                    console.log(`Created a new GPT document in database with parentMessageId ${res.id}`);
                 });
-        } else { // if data exists, get votes
+        } else { 
             api.sendMessage(message.content, {
                 parentMessageId: data[0].parentMessageId,
                 conversationId: data[0].conversationId
@@ -225,7 +225,7 @@ async function handleGPTMessage(message) {
                 data[0].conversationId = res.conversationId;
                 data[0].save();
 
-                return message.reply({ content: res.text.toLowerCase() });
+                message.reply({ content: res.text.toLowerCase() });
             })
         }
     }).clone();
