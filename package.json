@@ -3,7 +3,7 @@
   "version": "1.13.0",
   "description": "Updated version of my Discord bot, now using Discord.js v13",
   "engines": {
-    "node": "16.x"
+    "node": "18.x"
   },
   "main": "index.js",
   "scripts": {
