@@ -71,8 +71,8 @@ for(const file of musicEventFiles) {
 client.login(process.env.DISCORD_TOKEN);
 
 // Twitter
-// const twitter = require('./modules/twitter');
-// twitter.execute(client);
+const twitter = require('./modules/twitter');
+twitter.execute(client);
 
 // Reddit
 // const reddit = require('./modules/reddit');
