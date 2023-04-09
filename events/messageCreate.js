@@ -110,6 +110,8 @@ async function handleMentions(message) {
         case 'gomo':
         case 'morning':
         case 'gm':
+        case 'good morning eden':
+        case 'goodmorning eden':
             const messages1 = ['GOOD MORNING', 'good morning x', 'goooood morning', 'mornin', 'gomo'];
             const randomMessage1 = messages1[Math.floor(Math.random() * messages1.length)];
             return message.reply({ content: randomMessage1});
@@ -117,6 +119,8 @@ async function handleMentions(message) {
         case 'goodnight':
         case 'nini':
         case 'gn':
+        case 'goodnight eden':
+        case 'good night eden':
             const messages2 = ['nini', 'night night', 'gn x', 'good night x', 'dont let the bed bugs bite x'];
             const randomMessage2 = messages2[Math.floor(Math.random() * messages2.length)];
             return message.reply({ content: randomMessage2});
