@@ -1,12 +1,17 @@
 // Interactions: slash commands, buttons, select menus
 const { EmbedBuilder, InteractionType } = require('discord.js');
 const SurvivorRound = require('../schemas/SurvivorRoundSchema');
+const Giveaway = require('../schemas/GiveawaySchema');
 
 module.exports = {
 	name: 'interactionCreate',
 	async execute(interaction) {
         if (interaction.isStringSelectMenu() && interaction.channel.name == process.env.SURVIVOR_CHANNEL_NAME) {
             await handleSurvivorVote(interaction); // handle menu interactions from /survivor
+        }
+
+        if (interaction.isButton() && interaction.channel.id == process.env.ANNOUNCEMENTS_CHANNEL_ID) {
+            await handleGiveawayEntry(interaction);
         }
 
         if (!interaction.type === InteractionType.ApplicationCommand) return;
@@ -99,4 +104,51 @@ async function handleSurvivorVote(interaction) {
             return interaction.reply({ embeds: [userConfirmEmbed], ephemeral: true });
         }
     }).clone();
+}
+
+async function handleGiveawayEntry(interaction) {
+    const giveaway = await Giveaway.findByIdAndUpdate(interaction.customId).clone();
+
+    if (giveaway.entries.includes(interaction.user.id)) {
+        const enteredEmbed = new EmbedBuilder()
+            .setDescription('You have already entered the giveaway!')
+            .setColor(process.env.ERROR_COLOR);
+        return interaction.reply({ embeds: [enteredEmbed], ephemeral: true });
+    }
+
+    const premiumRoles = [
+        "1048015470168637440", // Final Call
+        "1048015082191335488", // Bipolar Paradise
+        "1048014115567837188", // Entrance
+    ];
+    const premiumRole = interaction.guild.roles.cache.get(premiumRoles.find(roleId => interaction.member._roles.includes(roleId)));
+
+    let subscriberMessage;
+    if (premiumRole) {
+        switch (premiumRole.id) { // subscribers get more entries
+            case premiumRoles[0]:
+                giveaway.entries.push(interaction.user.id);
+                giveaway.entries.push(interaction.user.id);
+                giveaway.entries.push(interaction.user.id);
+                subscriberMessage = 'Thank you for being a Server Subscriber, you get 3 extra entries! (4 total)';
+                break;
+            case premiumRoles[1]:
+                giveaway.entries.push(interaction.user.id);
+                giveaway.entries.push(interaction.user.id);
+                subscriberMessage = 'Thank you for being a Server Subscriber, you get 2 extra entries! (3 total)';
+                break;
+            case premiumRoles[2]:
+                giveaway.entries.push(interaction.user.id);
+                subscriberMessage = 'Thank you for being a Server Subscriber, you get 1 extra entry! (2 total)';
+                break;
+        }
+    }
+    giveaway.entries.push(interaction.user.id);
+
+    await giveaway.save();
+
+    const confirmEmbed = new EmbedBuilder()
+        .setDescription(`Entry confirmed! ${subscriberMessage ?? ''}`)
+        .setColor(process.env.CONFIRM_COLOR);
+    interaction.reply({ embeds: [confirmEmbed], ephemeral: true });
 }
