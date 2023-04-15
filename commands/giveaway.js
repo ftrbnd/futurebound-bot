@@ -20,6 +20,20 @@ module.exports = {
                     .setDescription('A short description')
                     .setRequired(true))
                 .addStringOption(option => 
+                    option.setName('unit')
+                    .setDescription('unit of time')
+                    .addChoices(
+                        { name: 'Minutes', value: 'minutes' },
+                        { name: 'Hours', value: 'hours' },
+                        { name: 'Days', value: 'days' },
+                    )
+                    .setRequired(true))
+                .addIntegerOption(option => 
+                    option.setName('amount')
+                    .setDescription('amount of specified time unit')
+                    .setMinValue(1)
+                    .setRequired(true))
+                .addStringOption(option => 
                     option.setName('image')
                     .setDescription('The image url')
                     .setRequired(false)))
@@ -40,8 +54,22 @@ module.exports = {
             const prize = interaction.options.getString('prize');
             const description = interaction.options.getString('description');
             const imageURL = interaction.options.getString('image');
+
             const endDate = new Date();
-            endDate.setMinutes(endDate.getMinutes() + 5);
+
+            const unit = interaction.options.getString('unit');
+            const amount = interaction.options.getInteger('amount');
+            switch (unit) {
+                case 'minutes':
+                    endDate.setMinutes(endDate.getMinutes() + amount);
+                    break;
+                case 'hours':
+                    endDate.setHours(endDate.getHours() + amount);
+                    break;
+                case 'days':
+                    endDate.setDate(endDate.getDate() + amount);
+                    break;
+            }
             const timestamp = `${endDate.getTime()}`.substring(0, 10);
 
             const giveaway = new Giveaway({
@@ -86,7 +114,7 @@ module.exports = {
                 announcementChannel.send({ embeds: [giveawayEmbed], components: [row] });
 
                 const confirmEmbed = new EmbedBuilder()
-                    .setDescription(`Started giveaway for **${prize}** in ${announcementChannel}`)
+                    .setDescription(`Started giveaway for **${prize}** in ${announcementChannel}, ends in ${amount} ${amount == 1 ? unit.substring(0, unit.length - 1) : unit}`)
                     .addFields([
                         { name: 'End Date', value: `<t:${timestamp}>` }
                     ])
