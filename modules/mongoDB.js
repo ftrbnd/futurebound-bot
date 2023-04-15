@@ -155,6 +155,11 @@ module.exports = {
                             if (giveaway.imageURL) winnerEmbed.setThumbnail(giveaway.imageURL);
 
                             announcementChannel.send({ embeds: [winnerEmbed] });
+                            try {
+                                winner.send({ content: 'Congrats on winning! A moderator will contact you shortly', embeds: [winnerEmbed] });
+                            } catch (e) {
+                                console.log(e);
+                            }
                         }
                     })
 
