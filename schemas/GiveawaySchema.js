@@ -16,6 +16,10 @@ const GiveawaySchema = new mongoose.Schema({
     entries: {
         type: mongoose.SchemaTypes.Array,
         required: false,
+    },
+    imageURL: {
+        type: mongoose.SchemaTypes.String,
+        required: false,
     }
 }, { versionKey: false });
 

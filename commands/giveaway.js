@@ -39,29 +39,34 @@ module.exports = {
         if(interaction.options.getSubcommand() === 'start') {
             const prize = interaction.options.getString('prize');
             const description = interaction.options.getString('description');
-            const endDate = new Date();
             const imageURL = interaction.options.getString('image');
-            endDate.setDate(endDate.getDate() + 1);
+            const endDate = new Date();
+            endDate.setMinutes(endDate.getMinutes() + 5);
+            const timestamp = `${endDate.getTime()}`.substring(0, 10);
 
-            Giveaway.create({
-                prize: prize,
-                description: description,
-                endDate: endDate
-            }, function (err, giveaway) {
+            const giveaway = new Giveaway({
+                prize,
+                description,
+                endDate,
+                imageURL
+            });
+
+            giveaway.save(function (err) {
                 if (err) {
                     const errEmbed = new EmbedBuilder()
-                        .setDescription(`An error occurred.`)
+                        .setDescription(`An error occurred, please try againE`)
                         .setColor(process.env.ERROR_COLOR);
                     interaction.reply({ embeds: [errEmbed] });
                     return console.error(err);
                 }
 
                 console.log(`Saved ${prize} giveaway to database!`);
+
                 const giveawayEmbed = new EmbedBuilder()
                     .setTitle(`Giveaway: ${prize}`)
                     .setDescription(description)
                     .addFields([
-                        { name: 'End Date', value: `<t:${endDate.getTime()}>` }
+                        { name: 'End Date', value: `<t:${timestamp}>` }
                     ])
                     .setColor(process.env.GIVEAWAY_COLOR);
                 if (imageURL) giveawayEmbed.setThumbnail(imageURL);
@@ -77,15 +82,16 @@ module.exports = {
                             .setStyle(ButtonStyle.Link)
                             .setURL(`https://discord.com/channels/${interaction.guild.id}/role-subscriptions`)
                     );
-                
+ 
                 announcementChannel.send({ embeds: [giveawayEmbed], components: [row] });
 
                 const confirmEmbed = new EmbedBuilder()
                     .setDescription(`Started giveaway for **${prize}** in ${announcementChannel}`)
                     .addFields([
-                        { name: 'End Date', value: `<t:${endDate.getTime()}>` }
+                        { name: 'End Date', value: `<t:${timestamp}>` }
                     ])
                     .setColor(process.env.CONFIRM_COLOR);
+                
                 interaction.reply({ embeds: [confirmEmbed] });
             });
 

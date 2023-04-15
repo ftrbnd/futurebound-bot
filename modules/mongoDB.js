@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 mongoose.set('strictQuery', true);
 
 const User = require('../schemas/UserSchema');
+const Giveaway = require('../schemas/GiveawaySchema');
 const { EmbedBuilder } = require('discord.js');
 
 module.exports = {
@@ -10,11 +11,12 @@ module.exports = {
             .then((m) => {
                 console.log(`Connected to ${m.connections[0].name}!`)
             }).catch((err) => console.log(err));
-        
+                
         setInterval(() => {
-            User.find((err, data)=> { // is there a birthday today?
-                if(data) {
-                    const today = new Date();
+            const today = new Date();
+
+            User.find((err, data) => { // is there a birthday today?
+                if (data) {
                     // console.log(`Checking for birthdays/mutes - today's date: ${today}`)
             
                     const numberEndings = new Map();
@@ -25,18 +27,18 @@ module.exports = {
                     numberEndings.set(2, 'nd');
                     numberEndings.set(1, 'st');
 
-                    const futureboundGuild = client.guilds.cache.get(process.env.GUILD_ID);
-                    const modChannel = futureboundGuild.channels.cache.get(process.env.MODERATORS_CHANNEL_ID);
-                    if(!modChannel) return;
+                    const server = client.guilds.cache.get(process.env.GUILD_ID);
+                    const modChannel = server.channels.cache.get(process.env.MODERATORS_CHANNEL_ID);
+                    if (!modChannel) return;
             
                     data.forEach(user => {
-                        if(user.birthday) { // not all users may have birthdays due to warn command
-                            if(today.getMonth() === user.birthday.getMonth() && today.getDate() === user.birthday.getDate() && today.getHours() === user.birthday.getHours() && today.getMinutes() === user.birthday.getMinutes()) {
+                        if (user.birthday) { // not all users may have birthdays due to warn command
+                            if (today.getMonth() === user.birthday.getMonth() && today.getDate() === user.birthday.getDate() && today.getHours() === user.birthday.getHours() && today.getMinutes() === user.birthday.getMinutes()) {
                                 const age = today.getFullYear() - user.birthday.getFullYear();
                 
                                 let ageSuffix;
-                                for(const [number, suffix] of numberEndings.entries()) { // every number ends with 'th' except for numbers that end in 1, 2, or 3
-                                    if(`${age}`.endsWith(`${number}`)) {
+                                for (const [number, suffix] of numberEndings.entries()) { // every number ends with 'th' except for numbers that end in 1, 2, or 3
+                                    if (`${age}`.endsWith(`${number}`)) {
                                         ageSuffix = suffix;
                                         break;
                                     } else {
@@ -45,7 +47,7 @@ module.exports = {
                                 }
                 
                                 let balloons = '';
-                                for(var i = 0; i < age; i++) {
+                                for (var i = 0; i < age; i++) {
                                     balloons += '🎈';
                                 }
                 
@@ -57,21 +59,21 @@ module.exports = {
                                 // }
                                 // let bdayDescription = `It's ${user.username}'s birthday today! 🥳🎈🎉`
             
-                                const birthdayPerson = futureboundGuild.members.fetch(user.discordId)
+                                const birthdayPerson = server.members.fetch(user.discordId)
                                     .then(birthdayPerson => {
                                         const birthdayEmbed = new EmbedBuilder()
                                             .setTitle(`It's ${birthdayPerson.displayName}'s birthday today! 🥳🎈🎉`)
                                             .setDescription(balloons)
                                             .setColor('ffffc5')
-                                            .setThumbnail(birthdayPerson.user.displayAvatarURL({ dynamic : true }))
+                                            .setThumbnail(birthdayPerson.user.displayAvatarURL({ dynamic: true }))
                                             .setFooter({
-                                                text: `Use /birthday in #bots to set your own birthday`, 
-                                                iconURL: `${futureboundGuild.iconURL({ dynamic : true })}`
+                                                text: `Use /birthday in #bots to set your own birthday`,
+                                                iconURL: `${server.iconURL({ dynamic: true })}`
                                             });
                 
                                         try {
                                             birthdayPerson.send({ content: 'happy birthday!! 🥳' });
-                                        } catch(error) {
+                                        } catch (error) {
                                             console.log(`Failed to dm ${user.username}`);
                                             console.log(error);
                                         }
@@ -82,11 +84,11 @@ module.exports = {
                                     })
                                     .catch(console.error);
                             }
-                        }    
+                        }
 
-                        if(user.muteEnd) { // if a user has a muteEnd date != null
-                            if(today.getFullYear() === user.muteEnd.getFullYear() && today.getMonth() === user.muteEnd.getMonth() && today.getDate() === user.muteEnd.getDate()) {
-                                const userToUnmute = futureboundGuild.members.fetch(user.discordId)
+                        if (user.muteEnd) { // if a user has a muteEnd date != null
+                            if (today.getFullYear() === user.muteEnd.getFullYear() && today.getMonth() === user.muteEnd.getMonth() && today.getDate() === user.muteEnd.getDate()) {
+                                const userToUnmute = server.members.fetch(user.discordId)
                                     .then(userToUnmute => {
                                         try {
                                             userToUnmute.roles.set([]); // remove all roles - including Muted
@@ -97,13 +99,13 @@ module.exports = {
                                         const logEmbed = new EmbedBuilder()
                                             .setTitle(userToUnmute.displayName + ' was unmuted after a week.')
                                             .addFields([
-                                                { name: 'User ID: ', value: `${user.discordId}`},
+                                                { name: 'User ID: ', value: `${user.discordId}` },
                                             ])
                                             .setColor(process.env.CONFIRM_COLOR)
                                             // .setThumbnail(userToUnmute.avatarURL())
                                             .setFooter({
-                                                text: futureboundGuild.name, 
-                                                iconURL: futureboundGuild.iconURL({ dynamic : true })
+                                                text: server.name,
+                                                iconURL: server.iconURL({ dynamic: true })
                                             })
                                             .setTimestamp();
                                         modChannel.send({ embeds: [logEmbed] });
@@ -119,7 +121,47 @@ module.exports = {
                 } else {
                     console.log(err);
                 }
-            })
+            });
+
+            Giveaway.find((err, data) => {
+                if (data) {
+                    
+                    data.forEach(giveaway => {
+                        if (today.getMonth() === giveaway.endDate.getMonth()
+                            && today.getDate() === giveaway.endDate.getDate()
+                            && today.getHours() === giveaway.endDate.getHours()
+                            && today.getMinutes() === giveaway.endDate.getMinutes()) {
+                            
+                            if (giveaway.entries.length == 0) {
+                                return console.log('No entries for this giveaway.');
+                            }
+                            
+                            const server = client.guilds.cache.get(process.env.GUILD_ID);
+                            const winnerId = giveaway.entries[Math.floor(Math.random() * giveaway.entries.length)];
+                            const winner = server.members.cache.get(winnerId);
+
+                            const announcementChannel = server.channels.cache.get(process.env.ANNOUNCEMENTS_CHANNEL_ID);
+
+                            const winnerEmbed = new EmbedBuilder()
+                                .setAuthor({
+                                    name: `${winner.nickname || winner.user.username} won the giveaway!`,
+                                    iconURL: winner.displayAvatarURL({ dynamic: true })
+                                })
+                                .addFields([
+                                    { name: 'Prize: ', value: giveaway.prize },
+                                ])
+                                .setColor(process.env.GIVEAWAY_COLOR)
+                                .setTimestamp();
+                            if (giveaway.imageURL) winnerEmbed.setThumbnail(giveaway.imageURL);
+
+                            announcementChannel.send({ embeds: [winnerEmbed] });
+                        }
+                    })
+
+                } else {
+                    console.log(err);
+                }
+            });
         }, 60000); // run this every minute
     }       
 }

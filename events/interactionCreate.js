@@ -146,6 +146,22 @@ async function handleGiveawayEntry(interaction) {
     giveaway.entries.push(interaction.user.id);
 
     await giveaway.save();
+    console.log(`${interaction.user.tag} entered giveaway #${interaction.customId}`);
+
+    const timestamp = `${giveaway.endDate.getTime()}`.substring(0, 10);
+    const newEmbed = new EmbedBuilder()
+        .setTitle(`Giveaway: ${giveaway.prize}`)
+        .setDescription(giveaway.description)
+        .addFields([
+            { name: 'End Date', value: `<t:${timestamp}>` }
+        ])
+        .setColor(process.env.GIVEAWAY_COLOR)
+        .setFooter({
+            text: `${giveaway.entries.length} ${giveaway.entries.length == 1 ? 'entry' : 'entries'}`
+        });
+    if (giveaway.imageURL) newEmbed.setThumbnail(giveaway.imageURL);
+
+    await interaction.message.edit({ embeds: [newEmbed] });
 
     const confirmEmbed = new EmbedBuilder()
         .setDescription(`Entry confirmed! ${subscriberMessage ?? ''}`)
