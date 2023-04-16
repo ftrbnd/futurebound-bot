@@ -143,7 +143,6 @@ module.exports = {
 
                             server.members.fetch(winnerId)
                                 .then(member => {
-                                    console.log('Winner: ', member);
 
                                     const winnerEmbed = new EmbedBuilder()
                                         .setAuthor({
@@ -158,11 +157,11 @@ module.exports = {
                                     if (giveaway.imageURL) winnerEmbed.setThumbnail(giveaway.imageURL);
 
                                     announcementChannel.send({ embeds: [winnerEmbed] });
-                                    // try {
-                                    //     server.members.cache.get(winnerId).send({ content: 'Congrats on winning! A moderator will contact you shortly', embeds: [winnerEmbed] });
-                                    // } catch (e) {
-                                    //     console.log(e);
-                                    // }
+                                    try {
+                                        member.send({ content: 'Congrats on winning! A moderator will contact you shortly', embeds: [winnerEmbed] });
+                                    } catch (e) {
+                                        console.log(e);
+                                    }
                                 });
                         }
                     })
