@@ -132,38 +132,38 @@ module.exports = {
                             && today.getHours() === giveaway.endDate.getHours()
                             && today.getMinutes() === giveaway.endDate.getMinutes()) {
                             
-                            if (giveaway.entries.length == 0) {
+                            if (giveaway.entries.length == 0)
                                 return console.log('No entries for this giveaway.');
-                            }
                             
                             const server = client.guilds.cache.get(process.env.GUILD_ID);
                             const announcementChannel = server.channels.cache.get(process.env.ANNOUNCEMENTS_CHANNEL_ID);
 
                             const winnerId = giveaway.entries[Math.floor(Math.random() * giveaway.entries.length)];
                             console.log(`Winner's id of giveaway #${giveaway.id}: ${winnerId}`);
-                            // const winner = server.members.cache.get(winnerId);
-                            // console.log(`Winner of giveaway #${giveaway.id}: ${winner}`);
-                            // const winnerDisplayName = winner.nickname ? winner.nickname : winner.user.username;
-                            // console.log('winnerDisplayName: ', winnerDisplayName);
 
-                            const winnerEmbed = new EmbedBuilder()
-                                .setAuthor({
-                                    name: `${server.members.cache.get(winnerId).user.tag} won the giveaway!`,
-                                    iconURL: server.members.cache.get(winnerId).displayAvatarURL()
-                                })
-                                .addFields([
-                                    { name: 'Prize: ', value: giveaway.prize },
-                                ])
-                                .setColor(process.env.GIVEAWAY_COLOR)
-                                .setTimestamp();
-                            if (giveaway.imageURL) winnerEmbed.setThumbnail(giveaway.imageURL);
+                            server.members.fetch(winnerId)
+                                .then(member => {
+                                    console.log('Winner: ', member);
 
-                            announcementChannel.send({ embeds: [winnerEmbed] });
-                            try {
-                                winner.send({ content: 'Congrats on winning! A moderator will contact you shortly', embeds: [winnerEmbed] });
-                            } catch (e) {
-                                console.log(e);
-                            }
+                                    const winnerEmbed = new EmbedBuilder()
+                                        .setAuthor({
+                                            name: `${member.displayName} won the giveaway!`,
+                                            iconURL: member.displayAvatarURL()
+                                        })
+                                        .addFields([
+                                            { name: 'Prize: ', value: giveaway.prize },
+                                        ])
+                                        .setColor(process.env.GIVEAWAY_COLOR)
+                                        .setTimestamp();
+                                    if (giveaway.imageURL) winnerEmbed.setThumbnail(giveaway.imageURL);
+
+                                    announcementChannel.send({ embeds: [winnerEmbed] });
+                                    // try {
+                                    //     server.members.cache.get(winnerId).send({ content: 'Congrats on winning! A moderator will contact you shortly', embeds: [winnerEmbed] });
+                                    // } catch (e) {
+                                    //     console.log(e);
+                                    // }
+                                });
                         }
                     })
 
