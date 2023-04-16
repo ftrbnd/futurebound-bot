@@ -138,13 +138,19 @@ module.exports = {
                             
                             const server = client.guilds.cache.get(process.env.GUILD_ID);
                             const winnerId = giveaway.entries[Math.floor(Math.random() * giveaway.entries.length)];
+                            console.log(`Winner's id of giveaway #${giveaway.id}: ${winnerId}`);
+
                             const winner = server.members.cache.get(winnerId);
+                            console.log(`Winner of giveaway #${giveaway.id}: ${winner}`);
 
                             const announcementChannel = server.channels.cache.get(process.env.ANNOUNCEMENTS_CHANNEL_ID);
 
+                            const winnerDisplayName = winner.nickname ? winner.nickname : winner.user.username;
+                            console.log('winnerDisplayName: ', winnerDisplayName);
+
                             const winnerEmbed = new EmbedBuilder()
                                 .setAuthor({
-                                    name: `${winner.nickname || winner.user.username} won the giveaway!`,
+                                    name: `${winnerDisplayName} won the giveaway!`,
                                     iconURL: winner.displayAvatarURL({ dynamic: true })
                                 })
                                 .addFields([
