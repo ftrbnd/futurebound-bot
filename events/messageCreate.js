@@ -135,7 +135,7 @@ async function handleMentions(message) {
             return message.reply({ content: randomMessage4});
     }
 
-    // await handleGPTMessage(message);
+    await handleGPTMessage(message);
 }
 
 function handleServerSubscriptions(message) {
