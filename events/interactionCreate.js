@@ -109,6 +109,13 @@ async function handleSurvivorVote(interaction) {
 async function handleGiveawayEntry(interaction) {
     const giveaway = await Giveaway.findByIdAndUpdate(interaction.customId).clone();
 
+    if (giveaway.endDate.getTime() < new Date().getTime()) {
+        const lateEmbed = new EmbedBuilder()
+            .setDescription('The giveaway has already ended!')
+            .setColor(process.env.ERROR_COLOR);
+        return interaction.reply({ embeds: [lateEmbed], ephemeral: true });
+    }
+
     if (giveaway.entries.includes(interaction.user.id)) {
         const enteredEmbed = new EmbedBuilder()
             .setDescription('You have already entered the giveaway!')
