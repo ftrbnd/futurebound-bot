@@ -106,30 +106,30 @@ async function handleMentions(message) {
     await message.channel.sendTyping();
 
     switch (true) {
-        case message.content.includes('good morning'):
-        case message.content.includes('gomo'):
-        case message.content.includes('morning'):
-        case message.content.includes('gm'):
-        case message.content.includes('goodmorning'):
+        case message.content.split(' ').includes('good morning'):
+        case message.content.split(' ').includes('gomo'):
+        case message.content.split(' ').includes('morning'):
+        case message.content.split(' ').includes('gm'):
+        case message.content.split(' ').includes('goodmorning'):
             const messages1 = ['GOOD MORNING', 'good morning x', 'goooood morning', 'mornin', 'gomo'];
             const randomMessage1 = messages1[Math.floor(Math.random() * messages1.length)];
             return message.reply({ content: randomMessage1});
-        case message.content.includes('good night'):
-        case message.content.includes('goodnight'):
-        case message.content.includes('nini'):
-        case message.content.includes('gn'):
+        case message.content.split(' ').includes('good night'):
+        case message.content.split(' ').includes('goodnight'):
+        case message.content.split(' ').includes('nini'):
+        case message.content.split(' ').includes('gn'):
             const messages2 = ['nini', 'night night', 'gn x', 'good night x', 'dont let the bed bugs bite x'];
             const randomMessage2 = messages2[Math.floor(Math.random() * messages2.length)];
             return message.reply({ content: randomMessage2});
-        case message.content.includes('hi'):
-        case message.content.includes('hey'):
-        case message.content.includes('hello'):
+        case message.content.split(' ').includes('hi'):
+        case message.content.split(' ').includes('hey'):
+        case message.content.split(' ').includes('hello'):
             const messages3 = ['hello x', 'hey', 'hi x'];
             const randomMessage3 = messages3[Math.floor(Math.random() * messages3.length)];
             return message.reply({ content: randomMessage3});
-        case message.content.includes('ily'):
-        case message.content.includes('i love you'):
-        case message.content.includes('i love u'):
+        case message.content.split(' ').includes('ily'):
+        case message.content.split(' ').includes('i love you'):
+        case message.content.split(' ').includes('i love u'):
             const messages4 = ['i love you too x', 'ily2 x', 'i love u more'];
             const randomMessage4 = messages4[Math.floor(Math.random() * messages4.length)];
             return message.reply({ content: randomMessage4});
