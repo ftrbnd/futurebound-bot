@@ -80,7 +80,7 @@ module.exports = {
                         { name: 'Song', value: songName}
                     ])
                     .setDescription(`${randomLyric}`)
-                    .setColor(process.env.ERROR_EMBED)
+                    .setColor(process.env.ERROR_COLOR)
                     .setFooter({
                         text: interaction.guild.name, 
                         iconURL: interaction.guild.iconURL({ dynamic : true})
