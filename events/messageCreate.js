@@ -157,7 +157,7 @@ function handleServerSubscriptions(message) {
             name: `${message.member.displayName} ${action} ${message.roleSubscriptionData.tierName} and has been a subscriber of ${message.guild.name} for ${message.roleSubscriptionData.totalMonthsSubscribed} ${monthPlural}!`,
             iconURL: message.author.displayAvatarURL({ dynamic : true})
         })
-        .setDescription(`[${message.roleSubscriptionData.tierName} role: ${premiumRole}](https://discord.com/channels/655655072885374987/role-subscriptions)`)
+        .setDescription(`${message.roleSubscriptionData.tierName} role: ${premiumRole}`)
         .setColor(premiumRole.hexColor)
         .setThumbnail('https://i.imgur.com/kzhphkQ.png') // eden logo
         .setFooter({
