@@ -81,3 +81,7 @@ client.login(process.env.DISCORD_TOKEN);
 // Mongo DB
 const mongoDB = require('./modules/mongoDB');
 mongoDB.execute(client);
+
+// Firebase
+const firebase = require('./modules/firebase');
+firebase.execute(client);

@@ -25,12 +25,14 @@
     "distube": "^4.0.3",
     "dotenv": "^10.0.0",
     "ffmpeg-static": "^4.4.1",
+    "firebase": "^9.23.0",
     "imgur": "^1.0.2",
     "mongoose": "^6.0.6",
     "reddit-snooper": "^1.0.1",
     "sodium": "^3.0.2",
     "twitter-api-v2": "^1.12.7",
     "urban": "^0.3.4",
-    "validate-color": "^2.2.1"
+    "validate-color": "^2.2.1",
+    "ytdl-core": "^4.11.4"
   }
 }
