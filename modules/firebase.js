@@ -19,7 +19,7 @@ module.exports = {
     async execute(client) {
         setInterval(async () => {
             const server = client.guilds.cache.get(process.env.GUILD_ID);
-            const heardleChannel = server.channels.cache.get(process.env.ANNOUNCEMENTS_CHANNEL_ID);
+            const heardleChannel = server.channels.cache.get(process.env.HEARDLE_CHANNEL_ID);
             const today = new Date();
 
             if (today.getHours() == 4 && today.getMinutes() === 0) { // midnight: set new daily song
@@ -65,18 +65,24 @@ module.exports = {
                     });
                 });
 
+                // update next day's midnight timestamp
+                console.log('Updating next midnight...');
+                const midnightRef = doc(firestore, 'daily_song', 'midnight');
+                await updateDoc(midnightRef, {
+                    next: today
+                });
 
-                // const heardleEmbed = new EmbedBuilder()
-                //     .setTitle('EDEN Heardle - New daily song!')
-                //     .setDescription('https://eden-heardle.web.app')
-                //     .setThumbnail('https://i.imgur.com/rQmm1FM.png')
-                //     .setTimestamp()
-                //     .setFooter({
-                //     text: 'Share your results in the #eden thread!', 
-                //     iconURL: server.iconURL({ dynamic : true})
-                // });
+                const heardleEmbed = new EmbedBuilder()
+                    .setTitle('EDEN Heardle - New daily song!')
+                    .setDescription('https://eden-heardle.web.app')
+                    .setThumbnail('https://i.imgur.com/rQmm1FM.png')
+                    .setTimestamp()
+                    .setFooter({
+                        text: 'Share your results in the #eden thread!', 
+                        iconURL: server.iconURL({ dynamic : true})
+                    });
 
-                // heardleChannel.send({ embeds: [heardleEmbed]});
+                heardleChannel.send({ embeds: [heardleEmbed]});
             }
         }, 60000);  // run this every minute
     }
