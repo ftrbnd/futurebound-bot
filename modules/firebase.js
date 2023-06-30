@@ -21,7 +21,6 @@ module.exports = {
             const server = client.guilds.cache.get(process.env.GUILD_ID);
             const heardleChannel = server.channels.cache.get(process.env.ANNOUNCEMENTS_CHANNEL_ID);
             const today = new Date();
-            console.log(today.getSeconds());
 
             if (today.getHours() == 4 && today.getMinutes() === 0) { // midnight: set new daily song
                 console.log("It is now midnight! Selecting new daily song...");
