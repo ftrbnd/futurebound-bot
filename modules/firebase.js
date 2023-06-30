@@ -1,5 +1,5 @@
 const {initializeApp} = require('firebase/app');
-const { getFirestore, getDocs, collection, setDoc, doc } = require('firebase/firestore');
+const { getFirestore, getDocs, collection, setDoc, doc, updateDoc } = require('firebase/firestore');
 const { EmbedBuilder } = require('discord.js');
 const ytdl = require('ytdl-core');
 
@@ -21,14 +21,15 @@ module.exports = {
             const server = client.guilds.cache.get(process.env.GUILD_ID);
             const heardleChannel = server.channels.cache.get(process.env.ANNOUNCEMENTS_CHANNEL_ID);
             const today = new Date();
+            console.log(today.getSeconds());
 
             if (today.getHours() == 4 && today.getMinutes() === 0) { // midnight: set new daily song
                 console.log("It is now midnight! Selecting new daily song...");
                 
-                const querySnapshot = await getDocs(collection(firestore, "songs"));
+                const songsQuerySnapshot = await getDocs(collection(firestore, "songs"));
                 
                 const songs = [];
-                querySnapshot.forEach((doc) => {
+                songsQuerySnapshot.forEach((doc) => {
                     songs.push({
                         name: doc.id,
                         ...doc.data()
@@ -39,17 +40,32 @@ module.exports = {
 
                 // determine the random start time
                 const songLength = (await ytdl.getBasicInfo(randomSong.link)).videoDetails.lengthSeconds;
-                const randomStartTime = Math.floor(Math.random() * songLength ) - 7;
+                const randomStartTime = Math.floor(Math.random() * songLength) - 7;
                 console.log(`Determined start time: ${randomStartTime} seconds`);
 
                 // write to database with new daily song
                 await setDoc(doc(firestore, 'daily_song', 'song'), {
                     name: randomSong.name,
                     link: randomSong.link,
-                    album: randomSong.album,
+                    album: randomSong.album || '',
                     cover: randomSong.cover,
                     start: randomStartTime
                 });
+
+                console.log(`Resetting all users' daily.progress, daily.shareText, and setting daily.complete to false...`);
+                const usersQuerySnapshot = await getDocs(collection(firestore, "users"));
+                usersQuerySnapshot.forEach((user) => {
+                    const userRef = doc(firestore, 'users', user.id);
+                    console.log(`Resetting user #${user.id}...`);
+                    updateDoc(userRef, {
+                        daily: {
+                            complete: false,
+                            progress: [],
+                            shareText: []
+                        }
+                    });
+                });
+
 
                 // const heardleEmbed = new EmbedBuilder()
                 //     .setTitle('EDEN Heardle - New daily song!')
