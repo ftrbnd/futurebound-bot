@@ -22,7 +22,7 @@ module.exports = {
             const heardleChannel = server.channels.cache.get(process.env.ANNOUNCEMENTS_CHANNEL_ID);
             const today = new Date();
 
-            if (today.getHours() == 0 && today.getMinutes() === 0) { // midnight: set new daily song
+            if (today.getHours() == 4 && today.getMinutes() === 0) { // midnight: set new daily song
                 console.log("It is now midnight! Selecting new daily song...");
                 
                 const querySnapshot = await getDocs(collection(firestore, "songs"));
