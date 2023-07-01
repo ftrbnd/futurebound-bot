@@ -66,10 +66,12 @@ module.exports = {
                 });
 
                 // update next day's midnight timestamp
-                console.log('Updating next midnight...');
+                const nextMidnight = new Date(today);
+                nextMidnight.setDate(today.getDate() + 1)
+                console.log(`Setting next midnight to... ${nextMidnight}`);
                 const midnightRef = doc(firestore, 'daily_song', 'midnight');
                 await updateDoc(midnightRef, {
-                    next: today
+                    next: nextMidnight
                 });
 
                 const heardleEmbed = new EmbedBuilder()
