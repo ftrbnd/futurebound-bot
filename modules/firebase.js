@@ -1,5 +1,5 @@
 const {initializeApp} = require('firebase/app');
-const { getFirestore, getDocs, collection, setDoc, doc, updateDoc } = require('firebase/firestore');
+const { getFirestore, getDocs, collection, setDoc, doc, updateDoc, getDoc } = require('firebase/firestore');
 const { EmbedBuilder } = require('discord.js');
 const ytdl = require('ytdl-core');
 
@@ -70,8 +70,10 @@ module.exports = {
                 nextMidnight.setUTCDate(today.getUTCDate() + 1)
                 console.log(`Setting next midnight to... ${nextMidnight}`);
                 const midnightRef = doc(firestore, 'daily_song', 'midnight');
+                const midnightDoc = await getDoc(midnightRef);
                 await updateDoc(midnightRef, {
-                    next: nextMidnight
+                    next: nextMidnight,
+                    number: midnightDoc.data().number + 1
                 });
 
                 const heardleEmbed = new EmbedBuilder()
