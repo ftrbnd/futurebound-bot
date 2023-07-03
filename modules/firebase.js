@@ -73,7 +73,7 @@ module.exports = {
                 const midnightDoc = await getDoc(midnightRef);
                 await updateDoc(midnightRef, {
                     next: nextMidnight,
-                    number: midnightDoc.data().number + 1
+                    number: parseInt(midnightDoc.data().number) + 1
                 });
 
                 const heardleEmbed = new EmbedBuilder()
