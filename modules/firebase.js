@@ -68,7 +68,7 @@ module.exports = {
                 // update next day's midnight timestamp
                 const nextMidnight = new Date(today);
                 nextMidnight.setUTCDate(today.getUTCDate() + 1);
-                nextMidnight.setUTCHours(13);
+                nextMidnight.setUTCHours(12);
                 console.log(`Setting next midnight to... ${nextMidnight}`);
                 const midnightRef = doc(firestore, 'daily_song', 'midnight');
                 const midnightDoc = await getDoc(midnightRef);
