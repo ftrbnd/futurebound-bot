@@ -61,6 +61,9 @@ module.exports = {
                             complete: false,
                             progress: [],
                             shareText: []
+                        },
+                        statistics: {
+                            currentStreak: user.data().daily.complete ? user.data().statistics.currentStreak : 0
                         }
                     });
                 });
