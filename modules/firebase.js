@@ -63,7 +63,10 @@ module.exports = {
                             shareText: []
                         },
                         statistics: {
-                            currentStreak: user.data().daily.complete ? user.data().statistics.currentStreak : 0
+                            gamesPlayed: user.data().statistics.gamesPlayed,
+                            gamesWon: user.data().statistics.gamesWon,
+                            currentStreak: user.data().daily.complete ? user.data().statistics.currentStreak : 0,
+                            maxStreak: user.data().statistics.maxStreak
                         }
                     });
                 });
