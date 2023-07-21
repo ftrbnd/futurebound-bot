@@ -23,7 +23,7 @@ module.exports = {
             return interaction.reply({ embeds: [errEmbed] });
         }
 
-        voiceChannel.leave();
+        interaction.client.DisTube.voices.leave(voiceChannel);
 
         const leaveEmbed = new EmbedBuilder()
             .setDescription(`Left **${interaction.member.voice.channel.name}**`)
