@@ -33,6 +33,6 @@
     "twitter-api-v2": "^1.12.7",
     "urban": "^0.3.4",
     "validate-color": "^2.2.1",
-    "ytdl-core": "^4.11.4"
+    "ytdl-core": "^4.11.5"
   }
 }
