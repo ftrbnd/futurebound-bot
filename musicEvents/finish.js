@@ -8,6 +8,8 @@ module.exports = {
             .setDescription(`The queue has finished playing`)
             .setColor(process.env.MUSIC_COLOR);
 
-        queue.textChannel.send({ embeds: [finishEmbed] });
+        if (queue.textChannel) {
+            queue.textChannel.send({ embeds: [finishEmbed] });
+        }
 	},
 }

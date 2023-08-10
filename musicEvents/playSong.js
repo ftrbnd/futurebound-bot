@@ -8,6 +8,8 @@ module.exports = {
             .setDescription(`Now playing [${song.name}](${song.url}) [${song.user}]`)
             .setColor(process.env.MUSIC_COLOR);
 
-        queue.textChannel.send({ embeds: [playEmbed] });
+        if (queue.textChannel) {
+            queue.textChannel.send({ embeds: [playEmbed] });
+        }
 	},
 }

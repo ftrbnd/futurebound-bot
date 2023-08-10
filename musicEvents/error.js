@@ -7,7 +7,8 @@ module.exports = {
         console.error(error);
         
         const errEmbed = new EmbedBuilder()
-            .setDescription(`An error occurred.`)
+            .setTitle(`${error.name}: An error occurred.`)
+            .setDescription(error.message)
             .setColor(process.env.ERROR_COLOR);
 
         channel.send({ embeds: [errEmbed]});

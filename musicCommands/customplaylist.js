@@ -81,7 +81,7 @@ module.exports = {
                 await Playlist.findOne({ name: playlist }, (err, data) => {
                     if (err) {
                         const errEmbed = new EmbedBuilder()
-                            .setDescription('An error occured.')
+                            .setDescription('An error occurred.')
                             .setColor(process.env.ERROR_COLOR);
                         interaction.reply({ embeds: [errEmbed] });
                         return console.log(err);
@@ -98,8 +98,7 @@ module.exports = {
 
                         if(voiceChannel) {
                             interaction.client.DisTube.play(voiceChannel, data.link, {
-                                member: interaction.member,
-                                textChannel: interaction.channel,
+                                member: interaction.member
                             }).catch(err => {
                                 console.log(err);
                                 const errEmbed = new EmbedBuilder()

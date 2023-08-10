@@ -8,6 +8,8 @@ module.exports = {
             .setDescription(`**${queue.voiceChannel.name}** is empty - disconnecting...`)
             .setColor(process.env.MUSIC_COLOR);
 
-        queue.textChannel.send({ embeds: [emptyEmbed] });
+        if (queue.textChannel) {
+            queue.textChannel.send({ embeds: [emptyEmbed] });
+        }
 	},
 }
