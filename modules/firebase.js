@@ -92,8 +92,19 @@ module.exports = {
                         text: 'Share your results in the #eden thread!', 
                         iconURL: server.iconURL({ dynamic : true})
                     });
+                
+                const heardleV2Embed = new EmbedBuilder()
+                    .setTitle('EDEN Heardle v2 - Beta')
+                    .setDescription('https://eden-heardle.vercel.app')
+                    .setThumbnail('https://i.imgur.com/rQmm1FM.png')
+                    .setTimestamp()
+                    .setColor('Yellow')
+                    .setFooter({
+                        text: 'Please share any bugs/errors you encounter!', 
+                        iconURL: server.iconURL({ dynamic : true})
+                    });
 
-                heardleChannel.send({ embeds: [heardleEmbed]});
+                heardleChannel.send({ embeds: [heardleEmbed, heardleV2Embed]});
             }
         }, 60000);  // run this every minute
     }
