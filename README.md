@@ -1,2 +1,3 @@
-# eden-bot-v13
- Updated version of the EDEN Discord bot, now set to work with discord.js v13
+# EDEN Bot
+
+Discord bot for the [Futurebound Discord server](https://discord.gg/futurebound)

@@ -1,7 +1,7 @@
 {
-  "name": "eden-bot-v13",
-  "version": "1.13.0",
-  "description": "Updated version of my Discord bot, now using Discord.js v13",
+  "name": "eden-bot",
+  "version": "1.14.0",
+  "description": "Discord bot for the Futurebound Discord server",
   "engines": {
     "node": "18.x"
   },
