@@ -1,4 +1,3 @@
-require('dotenv').config();
 const { EmbedBuilder, SlashCommandBuilder, PermissionFlagsBits } = require('discord.js');
 
 module.exports = {

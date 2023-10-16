@@ -1,4 +1,3 @@
-require('dotenv').config();
 const { EmbedBuilder, PermissionFlagsBits, SlashCommandBuilder } = require('discord.js');
 const User = require('../schemas/UserSchema');
 

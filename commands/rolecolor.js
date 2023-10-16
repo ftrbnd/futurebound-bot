@@ -1,4 +1,3 @@
-require('dotenv').config();
 const { EmbedBuilder, SlashCommandBuilder } = require('discord.js');
 const { validateHTMLColorHex } = require('validate-color');
 

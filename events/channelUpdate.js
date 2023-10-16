@@ -1,4 +1,3 @@
-require('dotenv').config();
 const { EmbedBuilder, ChannelType } = require('discord.js');
 
 module.exports = {

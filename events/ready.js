@@ -1,4 +1,3 @@
-require('dotenv').config();
 const { EmbedBuilder, ActivityType } = require('discord.js');
 
 module.exports = {

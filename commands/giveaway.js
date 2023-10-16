@@ -1,5 +1,3 @@
-require('dotenv').config()
-
 const { EmbedBuilder, PermissionFlagsBits, SlashCommandBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle } = require('discord.js')
 const Giveaway = require('../schemas/GiveawaySchema');
 

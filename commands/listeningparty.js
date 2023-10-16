@@ -1,5 +1,3 @@
-require('dotenv').config()
-
 const { EmbedBuilder, PermissionFlagsBits, SlashCommandBuilder, ChannelType, GuildScheduledEventPrivacyLevel, GuildScheduledEventEntityType } = require('discord.js')
 
 module.exports = {
