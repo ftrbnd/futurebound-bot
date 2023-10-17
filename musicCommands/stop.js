@@ -5,7 +5,7 @@ module.exports = {
   data: new SlashCommandBuilder().setName('stop').setDescription('Stop the music and delete the queue'),
 
   async execute(interaction) {
-    const allowedRoleId = await getAllowedRoleId.execute(interaction);
+    const allowedRoleId = await getAllowedRoleId(interaction);
     if (!interaction.member._roles.includes(allowedRoleId) && allowedRoleId != interaction.guild.roles.everyone.id) {
       const errEmbed = new EmbedBuilder().setDescription(`You do not have permission to use music commands right now!`).setColor(process.env.ERROR_COLOR);
       return interaction.reply({ embeds: [errEmbed] });

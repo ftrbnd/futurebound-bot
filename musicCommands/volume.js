@@ -8,7 +8,7 @@ module.exports = {
     .addNumberOption((option) => option.setName('percent').setDescription('The volume percentage').setMinValue(0).setMaxValue(200).setRequired(true)),
 
   async execute(interaction) {
-    const allowedRoleId = await getAllowedRoleId.execute(interaction);
+    const allowedRoleId = await getAllowedRoleId(interaction);
     if (!interaction.member._roles.includes(allowedRoleId) && allowedRoleId != interaction.guild.roles.everyone.id) {
       const errEmbed = new EmbedBuilder().setDescription(`You do not have permission to use music commands right now!`).setColor(process.env.ERROR_COLOR);
       return interaction.reply({ embeds: [errEmbed] });
