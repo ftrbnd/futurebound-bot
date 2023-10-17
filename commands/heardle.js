@@ -2,60 +2,7 @@ const { EmbedBuilder, ActionRowBuilder, ButtonBuilder } = require('@discordjs/bu
 const { SlashCommandBuilder, ButtonStyle } = require('discord.js');
 const supabase = require('../lib/supabase');
 const sendErrorEmbed = require('../utils/sendErrorEmbed');
-
-function statusSquares(guesses) {
-  function getStatusSquare(status) {
-    switch (status) {
-      case 'CORRECT':
-        return '🟩';
-      case 'ALBUM':
-        return '🟧';
-      case 'WRONG':
-        return '🟥';
-      default:
-        return '⬜';
-    }
-  }
-
-  let squares = [];
-  guesses?.forEach((guess) => {
-    squares.push(getStatusSquare(guess.correctStatus));
-  });
-
-  return squares.join('');
-}
-
-function statusSquaresLeaderboard(statuses) {
-  function getStatusSquare(status) {
-    switch (status) {
-      case 'CORRECT':
-        return '🟩';
-      case 'ALBUM':
-        return '🟧';
-      case 'WRONG':
-        return '🟥';
-      default:
-        return '⬜';
-    }
-  }
-
-  let squares = [];
-  statuses?.forEach((status) => {
-    squares.push(getStatusSquare(status));
-  });
-
-  return squares.join('');
-}
-
-function guessStatuses(songs) {
-  const statuses = [];
-
-  for (const song of songs) {
-    statuses.push(song.correctStatus);
-  }
-
-  return statuses;
-}
+const { statusSquares, statusSquaresLeaderboard, guessStatuses } = require('../utils/heardleStatusFunctions');
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -228,7 +175,7 @@ module.exports = {
           try {
             guildMember = await interaction.guild.members.fetch(discordId);
           } catch (err) {
-            console.log(`Could not fetch member with id ${discordId}: `);
+            console.log(`Could not fetch member with id: ${discordId} `);
             continue;
           }
 

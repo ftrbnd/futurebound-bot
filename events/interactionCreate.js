@@ -3,6 +3,7 @@ const { EmbedBuilder, InteractionType } = require('discord.js');
 const SurvivorRound = require('../schemas/SurvivorRoundSchema');
 const Giveaway = require('../schemas/GiveawaySchema');
 const supabase = require('../lib/supabase');
+const { statusSquaresLeaderboard, guessStatuses } = require('../utils/heardleStatusFunctions');
 
 module.exports = {
   name: 'interactionCreate',
@@ -422,36 +423,4 @@ async function handleLeaderboardButton(interaction) {
   }
 
   await interaction.editReply({ embeds: [leaderboardEmbed] });
-}
-
-function guessStatuses(songs) {
-  const statuses = [];
-
-  for (const song of songs) {
-    statuses.push(song.correctStatus);
-  }
-
-  return statuses;
-}
-
-function statusSquaresLeaderboard(statuses) {
-  function getStatusSquare(status) {
-    switch (status) {
-      case 'CORRECT':
-        return '🟩';
-      case 'ALBUM':
-        return '🟧';
-      case 'WRONG':
-        return '🟥';
-      default:
-        return '⬜';
-    }
-  }
-
-  let squares = [];
-  statuses?.forEach((status) => {
-    squares.push(getStatusSquare(status));
-  });
-
-  return squares.join('');
 }
