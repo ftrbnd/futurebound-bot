@@ -1,5 +1,6 @@
 const { EmbedBuilder, SlashCommandBuilder } = require('discord.js');
 const getAllowedRoleId = require('../utils/getAllowedRoleId');
+const sendErrorEmbed = require('../utils/sendErrorEmbed');
 
 module.exports = {
   data: new SlashCommandBuilder().setName('leave').setDescription('Leave your voice channel'),
@@ -22,8 +23,8 @@ module.exports = {
 
       const leaveEmbed = new EmbedBuilder().setDescription(`Left **${interaction.member.voice.channel.name}**`).setColor(process.env.MUSIC_COLOR);
       interaction.reply({ embeds: [leaveEmbed] });
-    } catch (e) {
-      console.error(e);
+    } catch (err) {
+      sendErrorEmbed(interaction, err);
     }
   }
 };

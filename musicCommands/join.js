@@ -1,5 +1,6 @@
 const { EmbedBuilder, SlashCommandBuilder, ChannelType } = require('discord.js');
 const getAllowedRoleId = require('../utils/getAllowedRoleId');
+const sendErrorEmbed = require('../utils/sendErrorEmbed');
 
 module.exports = {
   data: new SlashCommandBuilder().setName('join').setDescription('Get the bot to join your voice channel'),
@@ -26,8 +27,8 @@ module.exports = {
 
       const joinEmbed = new EmbedBuilder().setDescription(`Joined **${voiceChannel.name}**`).setColor(process.env.MUSIC_COLOR);
       interaction.reply({ embeds: [joinEmbed] });
-    } catch (e) {
-      console.error(e);
+    } catch (err) {
+      sendErrorEmbed(interaction, err);
     }
   }
 };
