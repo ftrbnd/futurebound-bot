@@ -212,7 +212,7 @@ async function handleLeaderboardButton(interaction) {
         try {
           guildMember = await interaction.guild.members.fetch(discordId);
         } catch (err) {
-          console.log(`Could not fetch member with id ${discordId}: `, err);
+          console.log(`Could not fetch member with id: ${discordId}`);
           continue;
         }
 
@@ -275,7 +275,7 @@ async function handleLeaderboardButton(interaction) {
         try {
           guildMember = await interaction.guild.members.fetch(discordId);
         } catch (err) {
-          console.log(`Could not fetch member with id ${discordId}: `, err);
+          console.log(`Could not fetch member with id: ${discordId}`);
           continue;
         }
 
@@ -314,7 +314,7 @@ async function handleLeaderboardButton(interaction) {
         try {
           guildMember = await interaction.guild.members.fetch(discordId);
         } catch (err) {
-          console.log(`Could not fetch member with id ${discordId}: `, err);
+          console.log(`Could not fetch member with id: ${discordId}`);
           continue;
         }
 
@@ -353,7 +353,7 @@ async function handleLeaderboardButton(interaction) {
         try {
           guildMember = await interaction.guild.members.fetch(discordId);
         } catch (err) {
-          console.log(`Could not fetch member with id ${discordId}: `, err);
+          console.log(`Could not fetch member with id: ${discordId}`);
           continue;
         }
 
@@ -396,7 +396,7 @@ async function handleLeaderboardButton(interaction) {
         try {
           guildMember = await interaction.guild.members.fetch(discordId);
         } catch (err) {
-          console.log(`Could not fetch member with id ${discordId}: `, err);
+          console.log(`Could not fetch member with id: ${discordId}`);
           continue;
         }
 
