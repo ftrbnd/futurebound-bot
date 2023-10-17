@@ -2,7 +2,7 @@
 const { EmbedBuilder, InteractionType } = require('discord.js');
 const SurvivorRound = require('../schemas/SurvivorRoundSchema');
 const Giveaway = require('../schemas/GiveawaySchema');
-const supabase = require('../modules/supabase');
+const supabase = require('../lib/supabase');
 
 module.exports = {
   name: 'interactionCreate',

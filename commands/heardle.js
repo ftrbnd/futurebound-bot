@@ -1,6 +1,6 @@
 const { EmbedBuilder, ActionRowBuilder, ButtonBuilder } = require('@discordjs/builders');
 const { SlashCommandBuilder, ButtonStyle } = require('discord.js');
-const supabase = require('../modules/supabase');
+const supabase = require('../lib/supabase');
 
 function statusSquares(guesses) {
   function getStatusSquare(status) {
@@ -66,7 +66,7 @@ module.exports = {
         .setDescription('Get your own stats')
         .addUserOption((option) => option.setName('user').setDescription("Get this user's stats").setRequired(false))
     )
-    .addSubcommand((subcommand) => subcommand.setName('leaderboard').setDescription('View the leaderboard')),
+    .addSubcommand((subcommand) => subcommand.setName('leaderboard').setDescription('View the Top 10 leaderboard')),
 
   async execute(interaction) {
     if (interaction.options.getSubcommand() === 'stats') {
