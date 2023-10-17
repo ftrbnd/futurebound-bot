@@ -1,8 +1,6 @@
 const { EmbedBuilder, ActionRowBuilder, ButtonBuilder } = require('@discordjs/builders');
-const { createClient } = require('@supabase/supabase-js');
 const { SlashCommandBuilder, ButtonStyle } = require('discord.js');
-
-const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_KEY);
+const supabase = require('../modules/supabase');
 
 function statusSquares(guesses) {
   function getStatusSquare(status) {
@@ -24,6 +22,38 @@ function statusSquares(guesses) {
   });
 
   return squares.join('');
+}
+
+function statusSquaresLeaderboard(statuses) {
+  function getStatusSquare(status) {
+    switch (status) {
+      case 'CORRECT':
+        return '🟩';
+      case 'ALBUM':
+        return '🟧';
+      case 'WRONG':
+        return '🟥';
+      default:
+        return '⬜';
+    }
+  }
+
+  let squares = [];
+  statuses?.forEach((status) => {
+    squares.push(getStatusSquare(status));
+  });
+
+  return squares.join('');
+}
+
+function guessStatuses(songs) {
+  const statuses = [];
+
+  for (const song of songs) {
+    statuses.push(song.correctStatus);
+  }
+
+  return statuses;
 }
 
 module.exports = {
@@ -159,12 +189,133 @@ module.exports = {
         await interaction.reply({ embeds: [statsEmbed] });
       }
     } else {
-      // GET LEADERBOARD
-      const { data, error } = await supabase.from('Statistics').select();
-      if (error) return console.log(error);
-      console.log('LEADERBOARD: ', data);
+      // defer reply
+      await interaction.deferReply();
 
-      await interaction.reply({ content: 'TODO: Leaderboard' });
+      // GET LEADERBOARD
+      const { data: statsData, error: statsError } = await supabase.from('Statistics').select();
+      if (statsError || statsData.length === 0) {
+        if (statsError) console.log(statsError);
+
+        const errEmbed = new EmbedBuilder().setDescription('No stats found').setColor(0xdf0000);
+
+        return interaction.editReply({ embeds: [errEmbed], ephemeral: true });
+      }
+
+      const leaderboard = {
+        dailies: [],
+        winPcts: [],
+        accuracies: [],
+        curStrks: [],
+        maxStrks: []
+      };
+
+      for (const userStats of statsData) {
+        // GET DISCORD USER
+        const { data: accountData, error: accountError } = await supabase.from('Account').select().eq('userId', userStats.userId);
+        if (accountError) {
+          console.log(accountError);
+
+          const errEmbed = new EmbedBuilder().setDescription("Couldn't find Discord account for a user").setColor(0xdf0000);
+
+          return interaction.editReply({ embeds: [errEmbed], ephemeral: true });
+        }
+
+        const discordId = accountData[0].providerAccountId;
+        let guildMember = null;
+        try {
+          guildMember = await interaction.guild.members.fetch(discordId);
+        } catch (err) {
+          console.log(`Could not fetch member with id ${discordId}: `, err);
+          continue;
+        }
+
+        const { data: guessesData, error: guessesError } = await supabase.from('Guesses').select().eq('userId', userStats.userId);
+        if (guessesError) {
+          console.log(guessesError);
+
+          const errEmbed = new EmbedBuilder().setDescription('No guesses found').setColor(0xdf0000);
+
+          return interaction.editReply({ embeds: [errEmbed], ephemeral: true });
+        }
+
+        const { data: guessedSongs, error: songsError } = await supabase.from('GuessedSong').select().eq('guessListId', guessesData[0].id);
+        if (songsError || !guessedSongs) {
+          console.log(songsError);
+
+          const errEmbed = new EmbedBuilder().setDescription('Error getting guessed songs').setColor(0xdf0000);
+
+          return interaction.editReply({ embeds: [errEmbed], ephemeral: true });
+        }
+
+        // daily stats
+        if (guessedSongs.length > 0 && (guessedSongs.length === 6 || guessedSongs.at(-1)?.correctStatus === 'CORRECT')) {
+          leaderboard.dailies.push({
+            data: guessStatuses(guessedSongs),
+            user: guildMember
+          });
+        }
+
+        // win percentages and accuracies
+        if (userStats.gamesPlayed > 0) {
+          leaderboard.winPcts.push({
+            data: Math.round(((userStats?.gamesWon ?? 0) / (userStats?.gamesPlayed || 1)) * 100),
+            user: guildMember
+          });
+
+          leaderboard.accuracies.push({
+            data: Math.round(((userStats.accuracy ?? 0) / (userStats.gamesPlayed * 6)) * 100),
+            user: guildMember
+          });
+        }
+
+        // current streaks
+        if (userStats.currentStreak > 0) {
+          leaderboard.curStrks.push({
+            data: userStats.currentStreak,
+            user: guildMember
+          });
+        }
+
+        // max streaks
+        if (userStats.maxStreak > 0) {
+          leaderboard.maxStrks.push({
+            data: userStats.maxStreak,
+            user: guildMember
+          });
+        }
+      }
+
+      leaderboard.dailies.sort((a, b) => {
+        const aIndex = a.data.indexOf('CORRECT');
+        const bIndex = b.data.indexOf('CORRECT');
+
+        return (aIndex === -1 ? 99 : aIndex) - (bIndex === -1 ? 99 : bIndex); // if they didn't get the song, 'CORRECT' is not in any of their GuessedSongs, so return any number greater than 6 instead of -1
+      });
+      leaderboard.winPcts.sort((a, b) => b.data - a.data);
+      leaderboard.accuracies.sort((a, b) => b.data - a.data);
+      leaderboard.curStrks.sort((a, b) => b.data - a.data);
+      leaderboard.maxStrks.sort((a, b) => b.data - a.data);
+
+      // TODO: limit each field to only top 10
+
+      const description = [];
+      for (let i = 0; i < leaderboard.dailies.length; i++) {
+        const daily = leaderboard.dailies[i];
+        description.push(`${i + 1}. ${daily.user.displayName} **${statusSquaresLeaderboard(daily.data)}**`);
+      }
+
+      const leaderboardEmbed = new EmbedBuilder().setDescription(description.join('\n')).setTitle('EDEN Heardle Leaderboard - Today').setURL('https://eden-heardle.vercel.app').setColor(0xf9d72f);
+
+      const dailies = new ButtonBuilder().setCustomId('dailies').setLabel('Today').setStyle(ButtonStyle.Primary);
+      const winPcts = new ButtonBuilder().setCustomId('winPcts').setLabel('Win Percentages').setStyle(ButtonStyle.Primary);
+      const accuracies = new ButtonBuilder().setCustomId('accuracies').setLabel('Accuracies').setStyle(ButtonStyle.Primary);
+      const curStrks = new ButtonBuilder().setCustomId('curStrks').setLabel('Current Streaks').setStyle(ButtonStyle.Primary);
+      const maxStrks = new ButtonBuilder().setCustomId('maxStrks').setLabel('Max Streaks').setStyle(ButtonStyle.Primary);
+
+      const row = new ActionRowBuilder().addComponents(dailies, winPcts, accuracies, curStrks, maxStrks);
+
+      await interaction.editReply({ embeds: [leaderboardEmbed], components: [row] });
     }
   }
 };
