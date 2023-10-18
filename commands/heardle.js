@@ -246,8 +246,6 @@ module.exports = {
         leaderboard.curStrks.sort((a, b) => b.data - a.data);
         leaderboard.maxStrks.sort((a, b) => b.data - a.data);
 
-        // TODO: limit each field to only top 10
-
         const description = [];
         for (let i = 0; i < leaderboard.dailies.length; i++) {
           const daily = leaderboard.dailies[i];

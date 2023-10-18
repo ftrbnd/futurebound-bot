@@ -8,6 +8,7 @@ const { SoundCloudPlugin } = require('@distube/soundcloud');
 // const reddit = require('./lib/reddit');
 const mongoDB = require('./lib/mongoDB');
 const firebase = require('./lib/firebase');
+const heardle = require('./lib/heardle');
 
 // Discord
 const client = new Client({
@@ -90,3 +91,6 @@ mongoDB(client);
 
 // Firebase
 firebase(client);
+
+// EDEN Heardle
+heardle(client);

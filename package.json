@@ -22,6 +22,7 @@
     "@supabase/supabase-js": "^2.38.1",
     "@vvo/tzdb": "^6.89.0",
     "chatgpt": "^5.1.2",
+    "cron": "^3.1.1",
     "discord.js": "^14.8.0",
     "distube": "^4.0.5",
     "dotenv": "^10.0.0",
