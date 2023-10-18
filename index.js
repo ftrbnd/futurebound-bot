@@ -90,7 +90,7 @@ client.login(process.env.DISCORD_TOKEN);
 mongoDB(client);
 
 // Firebase
-firebase(client);
+// firebase(client);
 
 // EDEN Heardle
 heardle(client);
