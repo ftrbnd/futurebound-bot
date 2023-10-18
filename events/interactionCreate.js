@@ -151,7 +151,6 @@ async function handleGiveawayEntry(interaction) {
   giveaway.entries.push(interaction.user.id);
 
   await giveaway.save();
-  console.log(`${interaction.user.tag} entered giveaway #${interaction.customId}`);
 
   const timestamp = `${giveaway.endDate.getTime()}`.substring(0, 10);
   const newEmbed = new EmbedBuilder()
@@ -358,8 +357,6 @@ async function handleLeaderboardButton(interaction) {
           continue;
         }
 
-        console.log('stats: ', userStats);
-
         // current streaks
         if (userStats.currentStreak > 0) {
           leaderboard.curStrks.push({
@@ -370,7 +367,6 @@ async function handleLeaderboardButton(interaction) {
       }
 
       leaderboard.curStrks.sort((a, b) => b.data - a.data);
-      console.log('CURRENT STREAKS: ', leaderboard.curStrks);
 
       description = [];
       for (let i = 0; i < leaderboard.curStrks.length; i++) {
