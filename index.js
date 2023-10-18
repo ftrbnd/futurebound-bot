@@ -7,7 +7,7 @@ const { SoundCloudPlugin } = require('@distube/soundcloud');
 // const twitter = require('./lib/twitter');
 // const reddit = require('./lib/reddit');
 const mongoDB = require('./lib/mongoDB');
-const firebase = require('./lib/firebase');
+// const firebase = require('./lib/firebase');
 const heardle = require('./lib/heardle');
 
 // Discord
