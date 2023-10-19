@@ -1,3 +1,5 @@
+const fs = require('fs');
+
 const lineSplitFile = async (filename) => {
   try {
     const contents = await fs.promises.readFile(filename, 'utf-8');
