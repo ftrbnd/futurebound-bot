@@ -251,6 +251,7 @@ module.exports = {
           const daily = leaderboard.dailies[i];
           description.push(`${i + 1}. ${daily.user.displayName} **${statusSquaresLeaderboard(daily.data)}**`);
         }
+        if (description.length > 10) description = description.slice(0, 10);
 
         const leaderboardEmbed = new EmbedBuilder()
           .setDescription(description.length > 0 ? description.join('\n') : "No one has completed today's Heardle yet!")
