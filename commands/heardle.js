@@ -252,7 +252,13 @@ module.exports = {
           description.push(`${i + 1}. ${daily.user.displayName} **${statusSquaresLeaderboard(daily.data)}**`);
         }
 
-        const leaderboardEmbed = new EmbedBuilder().setDescription(description.join('\n')).setTitle('EDEN Heardle Leaderboard - Today').setURL('https://eden-heardle.vercel.app').setColor(0xf9d72f);
+        console.log('DESCRIPTION: ', description);
+
+        const leaderboardEmbed = new EmbedBuilder()
+          .setDescription(description.length > 0 ? description.join('\n') : "No one has completed today's Heardle yet!")
+          .setTitle('EDEN Heardle Leaderboard - Today')
+          .setURL('https://eden-heardle.vercel.app')
+          .setColor(0xf9d72f);
 
         const dailies = new ButtonBuilder().setCustomId('dailies').setLabel('Today').setStyle(ButtonStyle.Primary);
         const winPcts = new ButtonBuilder().setCustomId('winPcts').setLabel('Win Percentages').setStyle(ButtonStyle.Primary);

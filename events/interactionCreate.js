@@ -256,7 +256,7 @@ async function handleLeaderboardButton(interaction) {
         description.push(`${i + 1}. ${daily.user.displayName} **${statusSquaresLeaderboard(daily.data)}**`);
       }
       if (description.length > 10) description = description.slice(0, 10);
-      leaderboardEmbed.setDescription(description.join('\n')).setTitle('EDEN Heardle Leaderboard - Today');
+      leaderboardEmbed.setDescription(description.length > 0 ? description.join('\n') : "No one has completed today's Heardle yet!").setTitle('EDEN Heardle Leaderboard - Today');
       break;
     case 'winPcts':
       for (const userStats of statsData) {
@@ -295,7 +295,7 @@ async function handleLeaderboardButton(interaction) {
         description.push(`${i + 1}. ${winPct.user.displayName} **${winPct.data}%**`);
       }
       if (description.length > 10) description = description.slice(0, 10);
-      leaderboardEmbed.setDescription(description.join('\n')).setTitle('EDEN Heardle Leaderboard - Win Percentages');
+      leaderboardEmbed.setDescription(description.length > 0 ? description.join('\n') : 'No one has won a game yet!').setTitle('EDEN Heardle Leaderboard - Win Percentages');
       break;
     case 'accuracies':
       for (const userStats of statsData) {
@@ -334,7 +334,7 @@ async function handleLeaderboardButton(interaction) {
         description.push(`${i + 1}. ${accuracy.user.displayName} **${accuracy.data}%**`);
       }
       if (description.length > 10) description = description.slice(0, 10);
-      leaderboardEmbed.setDescription(description.join('\n')).setTitle('EDEN Heardle Leaderboard - Accuracies');
+      leaderboardEmbed.setDescription(description.length > 0 ? description.join('\n') : 'No one has completed a game yet!').setTitle('EDEN Heardle Leaderboard - Accuracies');
       break;
     case 'curStrks':
       for (const userStats of statsData) {
@@ -374,7 +374,7 @@ async function handleLeaderboardButton(interaction) {
         description.push(`${i + 1}. ${streak.user.displayName} **${streak.data}**`);
       }
       if (description.length > 10) description = description.slice(0, 10);
-      leaderboardEmbed.setDescription(description.join('\n')).setTitle('EDEN Heardle Leaderboard - Current Streaks');
+      leaderboardEmbed.setDescription(description.length > 0 ? description.join('\n') : 'There are no active streaks.').setTitle('EDEN Heardle Leaderboard - Current Streaks');
       break;
     case 'maxStrks':
       for (const userStats of statsData) {
@@ -413,7 +413,7 @@ async function handleLeaderboardButton(interaction) {
         description.push(`${i + 1}. ${streak.user.displayName} **${streak.data}**`);
       }
       if (description.length > 10) description = description.slice(0, 10);
-      leaderboardEmbed.setDescription(description.join('\n')).setTitle('EDEN Heardle Leaderboard - Max Streaks');
+      leaderboardEmbed.setDescription(description.length > 0 ? description.join('\n') : 'No max streaks available yet.').setTitle('EDEN Heardle Leaderboard - Max Streaks');
       break;
     default:
   }
