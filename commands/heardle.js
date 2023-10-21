@@ -246,7 +246,7 @@ module.exports = {
         leaderboard.curStrks.sort((a, b) => b.data - a.data);
         leaderboard.maxStrks.sort((a, b) => b.data - a.data);
 
-        const description = [];
+        let description = [];
         for (let i = 0; i < leaderboard.dailies.length; i++) {
           const daily = leaderboard.dailies[i];
           description.push(`${i + 1}. ${daily.user.displayName} **${statusSquaresLeaderboard(daily.data)}**`);
