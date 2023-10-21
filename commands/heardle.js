@@ -252,8 +252,6 @@ module.exports = {
           description.push(`${i + 1}. ${daily.user.displayName} **${statusSquaresLeaderboard(daily.data)}**`);
         }
 
-        console.log('DESCRIPTION: ', description);
-
         const leaderboardEmbed = new EmbedBuilder()
           .setDescription(description.length > 0 ? description.join('\n') : "No one has completed today's Heardle yet!")
           .setTitle('EDEN Heardle Leaderboard - Today')
