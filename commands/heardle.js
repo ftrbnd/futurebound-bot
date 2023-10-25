@@ -256,7 +256,7 @@ module.exports = {
         const leaderboardEmbed = new EmbedBuilder()
           .setDescription(description.length > 0 ? description.join('\n') : "No one has completed today's Heardle yet!")
           .setTitle('EDEN Heardle Leaderboard - Today')
-          .setURL('https://eden-heardle.vercel.app')
+          .setURL('https://www.eden-heardle.io')
           .setColor(0xf9d72f);
 
         const dailies = new ButtonBuilder().setCustomId('dailies').setLabel('Today').setStyle(ButtonStyle.Primary);
