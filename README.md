@@ -55,9 +55,9 @@
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
-This server has 2 responsibilities:
-* Choose a new random song every day at 4am UTC
-* Receive POST and DELETE requests from [EDEN Heardle](https://eden-bot.io) when users interact with the Custom Heardle modal
+This Discord bot was created during the peak of the pandemic in May 2020 and was made to help manage the growth the Futurebound server was experiencing. It was this project that reignited my passion for programming, and it has continued to be maintained throughout the years.
+
+In addition to some basic moderation commands (`/ban`, `/warn`, etc.), the bot also helps automate the hosting of listening parties, announcing the new daily Heardle, plays music in voice channels, and even has a `/guessthesong` game.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -66,12 +66,10 @@ This server has 2 responsibilities:
 ### Built With
 
 * [![Heroku][Heroku]][Heroku-url]
-* [![Typescript][Typescript]][Typescript-url]
+* [![Javascript][Javascript]][Javascript-url]
 * [![Node][Node.js]][Node-url]
-* [![Express][Express]][Express-url]
-* [![Ffmpeg][Ffmpeg]][Ffmpeg-url]
-* [![Prisma][PrismaOrm]][Prisma-url]
-* [![Supabase][Supabase]][Supabase-url]
+* [![Discord.js][Discord.js]][DiscordJs-url]
+* [![MongoDB][Mongodb]][MongoDb-url]
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -82,7 +80,11 @@ This server has 2 responsibilities:
 
 ### Prerequisites
 * [Node.js](https://nodejs.org/en/) 18 or higher
-* Database urls and key from [Supabase](https://supabase.com)
+* Client keys from [Discord](https://discord.com/developers/applications)
+* Database url from [MongoDB](https://mongodb.com/)
+* API key from [OpenAI](https://openai.com/) 
+* API key from [Spotify](https://developer.spotify.com/) for the music player
+* Database urls and key from [Supabase](https://supabase.com) for using Heardle commands
 
 ### Installation
 
@@ -94,11 +96,7 @@ This server has 2 responsibilities:
    ```sh
    npm install
    ```
-3. Generate your Prisma client
-   ```sh
-   npx prisma generate
-   ```
-5. Start the local dev server
+3. Start the local dev server
    ```sh
    npm run dev
    ```
@@ -107,16 +105,52 @@ This server has 2 responsibilities:
 
 Create a `.env` file at the root and fill out the values:
 ```env
-  DATABASE_URL=
-  SUPABASE_KEY=
+  DISCORD_TOKEN=
+  CLIENT_ID=
+  MONGODB_URI=
+  SPOTIFY_CLIENT_ID=
+  SPOTIFY_CLIENT_SECRET=
+  OPENAI_API_KEY=
   SUPABASE_URL=
+  SUPABASE_KEY=
+  
+  # Set this to one minute before EDEN Heardle resets (4am UTC)
+  CRON_HOUR=3
+  CRON_MINUTE=59
 
-  # Set the hour and minute to your preference in UTC time
-  CRON_UTC_HOUR=4
-  CRON_UTC_MINUTE=0
-
-  # The domain EDEN Heardle is running on, change the port if needed
-  WHITELISTED_DOMAINS=http://localhost:3000
+  # ... and a lot of Discord ids for channels, roles, etc.
+  GUILD_ID=
+  MODERATORS_CHANNEL_ID=
+  LOGS_CHANNEL_ID=
+  COMMANDS_CHANNEL_ID=
+  JOIN_TO_CREATE_ID=
+  VOICE_CHAT_ID=
+  JOIN_TO_CREATE_CATEGORY_ID=
+  MODERATORS_ROLE_ID=
+  MUTE_ROLE_ID=
+  WELCOME_CHANNEL_ID=
+  GENERAL_CHANNEL_ID=
+  ANNOUNCEMENTS_CHANNEL_ID= 
+  UPVOTE_EMOJI_ID=
+  DOWNVOTE_EMOJI_ID=
+  SURVIVOR_CHANNEL_NAME=
+  SURVIVOR_ROLE_ID=
+  ROLES_CHANNEL_ID=
+  FUTUREBOUND_ROLE_ID=
+  INTRODUCTIONS_CHANNEL_ID=
+  KERMITHEARTS_EMOJI_ID=
+  SUBSCRIBER_ROLE_ID=
+  TIER_3_ROLE_ID=
+  BOTS_CHANNEL_ID=
+  GIVEAWAY_EMOJI_ID=
+  HEARDLE_CHANNEL_ID=
+  
+  # for use with EmbedBuilders
+  MUSIC_COLOR=f94c57
+  ERROR_COLOR=DF0000
+  CONFIRM_COLOR=32FF25
+  GIVEAWAY_COLOR=7CF3FF
+  HEARDLE_COLOR=f9d72f
 ```
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
@@ -126,16 +160,12 @@ Create a `.env` file at the root and fill out the values:
 <!-- USAGE EXAMPLES -->
 ## Usage
 
-### Viewing the leaderboard on the website
-[![Website Leaderboard][website-leaderboard-screenshot]](https://eden-heardle.io)
 ### Viewing the leaderboard on the Discord server
 [![Discord Leaderboard][discord-leaderboard-screenshot]](https://discord.gg/futurebound)
-
-### Creating a Custom Heardle
-**Note: An account is required to create a custom Heardle, and users are limited to 1.
-Deleting a custom Heardle will again allow them to create a new custom Heardle.**
-[![Custom Heardle Form][custom-heardle-form]](https://eden-heardle.io)
-[![Custom Heardle Result][custom-heardle-result]](https://eden-heardle.io)
+### Use /help to view the list of all commands
+[![Discord Help][discord-help-screenshot]](https://discord.gg/futurebound)
+### Slash Commands provide users an easier experience when using commands
+[![Discord Slash Commands][discord-slashcommands-screenshot]](https://support.discord.com/hc/en-us/articles/1500000368501-Slash-Commands-FAQ)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -186,21 +216,19 @@ Project Link: [https://github.com/ftrbnd/eden-bot](https://github.com/ftrbnd/ede
 [product-screenshot]: https://i.imgur.com/OzETWxS.png
 [website-leaderboard-screenshot]: https://i.imgur.com/dVr4AOB.png
 [discord-leaderboard-screenshot]: https://i.imgur.com/3TyTIKe.png
+[discord-help-screenshot]: https://i.imgur.com/0Sd2kXW.png
+[discord-slashcommands-screenshot]: https://i.imgur.com/XO2ZYMi.png
 [custom-heardle-form]: https://i.imgur.com/w0W4CFN.png
 [custom-heardle-result]: https://i.imgur.com/wGNsPv2.png
 [Heroku]: https://img.shields.io/badge/Heroku-430098?style=for-the-badge&logo=heroku&logoColor=white
 [Heroku-url]: https://www.heroku.com/
-[Typescript]: https://img.shields.io/badge/typescript-3178C6?style=for-the-badge&logo=typescript&logoColor=white
-[Typescript-url]: https://www.typescriptlang.org/
+[Javascript]: https://img.shields.io/badge/javascript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=white
+[Javascript-url]: https://www.javascript.com/
 [Node.js]: https://img.shields.io/badge/Node.js-339933?style=for-the-badge&logo=nodedotjs&logoColor=white
 [Node-url]: https://nodejs.org/
-[Express]: https://img.shields.io/badge/Express-000000?style=for-the-badge&logo=express&logoColor=white
-[Express-url]: https://expressjs.com/
-[Ffmpeg]: https://img.shields.io/badge/Ffmpeg-007808?style=for-the-badge&logo=ffmpeg&logoColor=white
-[Ffmpeg-url]: https://www.ffmpeg.org/
-[PrismaOrm]: https://img.shields.io/badge/Prisma-%232D3748?style=for-the-badge&logo=prisma&logoColor=white
-[Prisma-url]: https://www.prisma.io/
-[Supabase]: https://img.shields.io/badge/Supabase-3FCF8E?style=for-the-badge&logo=supabase&logoColor=white
-[Supabase-url]: https://supabase.com/
+[Discord.js]: https://img.shields.io/badge/Discord.JS-5865F2?style=for-the-badge&logo=discord&logoColor=white
+[DiscordJs-url]: https://discord.js.org/
+[MongoDb]: https://img.shields.io/badge/MongoDB-47A248?style=for-the-badge&logo=mongodb&logoColor=white
+[Mongodb-url]: https://mongodb.com/
 [Discord-server]: https://img.shields.io/discord/655655072885374987?logo=discord&logoColor=white&color=5865F2
 [Server-link]: https://discord.gg/futurebound
