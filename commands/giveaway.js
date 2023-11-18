@@ -28,7 +28,7 @@ module.exports = {
 
   async execute(interaction) {
     try {
-      const announcementChannel = interaction.guild.channels.cache.get(process.env.ANNOUNCEMENTS_CHANNEL_ID);
+      const giveawayChannel = interaction.guild.channels.cache.get(process.env.GIVEAWAY_CHANNEL_ID);
 
       if (interaction.options.getSubcommand() === 'start') {
         const prize = interaction.options.getString('prize');
@@ -80,10 +80,10 @@ module.exports = {
             new ButtonBuilder().setLabel('Subscribe').setStyle(ButtonStyle.Link).setURL(`https://discord.com/channels/${interaction.guild.id}/role-subscriptions`)
           );
 
-          announcementChannel.send({ embeds: [giveawayEmbed], components: [row] });
+          giveawayChannel.send({ embeds: [giveawayEmbed], components: [row] });
 
           const confirmEmbed = new EmbedBuilder()
-            .setDescription(`Started giveaway for **${prize}** in ${announcementChannel}, ends in ${amount} ${amount == 1 ? unit.substring(0, unit.length - 1) : unit}`)
+            .setDescription(`Started giveaway for **${prize}** in ${giveawayChannel}, ends in ${amount} ${amount == 1 ? unit.substring(0, unit.length - 1) : unit}`)
             .addFields([{ name: 'End Date', value: `<t:${timestamp}>` }])
             .setColor(process.env.CONFIRM_COLOR);
 

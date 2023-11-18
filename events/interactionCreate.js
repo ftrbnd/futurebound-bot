@@ -12,7 +12,7 @@ module.exports = {
       await handleSurvivorVote(interaction); // handle menu interactions from /survivor
     }
 
-    if (interaction.isButton() && interaction.channel.id == process.env.ANNOUNCEMENTS_CHANNEL_ID) {
+    if (interaction.isButton() && interaction.channel.id == process.env.GIVEAWAY_CHANNEL_ID) {
       await handleGiveawayEntry(interaction);
     }
 
