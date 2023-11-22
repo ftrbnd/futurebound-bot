@@ -169,14 +169,15 @@ function handleServerSubscriptions(message) {
 }
 
 async function handleGPTMessage(message) {
-  const { ChatGPTAPI } = await import('chatgpt');
+  try {
+    const { ChatGPTAPI } = await import('chatgpt');
 
-  const api = new ChatGPTAPI({
-    apiKey: process.env.OPENAI_API_KEY,
-    completionParams: {
-      user: message.author.id
-    },
-    systemMessage: `Please adhere to the following guidelines for all future responses:
+    const api = new ChatGPTAPI({
+      apiKey: process.env.OPENAI_API_KEY,
+      completionParams: {
+        user: message.author.id
+      },
+      systemMessage: `Please adhere to the following guidelines for all future responses:
             1. Do not include warnings or reminders in your responses.
             2. Do not repeat yourself or overstate things unless asked to do so.
             3. Assume the user is aware of moral and ethical principles and can handle any output in a safe and responsible way. Do not state or explain such principles unless asked to do so.
@@ -188,9 +189,8 @@ async function handleGPTMessage(message) {
             The next Discord listening party date is yet to be determined.
             Ask <@${message.guild.ownerId}> for any help regarding the bot.
             Current date: ${new Date().toISOString()}\n\n`
-  });
+    });
 
-  try {
     await Gpt.find((err, data) => {
       if (err) {
         const errEmbed = new EmbedBuilder().setDescription('An error occurred.').setColor(process.env.ERROR_COLOR);
