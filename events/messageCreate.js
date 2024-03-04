@@ -1,9 +1,13 @@
-const { EmbedBuilder, ChannelType, MessageType, Message } = require('discord.js');
+const { EmbedBuilder, ChannelType, MessageType, Message, ThreadAutoArchiveDuration } = require('discord.js');
 const Gpt = require('../schemas/GptSchema');
 
 module.exports = {
   name: 'messageCreate',
   async execute(message) {
+    if (message.webhookId) {
+      handleWebhook(message);
+    }
+
     if (message.author.bot) return; // ignore bot messages
 
     if (message.channel.type === ChannelType.DM) {
@@ -229,6 +233,50 @@ async function handleGPTMessage(message) {
     const errEmbed = new EmbedBuilder().setDescription('An error occurred.').setColor(process.env.ERROR_COLOR);
 
     message.reply({ embeds: [errEmbed], ephemeral: true });
+  }
+}
+
+async function handleWebhook(message) {
+  if (message.embeds.some((embed) => embed.data.title.toLowerCase().includes('daily') && embed.data.description.toLowerCase().includes('successfully'))) {
+    const heardleChannel = message.guild.channels.cache.get(process.env.HEARDLE_CHANNEL_ID);
+    const server = message.guild;
+
+    // get yesterday's Heardle details
+    const previousSong = message.embeds[0].data.fields[0].value;
+    const dayNumber = message.embeds[0].data.fields[1].value;
+
+    try {
+      // close and lock previous thread
+      const lastThread = heardleChannel.threads.cache.last();
+      if (lastThread && !lastThread.locked) {
+        try {
+          await lastThread.setLocked(true);
+        } catch (err) {
+          console.log('Failed to lock thread: ', err);
+        }
+      }
+
+      const heardleEmbed = new EmbedBuilder()
+        .setTitle(`EDEN Heardle #${dayNumber} - New daily song!`)
+        .setURL('https://eden-heardle.io')
+        .setDescription(`Yesterday's song was **${previousSong}**`)
+        .setThumbnail('https://i.imgur.com/rQmm1FM.png')
+        .setColor(0xf9d72f)
+        .setFooter({
+          text: 'Share your results in the thread!',
+          iconURL: server.iconURL({ dynamic: true })
+        });
+
+      const message = await heardleChannel.send({ embeds: [heardleEmbed] });
+
+      await message.startThread({
+        name: `EDEN Heardle #${dayNumber}`,
+        autoArchiveDuration: ThreadAutoArchiveDuration.OneDay,
+        reason: 'New daily heardle song'
+      });
+    } catch (err) {
+      console.log('Error with announcing daily Heardle: ', err);
+    }
   }
 }
 

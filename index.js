@@ -7,8 +7,6 @@ const { SoundCloudPlugin } = require('@distube/soundcloud');
 // const twitter = require('./lib/twitter');
 // const reddit = require('./lib/reddit');
 const mongoDB = require('./lib/mongoDB');
-// const firebase = require('./lib/firebase');
-const heardle = require('./lib/heardle');
 
 // Discord
 const client = new Client({
@@ -80,17 +78,11 @@ for (const file of musicEventFiles) {
 
 client.login(process.env.DISCORD_TOKEN);
 
+// Mongo DB
+mongoDB(client);
+
 // Twitter
 // twitter.execute(client);
 
 // Reddit
 // reddit.execute(client);
-
-// Mongo DB
-mongoDB(client);
-
-// Firebase
-// firebase(client);
-
-// EDEN Heardle
-heardle(client);

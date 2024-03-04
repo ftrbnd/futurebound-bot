@@ -1,6 +1,6 @@
 {
   "name": "eden-bot",
-  "version": "1.14.0",
+  "version": "1.15.0",
   "description": "Discord bot for the Futurebound Discord server",
   "engines": {
     "node": "18.x"
@@ -22,12 +22,10 @@
     "@supabase/supabase-js": "^2.38.1",
     "@vvo/tzdb": "^6.89.0",
     "chatgpt": "^5.1.2",
-    "cron": "^3.1.1",
     "discord.js": "^14.8.0",
     "distube": "^4.0.5",
     "dotenv": "^10.0.0",
     "ffmpeg-static": "^5.1.0",
-    "firebase": "^9.23.0",
     "imgur": "^1.0.2",
     "mongoose": "^6.0.6",
     "reddit-snooper": "^1.0.1",
