@@ -4,7 +4,7 @@ const Gpt = require('../schemas/GptSchema');
 module.exports = {
   name: 'messageCreate',
   async execute(message) {
-    if (message.webhookId) {
+    if (message.webhookId === process.env.WEBHOOK_ID) {
       handleWebhook(message);
     }
 
