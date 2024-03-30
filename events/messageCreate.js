@@ -237,7 +237,9 @@ async function handleGPTMessage(message) {
 }
 
 async function handleWebhook(message) {
-  if (message.embeds.some((embed) => embed.data.title.toLowerCase().includes('daily') && embed.data.description.toLowerCase().includes('successfully'))) {
+  const webhookEmbed = message.embeds[0];
+
+  if (webhookEmbed.data.title.toLowerCase().includes('daily') && webhookEmbed.data.description.toLowerCase().includes('successfully')) {
     const heardleChannel = message.guild.channels.cache.get(process.env.HEARDLE_CHANNEL_ID);
     const server = message.guild;
 
@@ -276,6 +278,14 @@ async function handleWebhook(message) {
       });
     } catch (err) {
       console.log('Error with announcing daily Heardle: ', err);
+    }
+  } else if (webhookEmbed.data.title.toLowerCase().includes('heardle') && webhookEmbed.data.description.toLowerCase().includes('error')) {
+    try {
+      const owner = message.guild.members.cache.get(message.guild.ownerId);
+
+      await owner.send({ embeds: [webhookEmbed], content: 'Error with EDEN Heardle:' });
+    } catch (err) {
+      console.log('Error handling EDEN Heardle error:', err);
     }
   }
 }
