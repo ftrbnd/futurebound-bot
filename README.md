@@ -16,7 +16,7 @@
   <a href="https://github.com/ftrbnd/futurebound-bot">
     <img src="https://i.imgur.com/rQmm1FM.png" alt="Logo" width="80" height="80">
   </a>
-<h3 align="center">EDEN Discord Bot</h3>
+<h3 align="center">Futurebound Bot</h3>
   <p align="center">
     A Discord bot for the Futurebound Discord server
     <br />
