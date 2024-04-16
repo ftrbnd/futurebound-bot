@@ -15,10 +15,14 @@ module.exports = {
     } else {
       const introductionsChannel = message.guild.channels.cache.get(process.env.INTRODUCTIONS_CHANNEL_ID);
       if (!introductionsChannel) return;
-      // react to messages in introductions channel
+
       if (message.channel.id === process.env.INTRODUCTIONS_CHANNEL_ID) {
         const kermitHearts = message.guild.emojis.cache.get(process.env.KERMITHEARTS_EMOJI_ID);
         message.react(kermitHearts);
+      }
+
+      if (message.channel.id === process.env.BOT_BAIT_CHANNEL_ID) {
+        handleBotBaitMessage(message);
       }
 
       switch (message.type) {
@@ -295,4 +299,43 @@ function stylizeText(text) {
   const randomEmoji = emojis[Math.floor(Math.random() * emojis.length)];
 
   return `${text.toLowerCase().slice(0, -1)} ${randomEmoji}`; // remove punctuation of last sentence in message
+}
+
+async function handleBotBaitMessage(message) {
+  const modChannel = message.guild.channels.cache.get(process.env.MODERATORS_CHANNEL_ID);
+  const member = message.member;
+
+  try {
+    const owner = await message.guild.fetchOwner();
+
+    const logEmbed = new EmbedBuilder()
+      .setTitle(`[Bot Bait] ${member.displayName} was banned.`)
+      .addFields([{ name: 'User ID: ', value: `${member.id}` }])
+      .setColor(process.env.ERROR_COLOR)
+      .setThumbnail(member.user.displayAvatarURL({ dynamic: true }))
+      .setFooter({
+        text: message.guild.name,
+        iconURL: message.guild.iconURL({ dynamic: true })
+      })
+      .setTimestamp();
+    await modChannel.send({ embeds: [logEmbed] });
+
+    const banEmbed = new EmbedBuilder()
+      .setTitle(`You were banned from **${message.guild.name}**.`)
+      .setDescription(`Sent message in bot-bait channel, please message ${owner.user} if this was a mistake`)
+      .setColor(process.env.ERROR_COLOR)
+      .setFooter({
+        text: message.guild.name,
+        iconURL: message.guild.iconURL({ dynamic: true })
+      })
+      .setTimestamp();
+
+    await member.send({ embeds: [banEmbed] });
+
+    await member.ban({ deleteMessageSeconds: 60 * 60 * 24, reason: 'Sent message in bot-bait channel' });
+  } catch (err) {
+    console.error(err);
+    const msgFailEmbed = new EmbedBuilder().setDescription(err.message).setColor(process.env.CONFIRM_COLOR);
+    modChannel.send({ embeds: [msgFailEmbed] });
+  }
 }
