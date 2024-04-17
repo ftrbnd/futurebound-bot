@@ -306,7 +306,7 @@ async function handleBotBaitMessage(message) {
   const member = message.member;
 
   try {
-    const owner = await message.guild.fetchOwner();
+    await member.ban({ deleteMessageSeconds: 60 * 60 * 24, reason: 'Sent message in bot-bait channel' });
 
     const logEmbed = new EmbedBuilder()
       .setTitle(`[Bot Bait] ${member.displayName} was banned.`)
@@ -320,6 +320,8 @@ async function handleBotBaitMessage(message) {
       .setTimestamp();
     await modChannel.send({ embeds: [logEmbed] });
 
+    const owner = await message.guild.fetchOwner();
+
     const banEmbed = new EmbedBuilder()
       .setTitle(`You were banned from **${message.guild.name}**.`)
       .setDescription(`Sent message in bot-bait channel, please message ${owner.user} if this was a mistake`)
@@ -331,8 +333,6 @@ async function handleBotBaitMessage(message) {
       .setTimestamp();
 
     await member.send({ embeds: [banEmbed] });
-
-    await member.ban({ deleteMessageSeconds: 60 * 60 * 24, reason: 'Sent message in bot-bait channel' });
   } catch (err) {
     console.error(err);
     const msgFailEmbed = new EmbedBuilder().setDescription(err.message).setColor(process.env.CONFIRM_COLOR);
