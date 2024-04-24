@@ -262,6 +262,7 @@ async function handleWebhook(message) {
         }
       }
 
+      const notificationRole = await message.guild.roles.cache.get(process.env.EDEN_HEARDLE_ROLE_ID);
       const heardleEmbed = new EmbedBuilder()
         .setTitle(`EDEN Heardle #${dayNumber} - New daily song!`)
         .setURL('https://eden-heardle.io')
@@ -273,7 +274,7 @@ async function handleWebhook(message) {
           iconURL: server.iconURL({ dynamic: true })
         });
 
-      const message = await heardleChannel.send({ embeds: [heardleEmbed] });
+      const message = await heardleChannel.send({ content: `${notificationRole}`, embeds: [heardleEmbed] });
 
       await message.startThread({
         name: `EDEN Heardle #${dayNumber}`,
@@ -288,6 +289,7 @@ async function handleWebhook(message) {
       const owner = message.guild.members.cache.get(message.guild.ownerId);
 
       await owner.send({ embeds: [webhookEmbed], content: 'Error with EDEN Heardle:' });
+      // TODO: add buttons to send POST request to eden-heardle-server to rerun Daily or Unlimited Heardle cronjob
     } catch (err) {
       console.log('Error handling EDEN Heardle error:', err);
     }
