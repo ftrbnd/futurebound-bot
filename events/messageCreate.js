@@ -251,6 +251,8 @@ async function handleWebhook(message) {
     const previousSong = message.embeds[0].data.fields[0].value;
     const dayNumber = message.embeds[0].data.fields[1].value;
 
+    const notificationRole = await message.guild.roles.cache.get(process.env.EDEN_HEARDLE_ROLE_ID);
+
     try {
       // close and lock previous thread
       const lastThread = heardleChannel.threads.cache.last();
@@ -262,7 +264,6 @@ async function handleWebhook(message) {
         }
       }
 
-      const notificationRole = await message.guild.roles.cache.get(process.env.EDEN_HEARDLE_ROLE_ID);
       const heardleEmbed = new EmbedBuilder()
         .setTitle(`EDEN Heardle #${dayNumber} - New daily song!`)
         .setURL('https://eden-heardle.io')
@@ -274,9 +275,9 @@ async function handleWebhook(message) {
           iconURL: server.iconURL({ dynamic: true })
         });
 
-      const message = await heardleChannel.send({ content: `${notificationRole}`, embeds: [heardleEmbed] });
+      const dailyMessage = await heardleChannel.send({ content: `${notificationRole}`, embeds: [heardleEmbed] });
 
-      await message.startThread({
+      await dailyMessage.startThread({
         name: `EDEN Heardle #${dayNumber}`,
         autoArchiveDuration: ThreadAutoArchiveDuration.OneDay,
         reason: 'New daily heardle song'
