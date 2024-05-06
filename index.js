@@ -4,9 +4,8 @@ const { Client, Collection, Partials, GatewayIntentBits } = require('discord.js'
 const { DisTube } = require('distube');
 const { SpotifyPlugin } = require('@distube/spotify');
 const { SoundCloudPlugin } = require('@distube/soundcloud');
-// const twitter = require('./lib/twitter');
-// const reddit = require('./lib/reddit');
 const mongoDB = require('./lib/mongoDB');
+const { registerPrevHeardleCheck, registerNextHeardleCheck } = require('./lib/cron');
 
 // Discord
 const client = new Client({
@@ -78,11 +77,7 @@ for (const file of musicEventFiles) {
 
 client.login(process.env.DISCORD_TOKEN);
 
-// Mongo DB
 mongoDB(client);
 
-// Twitter
-// twitter.execute(client);
-
-// Reddit
-// reddit.execute(client);
+registerPrevHeardleCheck();
+registerNextHeardleCheck(client);
