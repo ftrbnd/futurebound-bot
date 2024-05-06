@@ -435,9 +435,9 @@ async function handleRetryDailyHeardle(interaction) {
 
     const { message } = await res.json();
 
-    console.log(message);
+    const embed = new EmbedBuilder().setDescription(message).setColor(process.env.CONFIRM_COLOR);
 
-    return await interaction.editReply({ content: message });
+    return await interaction.editReply({ embeds: [embed] });
   } catch (error) {
     await sendErrorEmbed(interaction, error);
   }
