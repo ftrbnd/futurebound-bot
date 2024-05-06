@@ -4,6 +4,7 @@ const SurvivorRound = require('../schemas/SurvivorRoundSchema');
 const Giveaway = require('../schemas/GiveawaySchema');
 const supabase = require('../lib/supabase');
 const { statusSquaresLeaderboard, guessStatuses } = require('../utils/heardleStatusFunctions');
+const sendErrorEmbed = require('../utils/sendErrorEmbed');
 
 module.exports = {
   name: 'interactionCreate',
@@ -19,6 +20,10 @@ module.exports = {
     const leaderboardButtonIds = ['dailies', 'winPcts', 'accuracies', 'curStrks', 'maxStrks'];
     if (interaction.isButton() && leaderboardButtonIds.includes(interaction.customId)) {
       await handleLeaderboardButton(interaction);
+    }
+
+    if (interaction.isButton() && interaction.customId === 'retry_daily_heardle') {
+      await handleRetryDailyHeardle(interaction);
     }
 
     if (!interaction.type === InteractionType.ApplicationCommand) return;
@@ -419,4 +424,21 @@ async function handleLeaderboardButton(interaction) {
   }
 
   await interaction.editReply({ embeds: [leaderboardEmbed] });
+}
+
+async function handleRetryDailyHeardle(interaction) {
+  try {
+    await interaction.deferReply();
+
+    const res = await fetch('http://localhost:3001/api/heardles/daily');
+    if (!res.ok) throw new Error('Failed to send request');
+
+    const { message } = await res.json();
+
+    console.log(message);
+
+    return await interaction.editReply({ content: message });
+  } catch (error) {
+    await sendErrorEmbed(interaction, error);
+  }
 }
