@@ -290,7 +290,6 @@ async function handleWebhook(message) {
       const owner = message.guild.members.cache.get(message.guild.ownerId);
 
       await owner.send({ embeds: [webhookEmbed], content: 'Error with EDEN Heardle:' });
-      // TODO: add buttons to send POST request to eden-heardle-server to rerun Daily or Unlimited Heardle cronjob
     } catch (err) {
       console.log('Error handling EDEN Heardle error:', err);
     }
