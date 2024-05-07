@@ -4,6 +4,8 @@ const SurvivorRound = require('../schemas/SurvivorRoundSchema');
 const Giveaway = require('../schemas/GiveawaySchema');
 const supabase = require('../lib/supabase');
 const { statusSquaresLeaderboard, guessStatuses } = require('../utils/heardleStatusFunctions');
+const sendErrorEmbed = require('../utils/sendErrorEmbed');
+const DailyHeardleCheck = require('../schemas/DailyHeardleCheckSchema');
 
 module.exports = {
   name: 'interactionCreate',
@@ -19,6 +21,10 @@ module.exports = {
     const leaderboardButtonIds = ['dailies', 'winPcts', 'accuracies', 'curStrks', 'maxStrks'];
     if (interaction.isButton() && leaderboardButtonIds.includes(interaction.customId)) {
       await handleLeaderboardButton(interaction);
+    }
+
+    if (interaction.isButton() && interaction.customId.startsWith('retry_daily_heardle')) {
+      await handleRetryDailyHeardle(interaction);
     }
 
     if (!interaction.type === InteractionType.ApplicationCommand) return;
@@ -419,4 +425,32 @@ async function handleLeaderboardButton(interaction) {
   }
 
   await interaction.editReply({ embeds: [leaderboardEmbed] });
+}
+
+async function handleRetryDailyHeardle(interaction) {
+  try {
+    await interaction.deferReply();
+
+    // 'retry_daily_heardle_${status.id} => ['retry', 'daily', 'heardle', status.id]
+    const statusId = interaction.customId.split('_')[3];
+
+    const statusExists = await DailyHeardleCheck.findById(statusId);
+    if (!statusExists) {
+      const errorEmbed = new EmbedBuilder().setDescription('Already sent retry request').setColor(process.env.ERROR_COLOR);
+
+      return await interaction.editReply({ embeds: [errorEmbed] });
+    }
+
+    const res = await fetch(`${process.env.EDEN_HEARDLE_SERVER_URL}/api/heardles/daily`);
+    if (!res.ok) throw new Error('Failed to send request');
+
+    const { message } = await res.json();
+
+    await DailyHeardleCheck.deleteMany({});
+    const embed = new EmbedBuilder().setDescription(message).setColor(process.env.CONFIRM_COLOR);
+
+    return await interaction.editReply({ embeds: [embed] });
+  } catch (error) {
+    await sendErrorEmbed(interaction, error, true);
+  }
 }
