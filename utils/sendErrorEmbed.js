@@ -1,10 +1,11 @@
 const { EmbedBuilder } = require('discord.js');
 
-const sendErrorEmbed = async (interaction, error) => {
+const sendErrorEmbed = async (interaction, error, deferred = false) => {
   const errorEmbed = new EmbedBuilder().setTitle(error.name).setDescription(error.message).setColor(process.env.ERROR_COLOR);
 
   console.log(error);
-  interaction.reply({ embeds: [errorEmbed], ephemeral: true });
+  if (deferred) await interaction.editReply({ embeds: [errorEmbed], ephemeral: true });
+  else await interaction.reply({ embeds: [errorEmbed], ephemeral: true });
 };
 
 module.exports = sendErrorEmbed;
