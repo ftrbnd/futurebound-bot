@@ -199,40 +199,30 @@ async function handleGPTMessage(message) {
             Current date: ${new Date().toISOString()}\n\n`
     });
 
-    await Gpt.find((err, data) => {
-      if (err) {
-        const errEmbed = new EmbedBuilder().setDescription('An error occurred.').setColor(process.env.ERROR_COLOR);
-        message.reply({ embeds: [errEmbed], ephemeral: true });
-        return console.log(err);
-      }
+    console.log(`GPT received a message by ${message.author.tag}: ${message.content}`);
 
-      console.log(`GPT received a message by ${message.author.tag}: ${message.content}`);
+    const gpts = await Gpt.find({});
 
-      if (!data || data.length == 0) {
-        api.sendMessage(message.content).then((res) => {
-          message.reply({ content: stylizeText(res.text) });
+    if (!gpts || gpts.length == 0) {
+      const res = await api.sendMessage(message.content);
+      console.log('GPT replied: ', res);
 
-          Gpt.create({
-            parentMessageId: res.id
-          }).catch((err) => console.error(err));
+      await message.reply({ content: stylizeText(res.text) });
 
-          console.log('GPT replied: ', res);
-        });
-      } else {
-        api
-          .sendMessage(message.content, {
-            parentMessageId: data[0].parentMessageId
-          })
-          .then((res) => {
-            data[0].parentMessageId = res.id;
-            data[0].save();
+      await Gpt.create({
+        parentMessageId: res.id
+      });
+    } else {
+      const res = await api.sendMessage(message.content, {
+        parentMessageId: data[0].parentMessageId
+      });
+      console.log('GPT replied: ', res);
 
-            console.log('GPT replied: ', res);
+      message.reply({ content: stylizeText(res.text) });
 
-            message.reply({ content: stylizeText(res.text) });
-          });
-      }
-    }).clone();
+      gpts[0].parentMessageId = res.id;
+      await gpts[0].save();
+    }
   } catch (err) {
     const errEmbed = new EmbedBuilder().setDescription('An error occurred.').setColor(process.env.ERROR_COLOR);
 

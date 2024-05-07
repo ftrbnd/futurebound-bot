@@ -92,21 +92,14 @@ module.exports = {
 };
 
 async function getPlaylists(choices) {
-  await Playlist.find({}, (err, data) => {
-    if (err) {
-      return console.log(err);
-    }
+  const playlists = await Playlist.find({});
+  if (playlists) {
+    for (const playlist of playlists) {
+      const playlistData = new Array(2);
+      playlistData[0] = playlist.name;
+      playlistData[1] = playlist.link;
 
-    if (!data) {
-      console.log(`Couldn't find any data for custom playlists.`);
-    } else {
-      for (const playlist of data) {
-        const playlistData = new Array(2);
-        playlistData[0] = playlist.name;
-        playlistData[1] = playlist.link;
-
-        choices.push(playlistData);
-      }
+      choices.push(playlistData);
     }
-  }).clone();
+  }
 }
