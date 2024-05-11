@@ -438,7 +438,11 @@ async function handleRetryDailyHeardle(interaction) {
       return await interaction.editReply({ embeds: [errorEmbed] });
     }
 
-    const res = await fetch(`${process.env.EDEN_HEARDLE_SERVER_URL}/api/heardles/daily`);
+    const res = await fetch(`${process.env.EDEN_HEARDLE_SERVER_URL}/api/heardles/daily`, {
+      headers: {
+        Authorization: `Bearer ${process.env.DISCORD_TOKEN}`
+      }
+    });
     if (!res.ok) throw new Error('Failed to send request');
 
     const { message } = await res.json();

@@ -14,7 +14,11 @@ module.exports = {
 
       await interaction.deferReply({ ephemeral: true });
 
-      const res = await fetch(`${process.env.EDEN_HEARDLE_SERVER_URL}/api/heardles`);
+      const res = await fetch(`${process.env.EDEN_HEARDLE_SERVER_URL}/healthcheck`, {
+        headers: {
+          Authorization: `Bearer ${process.env.DISCORD_TOKEN}`
+        }
+      });
       if (!res.ok) throw new Error('Failed to send request');
 
       const data = await res.json();
@@ -23,7 +27,7 @@ module.exports = {
 
       await interaction.editReply({ embeds: [responseEmbed], ephemeral: true });
     } catch (err) {
-      sendErrorEmbed(interaction, err);
+      sendErrorEmbed(interaction, err, true);
     }
   }
 };
