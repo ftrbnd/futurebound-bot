@@ -20,23 +20,21 @@ module.exports = {
 
       const oneWeek = new Date();
       oneWeek.setDate(oneWeek.getDate() + 7);
-      await User.findOne({ discordId: userToMute.id }, (err, data) => {
-        if (err) return console.error(err);
+      const user = await User.findOne({ discordId: userToMute.id });
 
-        if (!data) {
-          // if the user isn't already in the database, add their data
-          User.create({
-            discordId: userToMute.id,
-            username: userToMute.username,
-            muteEnd: oneWeek
-          }).catch((err) => console.error(err));
-        } else {
-          // if they already were in the database, simply update and save
-          data.muteEnd = oneWeek;
-          data.username = userToMute.username;
-          data.save();
-        }
-      }).clone();
+      if (!user) {
+        // if the user isn't already in the database, add their data
+        await User.create({
+          discordId: userToMute.id,
+          username: userToMute.username,
+          muteEnd: oneWeek
+        }).catch((err) => console.error(err));
+      } else {
+        // if they already were in the database, simply update and save
+        user.muteEnd = oneWeek;
+        user.username = userToMute.username;
+        await user.save();
+      }
 
       try {
         userToMuteMember = interaction.guild.members.cache.get(`${userToMute.id}`);

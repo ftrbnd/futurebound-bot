@@ -19,27 +19,20 @@ module.exports = {
     try {
       const chosenRole = interaction.guild.roles.cache.get(interaction.options.getString('role'));
 
-      await MusicPermission.findOne({ role: chosenRole.id }, (err, data) => {
-        if (err) {
-          const errEmbed = new EmbedBuilder().setDescription('An error occurred.').setColor(process.env.ERROR_COLOR);
-          interaction.reply({ embeds: [errEmbed] });
-          return console.log(err);
-        }
+      const permissions = await MusicPermission.findOne({ role: chosenRole.id });
+      if (!permissions) {
+        await MusicPermission.create({
+          roleName: chosenRole.name,
+          roleId: chosenRole.id
+        });
+      } else {
+        permissions.roleName = chosenRole.name;
+        permissions.roleId = chosenRole.id;
+        await permissions.save();
+      }
 
-        if (!data) {
-          MusicPermission.create({
-            roleName: chosenRole.name,
-            roleId: chosenRole.id
-          }).catch((err) => console.log(err));
-        } else {
-          data.roleName = chosenRole.name;
-          data.roleId = chosenRole.id;
-          data.save();
-        }
-
-        const confirmEmbed = new EmbedBuilder().setDescription(`Set music permissions to ${chosenRole}`).setColor(process.env.MUSIC_COLOR);
-        interaction.reply({ embeds: [confirmEmbed] });
-      }).clone();
+      const confirmEmbed = new EmbedBuilder().setDescription(`Set music permissions to ${chosenRole}`).setColor(process.env.MUSIC_COLOR);
+      interaction.reply({ embeds: [confirmEmbed] });
     } catch (err) {
       sendErrorEmbed(interaction, err);
     }

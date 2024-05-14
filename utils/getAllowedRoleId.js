@@ -1,21 +1,10 @@
 const { EmbedBuilder } = require('discord.js');
 const MusicPermission = require('../schemas/MusicPermissionSchema');
 
-const getAllowedRoleId = async (interaction) => {
-  const roleData = await MusicPermission.find({}, (err, data) => {
-    if (err) {
-      const errEmbed = new EmbedBuilder().setDescription('An error occurred.').setColor(process.env.ERROR_COLOR);
-      interaction.reply({ embeds: [errEmbed] });
-      return console.log(err);
-    }
+const getAllowedRoleId = async () => {
+  const roleData = await MusicPermission.find({});
 
-    if (!data) {
-      const errEmbed = new EmbedBuilder().setDescription('No data found.').setColor(process.env.ERROR_COLOR);
-      return interaction.reply({ embeds: [errEmbed] });
-    } else {
-      return data;
-    }
-  }).clone();
+  if (!roleData) throw new Error('No role data found');
 
   return roleData[0].roleId;
 };

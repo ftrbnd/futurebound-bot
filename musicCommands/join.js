@@ -7,7 +7,7 @@ module.exports = {
 
   async execute(interaction) {
     try {
-      const allowedRoleId = await getAllowedRoleId(interaction);
+      const allowedRoleId = await getAllowedRoleId();
       if (!interaction.member._roles.includes(allowedRoleId) && allowedRoleId != interaction.guild.roles.everyone.id) {
         const errEmbed = new EmbedBuilder().setDescription(`You do not have permission to use music commands right now!`).setColor(process.env.ERROR_COLOR);
         return interaction.reply({ embeds: [errEmbed] });

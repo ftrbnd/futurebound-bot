@@ -92,51 +92,48 @@ module.exports = {
 
       const theirBirthday = new Date(`${monthOption} ${dayOption} ${yearOption}`);
 
-      await User.findOne({ discordId: interaction.user.id }, { upsert: true }, (err, data) => {
-        if (err) return console.error(err);
+      const user = await User.findOne({ discordId: interaction.user.id }, { upsert: true });
+      if (!user) {
+        // if the user isn't already in the database, add their data
+        await User.create({
+          discordId: interaction.user.id,
+          username: interaction.user.username,
+          birthday: birthdayAttempt,
+          timezone: timezoneOption
+        });
 
-        if (!data) {
-          // if the user isn't already in the database, add their data
-          User.create({
-            discordId: interaction.user.id,
-            username: interaction.user.username,
-            birthday: birthdayAttempt,
-            timezone: timezoneOption
-          }).catch((err) => console.error(err));
+        console.log(`${interaction.user.username} set their birthday to ${theirBirthday.toLocaleDateString()}: ${birthdayAttempt}`);
 
-          console.log(`${interaction.user.username} set their birthday to ${theirBirthday.toLocaleDateString()}: ${birthdayAttempt}`);
+        birthdayEmbed.setAuthor({
+          name: `${interaction.user.username} set their birthday to ${theirBirthday.toLocaleDateString()}`,
+          iconURL: interaction.user.displayAvatarURL({ dynamic: true })
+        });
+        logChannel.send({ embeds: [birthdayEmbed] });
 
-          birthdayEmbed.setAuthor({
-            name: `${interaction.user.username} set their birthday to ${theirBirthday.toLocaleDateString()}`,
-            iconURL: interaction.user.displayAvatarURL({ dynamic: true })
-          });
-          logChannel.send({ embeds: [birthdayEmbed] });
+        personalEmbed.setAuthor({
+          name: `You have set your birthday to ${theirBirthday.toLocaleDateString()}`
+        });
+        return interaction.reply({ embeds: [personalEmbed], ephemeral: true });
+      } else {
+        // if they already were in the database, simply update and save
+        user.username = interaction.user.username;
+        user.birthday = birthdayAttempt;
+        user.timezone = timezoneOption;
+        await user.save();
 
-          personalEmbed.setAuthor({
-            name: `You have set your birthday to ${theirBirthday.toLocaleDateString()}`
-          });
-          return interaction.reply({ embeds: [personalEmbed], ephemeral: true });
-        } else {
-          // if they already were in the database, simply update and save
-          data.username = interaction.user.username;
-          data.birthday = birthdayAttempt;
-          data.timezone = timezoneOption;
-          data.save();
+        console.log(`${interaction.user.username} updated their birthday to ${theirBirthday.toLocaleDateString()}: ${birthdayAttempt}`);
 
-          console.log(`${interaction.user.username} updated their birthday to ${theirBirthday.toLocaleDateString()}: ${birthdayAttempt}`);
+        birthdayEmbed.setAuthor({
+          name: `${interaction.user.username} updated their birthday to ${theirBirthday.toLocaleDateString()}`,
+          iconURL: interaction.user.displayAvatarURL({ dynamic: true })
+        });
+        logChannel.send({ embeds: [birthdayEmbed] });
 
-          birthdayEmbed.setAuthor({
-            name: `${interaction.user.username} updated their birthday to ${theirBirthday.toLocaleDateString()}`,
-            iconURL: interaction.user.displayAvatarURL({ dynamic: true })
-          });
-          logChannel.send({ embeds: [birthdayEmbed] });
-
-          personalEmbed.setAuthor({
-            name: `You have updated your birthday to ${theirBirthday.toLocaleDateString()}`
-          });
-          return interaction.reply({ embeds: [personalEmbed], ephemeral: true });
-        }
-      }).clone();
+        personalEmbed.setAuthor({
+          name: `You have updated your birthday to ${theirBirthday.toLocaleDateString()}`
+        });
+        return interaction.reply({ embeds: [personalEmbed], ephemeral: true });
+      }
     } catch (err) {
       sendErrorEmbed(interaction, err);
     }

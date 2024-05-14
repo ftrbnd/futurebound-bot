@@ -71,49 +71,46 @@ module.exports = {
         const loser = interaction.options.getString('loser');
 
         // update the database
-        await Album.findOne({ album: albumName }, (err, data) => {
-          if (err) return console.error(err);
+        const album = await Album.findOne({ album: albumName });
+        if (!album) {
+          // if the survivor album isn't already in the database, add it
+          await Album.create({
+            album: albumName,
+            tracks: albumTracks
+          });
 
-          if (!data) {
-            // if the survivor album isn't already in the database, add it
-            Album.create({
-              album: albumName,
-              tracks: albumTracks
-            }).catch((err) => console.error(err));
-
-            createSurvivorEmbed(albumTracks, true);
-          } else {
-            // if they already were in the database, remove the loser track
-            if (loser) {
-              if (!albumTracks.includes(loser)) {
-                const errEmbed = new EmbedBuilder().setDescription(`**${loser}** is not a song in **${albumName}**, please try again!`).setColor(process.env.ERROR_COLOR);
-                return interaction.reply({ embeds: [errEmbed] });
-              }
-
-              if (data.tracks.length == 2) {
-                const errEmbed = new EmbedBuilder().setDescription(`There are only 2 songs left - use **/survivor winner**!`).setColor(process.env.ERROR_COLOR);
-                return interaction.reply({ embeds: [errEmbed] });
-              }
-
-              if (!data.tracks.includes(loser)) {
-                const errEmbed = new EmbedBuilder().setDescription(`**${loser}** was already eliminated!`).setColor(process.env.ERROR_COLOR);
-                return interaction.reply({ embeds: [errEmbed] });
-              }
-
-              data.tracks.pull(loser);
-              data.save();
-              albumTracks = data.tracks;
-              createSurvivorEmbed(albumTracks, false);
-            } else {
-              // first round - no loser
-              if (data.tracks.length < albumTracks.length) {
-                const errEmbed = new EmbedBuilder().setDescription(`There is already a round of **${albumName}** Survivor!`).setColor(process.env.ERROR_COLOR);
-                return interaction.reply({ embeds: [errEmbed] });
-              }
-              createSurvivorEmbed(albumTracks, true);
+          createSurvivorEmbed(albumTracks, true);
+        } else {
+          // if they already were in the database, remove the loser track
+          if (loser) {
+            if (!albumTracks.includes(loser)) {
+              const errEmbed = new EmbedBuilder().setDescription(`**${loser}** is not a song in **${albumName}**, please try again!`).setColor(process.env.ERROR_COLOR);
+              return interaction.reply({ embeds: [errEmbed] });
             }
+
+            if (album.tracks.length == 2) {
+              const errEmbed = new EmbedBuilder().setDescription(`There are only 2 songs left - use **/survivor winner**!`).setColor(process.env.ERROR_COLOR);
+              return interaction.reply({ embeds: [errEmbed] });
+            }
+
+            if (!album.tracks.includes(loser)) {
+              const errEmbed = new EmbedBuilder().setDescription(`**${loser}** was already eliminated!`).setColor(process.env.ERROR_COLOR);
+              return interaction.reply({ embeds: [errEmbed] });
+            }
+
+            album.tracks.pull(loser);
+            await album.save();
+            albumTracks = album.tracks;
+            createSurvivorEmbed(albumTracks, false);
+          } else {
+            // first round - no loser
+            if (album.tracks.length < albumTracks.length) {
+              const errEmbed = new EmbedBuilder().setDescription(`There is already a round of **${albumName}** Survivor!`).setColor(process.env.ERROR_COLOR);
+              return interaction.reply({ embeds: [errEmbed] });
+            }
+            createSurvivorEmbed(albumTracks, true);
           }
-        }).clone();
+        }
 
         async function createSurvivorEmbed(albumTracks, isFirstRound) {
           const numberEmojis = [
@@ -175,49 +172,46 @@ module.exports = {
       } else if (interaction.options.getSubcommand() === 'winner') {
         const winner = interaction.options.getString('song');
 
-        await Album.findOne({ album: albumName }, (err, data) => {
-          if (err) return console.error(err);
-
-          if (!data) {
-            // if the survivor album isn't in the database, there was no survivor round; no winner possible
-            const errEmbed = new EmbedBuilder().setDescription(`There is no current round of **${albumName}** Survivor.`).setColor(process.env.ERROR_COLOR);
+        const album = await Album.findOne({ album: albumName });
+        if (!album) {
+          // if the survivor album isn't in the database, there was no survivor round; no winner possible
+          const errEmbed = new EmbedBuilder().setDescription(`There is no current round of **${albumName}** Survivor.`).setColor(process.env.ERROR_COLOR);
+          return interaction.reply({ embeds: [errEmbed] });
+        } else {
+          // if the album was already in the database, announce the winner and delete the survivor album from the database
+          if (!albumTracks.includes(winner)) {
+            const errEmbed = new EmbedBuilder().setDescription(`**${winner}** is not a song in **${albumName}**, please try again!`).setColor(process.env.ERROR_COLOR);
             return interaction.reply({ embeds: [errEmbed] });
-          } else {
-            // if the album was already in the database, announce the winner and delete the survivor album from the database
-            if (!albumTracks.includes(winner)) {
-              const errEmbed = new EmbedBuilder().setDescription(`**${winner}** is not a song in **${albumName}**, please try again!`).setColor(process.env.ERROR_COLOR);
-              return interaction.reply({ embeds: [errEmbed] });
-            }
-
-            if (!data.tracks.includes(winner)) {
-              const errEmbed = new EmbedBuilder().setDescription(`**${winner}** was already eliminated, please try again!`).setColor(process.env.ERROR_COLOR);
-              return interaction.reply({ embeds: [errEmbed] });
-            }
-
-            if (data.tracks.length > 2) {
-              const errEmbed = new EmbedBuilder().setDescription(`There are still more than 2 songs left!`).setColor(process.env.ERROR_COLOR);
-              return interaction.reply({ embeds: [errEmbed] });
-            }
-
-            data.tracks = albumTracks; // reset the album in the database
-            data.save();
-
-            const winnerEmbed = new EmbedBuilder()
-              .setTitle(`**${albumName}** Survivor - Winner!`)
-              .setDescription(`👑 ${winner}`)
-              .setThumbnail(albumCover)
-              .setColor(embedColor)
-              .setFooter({
-                text: interaction.guild.name,
-                iconURL: interaction.guild.iconURL({ dynamic: true })
-              });
-
-            survivorChannel.send({ content: `${survivorPing}`, embeds: [winnerEmbed] });
-
-            const confirmEmbed = new EmbedBuilder().setDescription(`Winner of **${albumName} Survivor** sent in ${survivorChannel}`).setColor(process.env.CONFIRM_COLOR);
-            return interaction.reply({ embeds: [confirmEmbed] });
           }
-        }).clone();
+
+          if (!album.tracks.includes(winner)) {
+            const errEmbed = new EmbedBuilder().setDescription(`**${winner}** was already eliminated, please try again!`).setColor(process.env.ERROR_COLOR);
+            return interaction.reply({ embeds: [errEmbed] });
+          }
+
+          if (album.tracks.length > 2) {
+            const errEmbed = new EmbedBuilder().setDescription(`There are still more than 2 songs left!`).setColor(process.env.ERROR_COLOR);
+            return interaction.reply({ embeds: [errEmbed] });
+          }
+
+          album.tracks = albumTracks; // reset the album in the database
+          await album.save();
+
+          const winnerEmbed = new EmbedBuilder()
+            .setTitle(`**${albumName}** Survivor - Winner!`)
+            .setDescription(`👑 ${winner}`)
+            .setThumbnail(albumCover)
+            .setColor(embedColor)
+            .setFooter({
+              text: interaction.guild.name,
+              iconURL: interaction.guild.iconURL({ dynamic: true })
+            });
+
+          survivorChannel.send({ content: `${survivorPing}`, embeds: [winnerEmbed] });
+
+          const confirmEmbed = new EmbedBuilder().setDescription(`Winner of **${albumName} Survivor** sent in ${survivorChannel}`).setColor(process.env.CONFIRM_COLOR);
+          return interaction.reply({ embeds: [confirmEmbed] });
+        }
       }
     } catch (err) {
       sendErrorEmbed(interaction, err);
