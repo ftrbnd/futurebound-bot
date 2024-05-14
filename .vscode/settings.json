@@ -1,5 +1,5 @@
 {
-  "cSpell.words": ["distube", "GPTAPI", "guessthesong", "tzdb"],
+  "cSpell.words": ["distube", "guessthesong", "tzdb"],
   "editor.defaultFormatter": "esbenp.prettier-vscode",
   "editor.bracketPairColorization.enabled": true,
   "editor.formatOnSave": true,
