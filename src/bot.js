@@ -1,13 +1,10 @@
-require('dotenv').config();
 const fs = require('fs');
+const path = require('path');
 const { Client, Collection, Partials, GatewayIntentBits } = require('discord.js');
 const { DisTube } = require('distube');
 const { SpotifyPlugin } = require('@distube/spotify');
 const { SoundCloudPlugin } = require('@distube/soundcloud');
-const mongoDB = require('./lib/mongoDB');
-const { registerPrevHeardleCheck, registerNextHeardleCheck } = require('./lib/cron');
 
-// Discord
 const client = new Client({
   intents: [
     GatewayIntentBits.Guilds,
@@ -21,16 +18,17 @@ const client = new Client({
   partials: [Partials.Channel]
 });
 
+const commandsFolder = path.resolve(__dirname, './commands');
+const eventsFolder = path.resolve(__dirname, './events');
+
 client.commands = new Collection();
-const commandFiles = fs.readdirSync('./commands').filter((file) => file.endsWith('.js')); // Command handler
+const commandFiles = fs.readdirSync(commandsFolder).filter((file) => file.endsWith('.js'));
 for (const file of commandFiles) {
   const command = require(`./commands/${file}`);
-  // set a new item in the Collection
-  // with the key as the command name and the value as the exported module
   client.commands.set(command.data.name, command);
 }
 
-const eventFiles = fs.readdirSync('./events').filter((file) => file.endsWith('.js')); // Event handler
+const eventFiles = fs.readdirSync(eventsFolder).filter((file) => file.endsWith('.js'));
 for (const file of eventFiles) {
   const event = require(`./events/${file}`);
   if (event.once) {
@@ -40,7 +38,6 @@ for (const file of eventFiles) {
   }
 }
 
-// DisTube - music bot
 client.DisTube = new DisTube(client, {
   leaveOnStop: false,
   leaveOnEmpty: true,
@@ -59,13 +56,16 @@ client.DisTube = new DisTube(client, {
   ]
 });
 
-const musicCommandFiles = fs.readdirSync('./musicCommands').filter((file) => file.endsWith('.js')); // Command handler
+const musicCommandsFolder = path.resolve(__dirname, './musicCommands');
+const musicEventsFolder = path.resolve(__dirname, './musicEvents');
+
+const musicCommandFiles = fs.readdirSync(musicCommandsFolder).filter((file) => file.endsWith('.js'));
 for (const file of musicCommandFiles) {
   const musicCommand = require(`./musicCommands/${file}`);
-  client.commands.set(musicCommand.data.name, musicCommand); // the commands Collection was initialized before the regular commands
+  client.commands.set(musicCommand.data.name, musicCommand);
 }
 
-const musicEventFiles = fs.readdirSync('./musicEvents').filter((file) => file.endsWith('.js')); // Event handler
+const musicEventFiles = fs.readdirSync(musicEventsFolder).filter((file) => file.endsWith('.js'));
 for (const file of musicEventFiles) {
   const musicEvent = require(`./musicEvents/${file}`);
   if (musicEvent.once) {
@@ -75,9 +75,6 @@ for (const file of musicEventFiles) {
   }
 }
 
-client.login(process.env.DISCORD_TOKEN);
-
-mongoDB(client);
-
-registerPrevHeardleCheck();
-registerNextHeardleCheck(client);
+module.exports = {
+  client
+};

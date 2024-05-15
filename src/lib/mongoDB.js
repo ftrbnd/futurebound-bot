@@ -14,7 +14,7 @@ const numberEndings = new Map([
   [1, 'st']
 ]);
 
-const mongoDB = async (client) => {
+const registerDatabaseChecks = async (client) => {
   mongoose
     .connect(process.env.MONGODB_URI)
     .then((m) => {
@@ -167,4 +167,6 @@ const mongoDB = async (client) => {
   }, 60000); // run this every minute
 };
 
-module.exports = mongoDB;
+module.exports = {
+  registerDatabaseChecks
+};
