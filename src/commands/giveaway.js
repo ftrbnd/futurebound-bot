@@ -59,38 +59,32 @@ module.exports = {
           imageURL
         });
 
-        giveaway.save(function (err) {
-          if (err) {
-            const errEmbed = new EmbedBuilder().setDescription(`An error occurred, please try againE`).setColor(process.env.ERROR_COLOR);
-            interaction.reply({ embeds: [errEmbed] });
-            return console.error(err);
-          }
+        await giveaway.save();
 
-          console.log(`Saved ${prize} giveaway to database!`);
+        console.log(`Saved ${prize} giveaway to database!`);
 
-          const giveawayEmbed = new EmbedBuilder()
-            .setTitle(`Giveaway: ${prize}`)
-            .setDescription(description)
-            .addFields([{ name: 'End Date', value: `<t:${timestamp}>` }])
-            .setColor(process.env.GIVEAWAY_COLOR);
-          if (imageURL) giveawayEmbed.setThumbnail(imageURL);
+        const giveawayEmbed = new EmbedBuilder()
+          .setTitle(`Giveaway: ${prize}`)
+          .setDescription(description)
+          .addFields([{ name: 'End Date', value: `<t:${timestamp}>` }])
+          .setColor(process.env.GIVEAWAY_COLOR);
+        if (imageURL) giveawayEmbed.setThumbnail(imageURL);
 
-          const row = new ActionRowBuilder().addComponents(
-            new ButtonBuilder().setCustomId(giveaway.id).setStyle(ButtonStyle.Primary).setEmoji(process.env.GIVEAWAY_EMOJI_ID),
-            new ButtonBuilder().setLabel('Subscribe').setStyle(ButtonStyle.Link).setURL(`https://discord.com/channels/${interaction.guild.id}/role-subscriptions`)
-          );
+        const row = new ActionRowBuilder().addComponents(
+          new ButtonBuilder().setCustomId(giveaway.id).setStyle(ButtonStyle.Primary).setEmoji(process.env.GIVEAWAY_EMOJI_ID),
+          new ButtonBuilder().setLabel('Subscribe').setStyle(ButtonStyle.Link).setURL(`https://discord.com/channels/${interaction.guild.id}/role-subscriptions`)
+        );
 
-          giveawayChannel.send({ embeds: [giveawayEmbed], components: [row] });
+        await giveawayChannel.send({ embeds: [giveawayEmbed], components: [row] });
 
-          const confirmEmbed = new EmbedBuilder()
-            .setDescription(`Started giveaway for **${prize}** in ${giveawayChannel}, ends in ${amount} ${amount == 1 ? unit.substring(0, unit.length - 1) : unit}`)
-            .addFields([{ name: 'End Date', value: `<t:${timestamp}>` }])
-            .setColor(process.env.CONFIRM_COLOR);
+        const confirmEmbed = new EmbedBuilder()
+          .setDescription(`Started giveaway for **${prize}** in ${giveawayChannel}, ends in ${amount} ${amount == 1 ? unit.substring(0, unit.length - 1) : unit}`)
+          .addFields([{ name: 'End Date', value: `<t:${timestamp}>` }])
+          .setColor(process.env.CONFIRM_COLOR);
 
-          interaction.reply({ embeds: [confirmEmbed] });
-        });
+        await interaction.reply({ embeds: [confirmEmbed] });
       } else if (interaction.options.getSubcommand() === 'end') {
-        interaction.reply({ content: `hi` });
+        interaction.reply({ content: `TODO: implement this` });
       }
     } catch (err) {
       sendErrorEmbed(interaction, err);
