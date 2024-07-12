@@ -95,11 +95,11 @@ and even has a `/guessthesong` game.
    ```
 2. Install NPM packages
    ```sh
-   npm install
+   yarn install
    ```
 3. Start the local dev server
    ```sh
-   npm run dev
+   yarn dev
    ```
 
 ### Configuration

@@ -3,7 +3,7 @@
   "version": "1.15.0",
   "description": "Discord bot for the Futurebound Discord server",
   "engines": {
-    "node": "18.x"
+    "node": "20.x"
   },
   "main": "src/index.js",
   "scripts": {
