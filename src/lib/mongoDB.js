@@ -18,7 +18,7 @@ const registerDatabaseChecks = async (client) => {
   mongoose
     .connect(process.env.MONGODB_URI)
     .then((m) => {
-      console.log(`Connected to ${m.connections[0].name}!`);
+      console.log(`[Mongo] Connected to ${m.connections[0].name}`);
     })
     .catch((err) => console.log(err));
 

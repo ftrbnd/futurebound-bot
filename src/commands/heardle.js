@@ -1,8 +1,9 @@
-const { EmbedBuilder, ActionRowBuilder, ButtonBuilder } = require('@discordjs/builders');
-const { SlashCommandBuilder, ButtonStyle } = require('discord.js');
+const { ActionRowBuilder, ButtonBuilder } = require('@discordjs/builders');
+const { SlashCommandBuilder, ButtonStyle, EmbedBuilder } = require('discord.js');
 const supabase = require('../lib/supabase');
 const sendErrorEmbed = require('../utils/sendErrorEmbed');
 const { statusSquares, statusSquaresLeaderboard, guessStatuses } = require('../utils/heardleStatusFunctions');
+const { redis, redisSchema } = require('../lib/redis');
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -14,7 +15,21 @@ module.exports = {
         .setDescription('Get your own stats')
         .addUserOption((option) => option.setName('user').setDescription("Get this user's stats").setRequired(false))
     )
-    .addSubcommand((subcommand) => subcommand.setName('leaderboard').setDescription('View the Top 10 leaderboard')),
+    .addSubcommand((subcommand) => subcommand.setName('leaderboard').setDescription('View the Top 10 leaderboard'))
+    .addSubcommand((subcommand) =>
+      subcommand
+        .setName('set-announcement')
+        .setDescription("Set the website's announcement")
+        .addBooleanOption((option) => option.setName('show_banner').setDescription('Whether to show the announcement banner on the website'))
+        .addStringOption((option) => option.setName('text').setDescription('The announcement text'))
+        .addStringOption((option) => option.setName('link').setDescription('The link to open when clicked').setRequired(false))
+        .addStringOption((option) =>
+          option
+            .setName('status')
+            .setDescription("The status determines the banner's color")
+            .addChoices({ name: 'Success', value: 'success' }, { name: 'Info', value: 'info' }, { name: 'Error', value: 'error' })
+        )
+    ),
 
   async execute(interaction) {
     try {
@@ -137,7 +152,7 @@ module.exports = {
 
           await interaction.reply({ embeds: [statsEmbed] });
         }
-      } else {
+      } else if (interaction.options.getSubcommand() === 'leaderboard') {
         // defer reply
         await interaction.deferReply();
 
@@ -268,6 +283,38 @@ module.exports = {
         const row = new ActionRowBuilder().addComponents(dailies, winPcts, accuracies, curStrks, maxStrks);
 
         await interaction.editReply({ embeds: [leaderboardEmbed], components: [row] });
+      } else if (interaction.options.getSubcommand() === 'set-announcement') {
+        const owner = await interaction.guild.fetchOwner();
+        if (interaction.member.id !== owner.id) {
+          const embed = new EmbedBuilder().setDescription('You are not the server owner.').setColor(process.env.ERROR_COLOR);
+          return interaction.reply({ embeds: [embed] });
+        }
+
+        const showBanner = interaction.options.getBoolean('show_banner');
+        const text = interaction.options.getString('text');
+        const link = interaction.options.getString('link');
+        const status = interaction.options.getString('status');
+
+        const announcement = redisSchema.parse({ showBanner, text, link, status });
+
+        await redis.set('show_banner', announcement.showBanner);
+        await redis.set('text', announcement.text);
+        await redis.set('link', announcement.link);
+        await redis.set('status', announcement.status);
+
+        const confirmEmbed = new EmbedBuilder()
+          .setTitle('[EDEN Heardle] New Announcement')
+          .setColor(process.env.CONFIRM_COLOR)
+          .addFields([
+            { name: 'show_banner', value: `${announcement.showBanner}`, inline: true },
+            { name: 'text', value: announcement.text, inline: true },
+            { name: 'link', value: `${announcement.link}`, inline: true },
+            { name: 'status', value: announcement.status, inline: true }
+          ])
+          .setURL('https://eden-heardle.io/play')
+          .setColor(process.env.CONFIRM_COLOR);
+
+        await interaction.reply({ embeds: [confirmEmbed] });
       }
     } catch (err) {
       sendErrorEmbed(interaction, err);

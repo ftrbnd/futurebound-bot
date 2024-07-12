@@ -9,7 +9,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node src/index.js",
-    "dev": "nodemon"
+    "dev": "nodemon",
+    "deploy": "node deploy-commands.js"
   },
   "author": "Giovanni Salas",
   "license": "ISC",
@@ -28,10 +29,12 @@
     "dotenv": "^10.0.0",
     "ffmpeg-static": "^5.2.0",
     "imgur": "^1.0.2",
+    "ioredis": "^5.4.1",
     "mongoose": "^8.3.4",
     "sodium": "^3.0.2",
     "validate-color": "^2.2.1",
-    "ytdl-core": "^4.11.5"
+    "ytdl-core": "^4.11.5",
+    "zod": "^3.23.8"
   },
   "devDependencies": {
     "nodemon": "^3.1.0"
