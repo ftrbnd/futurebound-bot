@@ -87,7 +87,7 @@ module.exports = {
       client.user.setPresence({ activities: [{ name: song, type: ActivityType.Listening }] });
     }, 3 * 60 * 1000);
 
-    const message = `**${client.user.tag}** has restarted and is now online`;
+    const message = `**${client.user.tag}** is now ready`;
     const logChannel = client.channels.cache.get(process.env.LOGS_CHANNEL_ID);
 
     if (logChannel && process.env.NODE_ENV !== 'development') {
@@ -96,6 +96,6 @@ module.exports = {
       logChannel.send({ embeds: [readyEmbed] });
     }
 
-    console.log(message);
+    console.log(`[Discord] ${client.user.tag} is now ready`);
   }
 };
