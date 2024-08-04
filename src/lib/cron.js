@@ -1,17 +1,7 @@
-const supabase = require('../lib/supabase');
 const DailyHeardleCheck = require('../schemas/DailyHeardleCheckSchema');
 const { CronJob } = require('cron');
 const { EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle } = require('discord.js');
-
-async function getCurrentDailySong() {
-  const { data, error } = await supabase.from('DailySong').select().eq('id', '1');
-  if (error) {
-    console.error(error);
-    throw new Error(error.message);
-  }
-
-  return data[0];
-}
+const { getCurrentDailySong } = require('./heardle-api');
 
 async function snapshotPrev() {
   const prev = await getCurrentDailySong();
