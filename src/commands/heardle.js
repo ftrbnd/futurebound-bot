@@ -55,17 +55,17 @@ module.exports = {
         await interaction.reply({ embeds: [statsEmbed] });
       } else if (interaction.options.getSubcommand() === 'leaderboard') {
         const { leaderboard } = await getLeaderboard();
-        const { title, description } = createLeaderboardDescription(leaderboard, 'dailies');
+        const { title, description } = createLeaderboardDescription(leaderboard, 'today');
 
         const leaderboardEmbed = new EmbedBuilder().setDescription(description).setTitle(title).setURL('https://www.eden-heardle.io').setColor(0xf9d72f);
 
-        const dailies = new ButtonBuilder().setCustomId('dailies').setLabel('Today').setStyle(ButtonStyle.Primary);
-        const winPcts = new ButtonBuilder().setCustomId('winPcts').setLabel('Win Percentages').setStyle(ButtonStyle.Primary);
+        const today = new ButtonBuilder().setCustomId('today').setLabel('Today').setStyle(ButtonStyle.Primary);
+        const winPercentages = new ButtonBuilder().setCustomId('winPercentages').setLabel('Win Percentages').setStyle(ButtonStyle.Primary);
         const accuracies = new ButtonBuilder().setCustomId('accuracies').setLabel('Accuracies').setStyle(ButtonStyle.Primary);
-        const curStrks = new ButtonBuilder().setCustomId('curStrks').setLabel('Current Streaks').setStyle(ButtonStyle.Primary);
-        const maxStrks = new ButtonBuilder().setCustomId('maxStrks').setLabel('Max Streaks').setStyle(ButtonStyle.Primary);
+        const currentStreaks = new ButtonBuilder().setCustomId('currentStreaks').setLabel('Current Streaks').setStyle(ButtonStyle.Primary);
+        const maxStreaks = new ButtonBuilder().setCustomId('maxStreaks').setLabel('Max Streaks').setStyle(ButtonStyle.Primary);
 
-        const row = new ActionRowBuilder().addComponents(dailies, winPcts, accuracies, curStrks, maxStrks);
+        const row = new ActionRowBuilder().addComponents(today, winPercentages, accuracies, currentStreaks, maxStreaks);
 
         await interaction.reply({ embeds: [leaderboardEmbed], components: [row] });
       } else if (interaction.options.getSubcommand() === 'set-announcement') {

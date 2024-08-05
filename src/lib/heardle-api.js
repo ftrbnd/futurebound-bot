@@ -42,7 +42,11 @@ async function getCurrentDailySong() {
 
 // user: Discord.js User
 async function getUserStats(user) {
-  const res = await fetch(`${ENDPOINT}/statistics/${user.id}`);
+  const res = await fetch(`${ENDPOINT}/statistics/${user.id}`, {
+    headers: {
+      Authorization: `Bearer ${process.env.DISCORD_TOKEN}`
+    }
+  });
   if (!res.ok) throw new Error('Failed to send GET /api/heardles/statistics/:userId request');
 
   // data: { guesses: GuessedSong[], statistics: Statistics }
@@ -51,7 +55,11 @@ async function getUserStats(user) {
 }
 
 async function getLeaderboard() {
-  const res = await fetch(`${ENDPOINT}/leaderboard`);
+  const res = await fetch(`${ENDPOINT}/leaderboard`, {
+    headers: {
+      Authorization: `Bearer ${process.env.DISCORD_TOKEN}`
+    }
+  });
   if (!res.ok) throw new Error('Failed to send GET /api/heardles/leaderboard request');
 
   const { leaderboard } = await res.json();
@@ -59,21 +67,22 @@ async function getLeaderboard() {
 }
 
 const categories = new Map([
-  ['dailies', 'Today'],
-  ['winPcts', 'Win Percentages'],
+  ['today', 'Today'],
+  ['winPercentages', 'Win Percentages'],
   ['accuracies', 'Accuracies'],
-  ['curStrks', 'Current Streaks'],
-  ['maxStrks', 'Max Streaks']
+  ['currentStreaks', 'Current Streaks'],
+  ['maxStreaks', 'Max Streaks']
 ]);
 // leaderboard: Leaderboard
-// category: 'dailies' | 'winPcts' | 'accuracies' | 'curStrks' | 'maxStrks'
+// category: 'today' | 'winPercentages' | 'accuracies' | 'currentStreaks' | 'maxStreaks'
 function createLeaderboardDescription(leaderboard, category) {
   let dataRows = [];
 
   for (let i = 0; i < leaderboard[category].length; i++) {
     const stat = leaderboard[category][i];
-    const displayData = category === 'dailies' ? `${statusSquaresLeaderboard(stat.data)}` : stat.data;
-    dataRows.push(`${i + 1}. ${stat.user.name} **${displayData}%**`);
+    const displayData = category === 'today' ? `${statusSquaresLeaderboard(stat.data)}` : `${stat.data}%`;
+
+    dataRows.push(`${i + 1}. ${stat.user.name} **${displayData}**`);
   }
   if (dataRows.length > 10) dataRows = dataRows.slice(0, 10);
 

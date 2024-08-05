@@ -9,20 +9,15 @@ const { getLeaderboard, sendRetryRequest, createLeaderboardDescription } = requi
 module.exports = {
   name: 'interactionCreate',
   async execute(interaction) {
+    const leaderboardButtonIds = ['today', 'winPercentages', 'accuracies', 'currentStreaks', 'maxStreaks'];
+
     if (interaction.isStringSelectMenu() && interaction.channel.name == process.env.SURVIVOR_CHANNEL_NAME) {
       await handleSurvivorVote(interaction); // handle menu interactions from /survivor
-    }
-
-    if (interaction.isButton() && interaction.channel.id == process.env.GIVEAWAY_CHANNEL_ID) {
-      await handleGiveawayEntry(interaction);
-    }
-
-    const leaderboardButtonIds = ['dailies', 'winPcts', 'accuracies', 'curStrks', 'maxStrks'];
-    if (interaction.isButton() && leaderboardButtonIds.includes(interaction.customId)) {
+    } else if (interaction.isButton() && leaderboardButtonIds.includes(interaction.customId)) {
       await handleLeaderboardButton(interaction);
-    }
-
-    if (interaction.isButton() && interaction.customId.startsWith('retry_daily_heardle')) {
+    } else if (interaction.isButton() && interaction.channel.id == process.env.GIVEAWAY_CHANNEL_ID) {
+      await handleGiveawayEntry(interaction);
+    } else if (interaction.isButton() && interaction.customId.startsWith('retry_daily_heardle')) {
       await handleRetryDailyHeardle(interaction);
     }
 
@@ -177,8 +172,9 @@ async function handleLeaderboardButton(interaction) {
   const { leaderboard } = await getLeaderboard();
 
   const leaderboardEmbed = new EmbedBuilder().setURL('https://eden-heardle.io').setColor(0xf9d72f);
-  const description = createLeaderboardDescription(leaderboard, interaction.customId);
-  leaderboardEmbed.setDescription(description);
+  const { title, description } = createLeaderboardDescription(leaderboard, interaction.customId);
+
+  leaderboardEmbed.setTitle(title).setDescription(description);
 
   await interaction.editReply({ embeds: [leaderboardEmbed] });
 }
