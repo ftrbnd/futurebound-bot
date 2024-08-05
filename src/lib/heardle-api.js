@@ -1,4 +1,5 @@
 const { statusSquaresLeaderboard } = require('../utils/heardleStatusFunctions');
+const { heardleAnnouncementSchema } = require('../utils/schema');
 
 const SERVER = process.env.EDEN_HEARDLE_SERVER_URL;
 const ENDPOINT = `${SERVER}/api/heardles`;
@@ -92,11 +93,29 @@ function createLeaderboardDescription(leaderboard, category) {
   return { title, description };
 }
 
+async function setAnnouncement(showBanner, text, link, status) {
+  const body = heardleAnnouncementSchema.parse({ showBanner, text, link, status });
+
+  const res = await fetch(`${ENDPOINT}/announcement`, {
+    method: 'PATCH',
+    body: JSON.stringify({ announcement: body }),
+    headers: {
+      Authorization: `Bearer ${process.env.DISCORD_TOKEN}`,
+      'Content-Type': 'application/json'
+    }
+  });
+  if (!res.ok) throw new Error('Failed to send POST /api/heardles/announcement request');
+
+  const { announcement } = await res.json();
+  return announcement;
+}
+
 module.exports = {
   sendHealthCheck,
   sendRetryRequest,
   getCurrentDailySong,
   getUserStats,
   getLeaderboard,
-  createLeaderboardDescription
+  createLeaderboardDescription,
+  setAnnouncement
 };

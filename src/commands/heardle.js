@@ -1,9 +1,8 @@
 const { ActionRowBuilder, ButtonBuilder } = require('@discordjs/builders');
 const { SlashCommandBuilder, ButtonStyle, EmbedBuilder } = require('discord.js');
 const sendErrorEmbed = require('../utils/sendErrorEmbed');
-const { statusSquares, statusSquaresLeaderboard, guessStatuses } = require('../utils/heardleStatusFunctions');
-const { redis, redisSchema } = require('../lib/redis');
-const { getUserStats, getLeaderboard, createLeaderboardDescription } = require('../lib/heardle-api');
+const { statusSquares } = require('../utils/heardleStatusFunctions');
+const { getUserStats, getLeaderboard, createLeaderboardDescription, setAnnouncement } = require('../lib/heardle-api');
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -80,12 +79,7 @@ module.exports = {
         const link = interaction.options.getString('link');
         const status = interaction.options.getString('status');
 
-        const announcement = redisSchema.parse({ showBanner, text, link, status });
-
-        await redis.set('show_banner', announcement.showBanner);
-        await redis.set('text', announcement.text);
-        await redis.set('link', announcement.link);
-        await redis.set('status', announcement.status);
+        const announcement = await setAnnouncement(showBanner, text, link, status);
 
         const confirmEmbed = new EmbedBuilder()
           .setTitle('[EDEN Heardle] New Announcement')
