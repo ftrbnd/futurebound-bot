@@ -85,7 +85,6 @@ and even has a `/guessthesong` game.
 - Database url from [MongoDB](https://mongodb.com/)
 - API key from [OpenAI](https://openai.com/)
 - API key from [Spotify](https://developer.spotify.com/) for the music player
-- Database urls and key from [Supabase](https://supabase.com) for using Heardle commands
 
 ### Installation
 
@@ -113,8 +112,6 @@ Create a `.env` file at the root and fill out the values:
   SPOTIFY_CLIENT_ID=
   SPOTIFY_CLIENT_SECRET=
   OPENAI_API_KEY=
-  SUPABASE_URL=
-  SUPABASE_KEY=
 
   # Set this to one minute before EDEN Heardle resets (4am UTC)
   CRON_HOUR=3

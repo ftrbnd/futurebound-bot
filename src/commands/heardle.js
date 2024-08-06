@@ -1,9 +1,8 @@
 const { ActionRowBuilder, ButtonBuilder } = require('@discordjs/builders');
 const { SlashCommandBuilder, ButtonStyle, EmbedBuilder } = require('discord.js');
-const supabase = require('../lib/supabase');
 const sendErrorEmbed = require('../utils/sendErrorEmbed');
-const { statusSquares, statusSquaresLeaderboard, guessStatuses } = require('../utils/heardleStatusFunctions');
-const { redis, redisSchema } = require('../lib/redis');
+const { statusSquares } = require('../utils/heardleStatusFunctions');
+const { getUserStats, getLeaderboard, createLeaderboardDescription, setAnnouncement } = require('../lib/heardle-api');
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -34,255 +33,40 @@ module.exports = {
   async execute(interaction) {
     try {
       if (interaction.options.getSubcommand() === 'stats') {
-        const user = interaction.options.getUser('user');
-        if (user) {
-          // VIEW USER'S STATS
-          const { data: accountData, error: accountError } = await supabase.from('Account').select().eq('providerAccountId', user.id);
-          if (accountError || accountData.length === 0) {
-            if (accountError) console.log(accountError);
+        const user = interaction.options.getUser('user') ?? interaction.user;
+        const { guesses, statistics } = await getUserStats(user);
 
-            const errEmbed = new EmbedBuilder().setDescription('This user is not signed in to EDEN Heardle!').setColor(0xdf0000);
+        const completedDaily = guesses.length > 0 && (guesses.length === 6 || guesses.at(-1).correctStatus === 'CORRECT');
 
-            return interaction.reply({ embeds: [errEmbed], ephemeral: true });
-          }
+        const statsEmbed = new EmbedBuilder()
+          .setAuthor({ name: user.displayName, iconURL: user.displayAvatarURL() })
+          .setTitle('EDEN Heardle Stats')
+          .setURL('https://eden-heardle.io')
+          .setColor(0xf9d72f)
+          .addFields(
+            { name: 'Today', value: completedDaily ? statusSquares(guesses) : 'N/A' },
+            { name: 'Win Percentage', value: `${Math.round(((statistics?.gamesWon ?? 0) / (statistics?.gamesPlayed || 1)) * 100)}%` },
+            { name: 'Accuracy', value: `${Math.round(((statistics?.accuracy ?? 0) / ((statistics?.gamesPlayed || 1) * 6)) * 100)}%` },
+            { name: 'Current Streak', value: `${statistics.currentStreak}` },
+            { name: 'Max Streak', value: `${statistics.maxStreak}` }
+          );
 
-          // Get today's results
-          const { data: guessListData, error: guessListError } = await supabase.from('Guesses').select().eq('userId', accountData[0].userId);
-          if (guessListError || guessListData.length === 0) {
-            if (guessListError) console.log(guessListError);
-
-            const errEmbed = new EmbedBuilder().setDescription('This user made any guesses!').setColor(0xdf0000);
-
-            return interaction.reply({ embeds: [errEmbed], ephemeral: true });
-          }
-          const guessListId = guessListData[0].id;
-
-          const { data: guesses, error: guessesError } = await supabase.from('GuessedSong').select().eq('guessListId', guessListId);
-          if (guessesError) {
-            if (guessListError) console.log(guessListError);
-
-            const errEmbed = new EmbedBuilder().setDescription("Error getting user's guesses").setColor(0xdf0000);
-
-            return interaction.reply({ embeds: [errEmbed], ephemeral: true });
-          }
-
-          // Get user's stats
-          const { data: statsData, error: statsError } = await supabase.from('Statistics').select().eq('userId', accountData[0].userId);
-          if (statsError || statsData.length === 0) {
-            if (statsError) console.log(statsError);
-
-            const errEmbed = new EmbedBuilder().setDescription("This user doesn't have any stats yet!").setColor(0xdf0000);
-
-            return interaction.reply({ embeds: [errEmbed], ephemeral: true });
-          }
-
-          const stats = statsData[0];
-          const completedDaily = guesses.length > 0 && (guesses.length === 6 || guesses.at(-1).correctStatus === 'CORRECT');
-
-          const statsEmbed = new EmbedBuilder()
-            .setAuthor({ name: user.displayName, iconURL: user.displayAvatarURL() })
-            .setTitle('EDEN Heardle Stats')
-            .setURL('https://eden-heardle.vercel.app')
-            .setColor(0xf9d72f)
-            .addFields(
-              { name: 'Today', value: completedDaily ? statusSquares(guesses) : 'N/A' },
-              { name: 'Win Percentage', value: `${Math.round(((stats?.gamesWon ?? 0) / (stats?.gamesPlayed || 1)) * 100)}%` },
-              { name: 'Accuracy', value: `${Math.round(((stats?.accuracy ?? 0) / ((stats?.gamesPlayed || 1) * 6)) * 100)}%` },
-              { name: 'Current Streak', value: `${stats.currentStreak}` },
-              { name: 'Max Streak', value: `${stats.maxStreak}` }
-            );
-
-          await interaction.reply({ embeds: [statsEmbed] });
-        } else {
-          // CHECK YOUR OWN STATS
-          const { data: accountData, error: accountError } = await supabase.from('Account').select().eq('providerAccountId', interaction.user.id);
-          if (accountError || accountData.length === 0) {
-            if (accountError) console.log(accountError);
-
-            const errEmbed = new EmbedBuilder().setDescription('Your Discord account is not signed in to EDEN Heardle!').setColor(0xdf0000);
-
-            return interaction.reply({ embeds: [errEmbed], ephemeral: true });
-          }
-
-          // Get today's results
-          const { data: guessListData, error: guessListError } = await supabase.from('Guesses').select().eq('userId', accountData[0].userId);
-          if (guessListError || guessListData.length === 0) {
-            if (guessListError) console.log(guessListError);
-
-            const errEmbed = new EmbedBuilder().setDescription("You haven't made any guesses!").setColor(0xdf0000);
-
-            return interaction.reply({ embeds: [errEmbed], ephemeral: true });
-          }
-          const guessListId = guessListData[0].id;
-
-          const { data: guesses, error: guessesError } = await supabase.from('GuessedSong').select().eq('guessListId', guessListId);
-          if (guessesError) {
-            if (guessListError) console.log(guessListError);
-
-            const errEmbed = new EmbedBuilder().setDescription('Error getting your guesses').setColor(0xdf0000);
-
-            return interaction.reply({ embeds: [errEmbed], ephemeral: true });
-          }
-
-          // Get your stats
-          const { data: statsData, error: statsError } = await supabase.from('Statistics').select().eq('userId', accountData[0].userId);
-          if (statsError || statsData.length === 0) {
-            if (statsError) console.log(statsError);
-
-            const errEmbed = new EmbedBuilder().setDescription("You don't have any stats yet!").setColor(0xdf0000);
-
-            return interaction.reply({ embeds: [errEmbed], ephemeral: true });
-          }
-
-          const stats = statsData[0];
-          const completedDaily = guesses.length > 0 && (guesses.length === 6 || guesses.at(-1).correctStatus === 'CORRECT');
-
-          const statsEmbed = new EmbedBuilder()
-            .setAuthor({ name: interaction.user.displayName, iconURL: interaction.user.displayAvatarURL() })
-            .setTitle('EDEN Heardle Stats')
-            .setURL('https://eden-heardle.vercel.app')
-            .setColor(0xf9d72f)
-            .addFields(
-              { name: 'Today', value: completedDaily ? statusSquares(guesses) : 'N/A' },
-              { name: 'Win Percentage', value: `${Math.round(((stats?.gamesWon ?? 0) / (stats?.gamesPlayed || 1)) * 100)}%` },
-              { name: 'Accuracy', value: `${Math.round(((stats?.accuracy ?? 0) / ((stats?.gamesPlayed || 1) * 6)) * 100)}%` },
-              { name: 'Current Streak', value: `${stats.currentStreak}` },
-              { name: 'Max Streak', value: `${stats.maxStreak}` }
-            );
-
-          await interaction.reply({ embeds: [statsEmbed] });
-        }
+        await interaction.reply({ embeds: [statsEmbed] });
       } else if (interaction.options.getSubcommand() === 'leaderboard') {
-        // defer reply
-        await interaction.deferReply();
+        const { leaderboard } = await getLeaderboard();
+        const { title, description } = createLeaderboardDescription(leaderboard, 'today');
 
-        // GET LEADERBOARD
-        const { data: statsData, error: statsError } = await supabase.from('Statistics').select();
-        if (statsError || statsData.length === 0) {
-          if (statsError) console.log(statsError);
+        const leaderboardEmbed = new EmbedBuilder().setDescription(description).setTitle(title).setURL('https://www.eden-heardle.io').setColor(0xf9d72f);
 
-          const errEmbed = new EmbedBuilder().setDescription('No stats found').setColor(0xdf0000);
-
-          return interaction.editReply({ embeds: [errEmbed], ephemeral: true });
-        }
-
-        const leaderboard = {
-          dailies: [],
-          winPcts: [],
-          accuracies: [],
-          curStrks: [],
-          maxStrks: []
-        };
-
-        for (const userStats of statsData) {
-          // GET DISCORD USER
-          const { data: accountData, error: accountError } = await supabase.from('Account').select().eq('userId', userStats.userId);
-          if (accountError) {
-            console.log(accountError);
-
-            const errEmbed = new EmbedBuilder().setDescription("Couldn't find Discord account for a user").setColor(0xdf0000);
-
-            return interaction.editReply({ embeds: [errEmbed], ephemeral: true });
-          }
-
-          const discordId = accountData[0].providerAccountId;
-          let guildMember = null;
-          try {
-            guildMember = await interaction.guild.members.fetch(discordId);
-          } catch (err) {
-            console.log(`Could not fetch member with id: ${discordId} `);
-            continue;
-          }
-
-          const { data: guessesData, error: guessesError } = await supabase.from('Guesses').select().eq('userId', userStats.userId);
-          if (guessesError) {
-            console.log(guessesError);
-
-            const errEmbed = new EmbedBuilder().setDescription('No guesses found').setColor(0xdf0000);
-
-            return interaction.editReply({ embeds: [errEmbed], ephemeral: true });
-          }
-
-          const { data: guessedSongs, error: songsError } = await supabase.from('GuessedSong').select().eq('guessListId', guessesData[0].id);
-          if (songsError || !guessedSongs) {
-            console.log(songsError);
-
-            const errEmbed = new EmbedBuilder().setDescription('Error getting guessed songs').setColor(0xdf0000);
-
-            return interaction.editReply({ embeds: [errEmbed], ephemeral: true });
-          }
-
-          // daily stats
-          if (guessedSongs.length > 0 && (guessedSongs.length === 6 || guessedSongs.at(-1)?.correctStatus === 'CORRECT')) {
-            leaderboard.dailies.push({
-              data: guessStatuses(guessedSongs),
-              user: guildMember
-            });
-          }
-
-          // win percentages and accuracies
-          if (userStats.gamesPlayed > 0) {
-            leaderboard.winPcts.push({
-              data: Math.round(((userStats?.gamesWon ?? 0) / (userStats?.gamesPlayed || 1)) * 100),
-              user: guildMember
-            });
-
-            leaderboard.accuracies.push({
-              data: Math.round(((userStats.accuracy ?? 0) / (userStats.gamesPlayed * 6)) * 100),
-              user: guildMember
-            });
-          }
-
-          // current streaks
-          if (userStats.currentStreak > 0) {
-            leaderboard.curStrks.push({
-              data: userStats.currentStreak,
-              user: guildMember
-            });
-          }
-
-          // max streaks
-          if (userStats.maxStreak > 0) {
-            leaderboard.maxStrks.push({
-              data: userStats.maxStreak,
-              user: guildMember
-            });
-          }
-        }
-
-        leaderboard.dailies.sort((a, b) => {
-          const aIndex = a.data.indexOf('CORRECT');
-          const bIndex = b.data.indexOf('CORRECT');
-
-          return (aIndex === -1 ? 99 : aIndex) - (bIndex === -1 ? 99 : bIndex); // if they didn't get the song, 'CORRECT' is not in any of their GuessedSongs, so return any number greater than 6 instead of -1
-        });
-        leaderboard.winPcts.sort((a, b) => b.data - a.data);
-        leaderboard.accuracies.sort((a, b) => b.data - a.data);
-        leaderboard.curStrks.sort((a, b) => b.data - a.data);
-        leaderboard.maxStrks.sort((a, b) => b.data - a.data);
-
-        let description = [];
-        for (let i = 0; i < leaderboard.dailies.length; i++) {
-          const daily = leaderboard.dailies[i];
-          description.push(`${i + 1}. ${daily.user.displayName} **${statusSquaresLeaderboard(daily.data)}**`);
-        }
-        if (description.length > 10) description = description.slice(0, 10);
-
-        const leaderboardEmbed = new EmbedBuilder()
-          .setDescription(description.length > 0 ? description.join('\n') : "No one has completed today's Heardle yet!")
-          .setTitle('EDEN Heardle Leaderboard - Today')
-          .setURL('https://www.eden-heardle.io')
-          .setColor(0xf9d72f);
-
-        const dailies = new ButtonBuilder().setCustomId('dailies').setLabel('Today').setStyle(ButtonStyle.Primary);
-        const winPcts = new ButtonBuilder().setCustomId('winPcts').setLabel('Win Percentages').setStyle(ButtonStyle.Primary);
+        const today = new ButtonBuilder().setCustomId('today').setLabel('Today').setStyle(ButtonStyle.Primary);
+        const winPercentages = new ButtonBuilder().setCustomId('winPercentages').setLabel('Win Percentages').setStyle(ButtonStyle.Primary);
         const accuracies = new ButtonBuilder().setCustomId('accuracies').setLabel('Accuracies').setStyle(ButtonStyle.Primary);
-        const curStrks = new ButtonBuilder().setCustomId('curStrks').setLabel('Current Streaks').setStyle(ButtonStyle.Primary);
-        const maxStrks = new ButtonBuilder().setCustomId('maxStrks').setLabel('Max Streaks').setStyle(ButtonStyle.Primary);
+        const currentStreaks = new ButtonBuilder().setCustomId('currentStreaks').setLabel('Current Streaks').setStyle(ButtonStyle.Primary);
+        const maxStreaks = new ButtonBuilder().setCustomId('maxStreaks').setLabel('Max Streaks').setStyle(ButtonStyle.Primary);
 
-        const row = new ActionRowBuilder().addComponents(dailies, winPcts, accuracies, curStrks, maxStrks);
+        const row = new ActionRowBuilder().addComponents(today, winPercentages, accuracies, currentStreaks, maxStreaks);
 
-        await interaction.editReply({ embeds: [leaderboardEmbed], components: [row] });
+        await interaction.reply({ embeds: [leaderboardEmbed], components: [row] });
       } else if (interaction.options.getSubcommand() === 'set-announcement') {
         const owner = await interaction.guild.fetchOwner();
         if (interaction.member.id !== owner.id) {
@@ -295,12 +79,7 @@ module.exports = {
         const link = interaction.options.getString('link');
         const status = interaction.options.getString('status');
 
-        const announcement = redisSchema.parse({ showBanner, text, link, status });
-
-        await redis.set('show_banner', announcement.showBanner);
-        await redis.set('text', announcement.text);
-        await redis.set('link', announcement.link);
-        await redis.set('status', announcement.status);
+        const announcement = await setAnnouncement(showBanner, text, link, status);
 
         const confirmEmbed = new EmbedBuilder()
           .setTitle('[EDEN Heardle] New Announcement')

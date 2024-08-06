@@ -1,5 +1,6 @@
 const { SlashCommandBuilder, EmbedBuilder, PermissionFlagsBits } = require('discord.js');
 const sendErrorEmbed = require('../utils/sendErrorEmbed');
+const { sendHealthCheck } = require('../lib/heardle-api');
 
 module.exports = {
   data: new SlashCommandBuilder().setName('ping').setDescription('Ping the EDEN Heardle server').setDefaultMemberPermissions(PermissionFlagsBits.Administrator),
@@ -14,14 +15,7 @@ module.exports = {
 
       await interaction.deferReply({ ephemeral: true });
 
-      const res = await fetch(`${process.env.EDEN_HEARDLE_SERVER_URL}/healthcheck`, {
-        headers: {
-          Authorization: `Bearer ${process.env.DISCORD_TOKEN}`
-        }
-      });
-      if (!res.ok) throw new Error('Failed to send request');
-
-      const data = await res.json();
+      const { data, res } = await sendHealthCheck();
 
       const responseEmbed = new EmbedBuilder().setTitle(`${res.status} ${res.statusText}`).setDescription(JSON.stringify(data)).setColor(process.env.CONFIRM_COLOR);
 
