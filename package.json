@@ -10,7 +10,8 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node src/index.js",
     "dev": "nodemon",
-    "deploy": "node deploy-commands.js"
+    "register-commands": "node register-commands.js",
+    "postinstall": "yarn register-commands"
   },
   "author": "Giovanni Salas",
   "license": "ISC",
