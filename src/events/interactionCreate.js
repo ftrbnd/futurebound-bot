@@ -1,10 +1,10 @@
 // Interactions: slash commands, buttons, select menus
 import { EmbedBuilder, InteractionType } from 'discord.js';
-import { SurvivorRound } from '../lib/mongo/schemas/SurvivorRound.js';
 import { Giveaway } from '../lib/mongo/schemas/Giveaway.js';
 import { sendErrorEmbed } from '../utils/sendErrorEmbed.js';
 import { DailyHeardleCheck } from '../lib/mongo/schemas/DailyHeardleCheck.js';
 import { getLeaderboard, sendRetryRequest, createLeaderboardDescription } from '../lib/heardle/api.js';
+import { getSurvivorRound, removeDuplicateVote, updateVotes } from '../lib/mongo/services/SurvivorRound.js';
 
 export const name = 'interactionCreate';
 export async function execute(interaction) {
@@ -43,11 +43,11 @@ async function handleSurvivorVote(interaction) {
   let userChangedSong = false,
     originalVote = '';
 
-  const survivorRound = await SurvivorRound.findOne({ album: albumName });
+  const survivorRound = await getSurvivorRound({ album: albumName });
   if (!survivorRound) {
     // this shouldn't be possible because users will only interact with the menu once a survivor round exists
     console.log('No survivor round data available.');
-    const errEmbed = new EmbedBuilder().setDescription('An error occured.').setColor(process.env.ERROR_COLOR);
+    const errEmbed = new EmbedBuilder().setDescription('An error occurred.').setColor(process.env.ERROR_COLOR);
     return interaction.reply({ embeds: [errEmbed], ephemeral: true });
   } else {
     if (interaction.message.id == survivorRound.lastMessageId) {
@@ -69,18 +69,13 @@ async function handleSurvivorVote(interaction) {
       } else if (allVotes.includes(interaction.user.id)) {
         // if the user has already voted for a song
         // remove their original vote
-        survivorRound.votes.forEach((userIds, song) => {
-          if (userIds.includes(interaction.user.id)) {
-            originalVote = song;
-            userIds.splice(userIds.indexOf(interaction.user.id), 1); // remove the user's id from the original song's vote list
-            userChangedSong = true;
-          }
-        });
+        const { ogVote, changedSong } = await removeDuplicateVote(survivorRound, interaction.user.id);
+        originalVote = ogVote;
+        userChangedSong = changedSong;
       }
 
       selectedSongVotes.push(interaction.user.id); // add their vote once it's confirmed that their original vote has been removed
-      survivorRound.votes.set(selectedSong, selectedSongVotes); // add the new votes list to the database
-      await survivorRound.save();
+      await updateVotes(survivorRound, selectedSong, selectedSongVotes);
     } else {
       console.log(`Invalid vote: ${interaction.user.tag} voted in an old round`);
       const errorEmbed = new EmbedBuilder().setDescription('Please vote in the most recent poll!').setColor(process.env.ERROR_COLOR);

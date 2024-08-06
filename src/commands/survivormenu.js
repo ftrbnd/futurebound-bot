@@ -1,9 +1,9 @@
 import { resolve } from 'path';
 
 import { EmbedBuilder, PermissionFlagsBits, SlashCommandBuilder, ActionRowBuilder, StringSelectMenuBuilder } from 'discord.js';
-import { SurvivorRound } from '../lib/mongo/schemas/SurvivorRound.js';
 import { sendErrorEmbed } from '../utils/sendErrorEmbed.js';
 import { lineSplitFile } from '../utils/lineSplitFile.js';
+import { createSurvivorRound, getSurvivorRound, updateRoundAfterSend } from '../lib/mongo/services/SurvivorRound.js';
 
 const __dirname = import.meta.dirname;
 
@@ -67,7 +67,7 @@ export async function execute(interaction) {
 
       if (interaction.options.getSubcommand() === 'standings') {
         // get current votes
-        const survivorRound = await SurvivorRound.findOne({ album: albumName });
+        const survivorRound = await getSurvivorRound({ album: albumName });
         if (!survivorRound) {
           const errEmbed = new EmbedBuilder().setDescription(`No data exists for **${albumName}**`).setColor(process.env.ERROR_COLOR);
           await interaction.reply({ embeds: [errEmbed] });
@@ -107,7 +107,7 @@ export async function execute(interaction) {
         let roundNumber, survivorEmbed, row;
 
         // update the database
-        const survivorRound = await SurvivorRound.findOne({ album: albumName });
+        const survivorRound = await getSurvivorRound({ album: albumName });
 
         const songVotesMap = new Map(); // empty map with empty vote arrays for new rounds
         for (let track of albumTracks) {
@@ -119,7 +119,7 @@ export async function execute(interaction) {
 
         if (!survivorRound) {
           // if the survivor album isn't already in the database, add it
-          await SurvivorRound.create({
+          await createSurvivorRound({
             album: albumName,
             tracks: albumTracks,
             votes: songVotesMap, // key:song, value: [userIds]
@@ -204,9 +204,7 @@ export async function execute(interaction) {
               });
 
             const message = await survivorChannel.send({ content: `${survivorRole}`, embeds: [survivorEmbed] });
-            survivorRound.lastMessageId = message.id;
-            survivorRound.roundNumber = roundNumber;
-            await survivorRound.save();
+            await updateRoundAfterSend(survivorRound, message.id, roundNumber);
 
             survivorRound.tracks = albumTracks; // reset the database tracks
             survivorRound.votes.forEach((userIds) => {
@@ -248,9 +246,7 @@ export async function execute(interaction) {
 
             const message = await survivorChannel.send({ content: `${survivorRole}`, embeds: [survivorEmbed], components: [row] });
             // update the database with the newest round numbers and latest message id for reaction purposes
-            survivorRound.lastMessageId = message.id;
-            survivorRound.roundNumber = roundNumber;
-            await survivorRound.save();
+            await updateRoundAfterSend(survivorRound, message.id, roundNumber);
           }
         }
 
