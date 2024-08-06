@@ -1,14 +1,17 @@
-const mongoose = require('mongoose');
+import { Schema, SchemaTypes, model } from 'mongoose';
 
-const AlbumSchema = new mongoose.Schema({
+const AlbumSchema = new Schema(
+  {
     album: {
-        type: mongoose.SchemaTypes.String,
-        required: true,
+      type: SchemaTypes.String,
+      required: true
     },
     tracks: {
-        type: mongoose.SchemaTypes.Array,
-        required: true,
+      type: SchemaTypes.Array,
+      required: true
     }
-}, { versionKey: false });
+  },
+  { versionKey: false }
+);
 
-module.exports = mongoose.model('Album', AlbumSchema);
+export const Album = model('Album', AlbumSchema);

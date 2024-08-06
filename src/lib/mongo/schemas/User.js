@@ -1,30 +1,33 @@
-const mongoose = require('mongoose');
+import { Schema, SchemaTypes, model } from 'mongoose';
 
-const UserSchema = new mongoose.Schema({
+const UserSchema = new Schema(
+  {
     discordId: {
-        type: mongoose.SchemaTypes.String,
-        required: true,
+      type: SchemaTypes.String,
+      required: true
     },
     username: {
-        type: mongoose.SchemaTypes.String,
-        required: true,
+      type: SchemaTypes.String,
+      required: true
     },
     birthday: {
-        type: mongoose.SchemaTypes.Date,
-        require: false,
+      type: SchemaTypes.Date,
+      require: false
     },
     timezone: {
-        type: mongoose.SchemaTypes.String,
-        require: false,
+      type: SchemaTypes.String,
+      require: false
     },
     warnings: {
-        type: mongoose.SchemaTypes.Number,
-        require: false
+      type: SchemaTypes.Number,
+      require: false
     },
     muteEnd: {
-        type: mongoose.SchemaTypes.Date,
-        require: false
+      type: SchemaTypes.Date,
+      require: false
     }
-}, { versionKey: false });
+  },
+  { versionKey: false }
+);
 
-module.exports = mongoose.model('User', UserSchema);
+export const User = model('User', UserSchema);

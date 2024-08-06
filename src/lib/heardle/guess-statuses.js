@@ -1,4 +1,4 @@
-function statusSquares(guesses) {
+export function statusSquares(guesses) {
   function getStatusSquare(status) {
     switch (status) {
       case 'CORRECT':
@@ -20,7 +20,7 @@ function statusSquares(guesses) {
   return squares.join('');
 }
 
-function statusSquaresLeaderboard(statuses) {
+export function statusSquaresLeaderboard(statuses) {
   function getStatusSquare(status) {
     switch (status) {
       case 'CORRECT':
@@ -43,7 +43,7 @@ function statusSquaresLeaderboard(statuses) {
 }
 
 // used in commands/heardle and events/interactionCreate
-function guessStatuses(songs) {
+export function guessStatuses(songs) {
   const statuses = [];
 
   for (const song of songs) {
@@ -52,5 +52,3 @@ function guessStatuses(songs) {
 
   return statuses;
 }
-
-module.exports = { statusSquares, statusSquaresLeaderboard, guessStatuses };

@@ -1,40 +1,38 @@
 // Interactions: slash commands, buttons, select menus
-const { EmbedBuilder, InteractionType } = require('discord.js');
-const SurvivorRound = require('../lib/mongo/schemas/SurvivorRound');
-const Giveaway = require('../lib/mongo/schemas/Giveaway');
-const sendErrorEmbed = require('../utils/sendErrorEmbed');
-const DailyHeardleCheck = require('../lib/mongo/schemas/DailyHeardleCheck');
-const { getLeaderboard, sendRetryRequest, createLeaderboardDescription } = require('../lib/heardle/api');
+import { EmbedBuilder, InteractionType } from 'discord.js';
+import { SurvivorRound } from '../lib/mongo/schemas/SurvivorRound.js';
+import { Giveaway } from '../lib/mongo/schemas/Giveaway.js';
+import { sendErrorEmbed } from '../utils/sendErrorEmbed.js';
+import { DailyHeardleCheck } from '../lib/mongo/schemas/DailyHeardleCheck.js';
+import { getLeaderboard, sendRetryRequest, createLeaderboardDescription } from '../lib/heardle/api.js';
 
-module.exports = {
-  name: 'interactionCreate',
-  async execute(interaction) {
-    const leaderboardButtonIds = ['today', 'winPercentages', 'accuracies', 'currentStreaks', 'maxStreaks'];
+export const name = 'interactionCreate';
+export async function execute(interaction) {
+  const leaderboardButtonIds = ['today', 'winPercentages', 'accuracies', 'currentStreaks', 'maxStreaks'];
 
-    if (interaction.isStringSelectMenu() && interaction.channel.name == process.env.SURVIVOR_CHANNEL_NAME) {
-      await handleSurvivorVote(interaction); // handle menu interactions from /survivor
-    } else if (interaction.isButton() && leaderboardButtonIds.includes(interaction.customId)) {
-      await handleLeaderboardButton(interaction);
-    } else if (interaction.isButton() && interaction.channel.id == process.env.GIVEAWAY_CHANNEL_ID) {
-      await handleGiveawayEntry(interaction);
-    } else if (interaction.isButton() && interaction.customId.startsWith('retry_daily_heardle')) {
-      await handleRetryDailyHeardle(interaction);
-    }
-
-    if (!interaction.type === InteractionType.ApplicationCommand) return;
-
-    const command = interaction.client.commands.get(interaction.commandName);
-    if (!command) return;
-
-    try {
-      await command.execute(interaction);
-    } catch (error) {
-      console.error(error);
-      const errorEmbed = new EmbedBuilder().setDescription('There was an error while executing this command!').setColor(process.env.ERROR_COLOR);
-      await interaction.reply({ embeds: [errorEmbed], ephemeral: true });
-    }
+  if (interaction.isStringSelectMenu() && interaction.channel.name == process.env.SURVIVOR_CHANNEL_NAME) {
+    await handleSurvivorVote(interaction); // handle menu interactions from /survivor
+  } else if (interaction.isButton() && leaderboardButtonIds.includes(interaction.customId)) {
+    await handleLeaderboardButton(interaction);
+  } else if (interaction.isButton() && interaction.channel.id == process.env.GIVEAWAY_CHANNEL_ID) {
+    await handleGiveawayEntry(interaction);
+  } else if (interaction.isButton() && interaction.customId.startsWith('retry_daily_heardle')) {
+    await handleRetryDailyHeardle(interaction);
   }
-};
+
+  if (!interaction.type === InteractionType.ApplicationCommand) return;
+
+  const command = interaction.client.commands.get(interaction.commandName);
+  if (!command) return;
+
+  try {
+    await command.execute(interaction);
+  } catch (error) {
+    console.error(error);
+    const errorEmbed = new EmbedBuilder().setDescription('There was an error while executing this command!').setColor(process.env.ERROR_COLOR);
+    await interaction.reply({ embeds: [errorEmbed], ephemeral: true });
+  }
+}
 
 async function handleSurvivorVote(interaction) {
   let selectedSong = interaction.values[0];

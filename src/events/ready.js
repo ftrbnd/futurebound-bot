@@ -1,4 +1,4 @@
-const { EmbedBuilder, ActivityType } = require('discord.js');
+import { EmbedBuilder, ActivityType } from 'discord.js';
 
 const songs = [
   '02:09',
@@ -72,30 +72,28 @@ const songs = [
   'The Love U Need'
 ];
 
-module.exports = {
-  name: 'ready',
-  once: true,
-  async execute(client) {
-    let index = 0;
-    let song = songs[index];
+export const name = 'ready';
+export const once = true;
+export async function execute(client) {
+  let index = 0;
+  let song = songs[index];
+
+  client.user.setPresence({ activities: [{ name: song, type: ActivityType.Listening }] });
+
+  setInterval(() => {
+    song = songs[index >= songs.length - 1 ? 0 : ++index];
 
     client.user.setPresence({ activities: [{ name: song, type: ActivityType.Listening }] });
+  }, 3 * 60 * 1000);
 
-    setInterval(() => {
-      song = songs[index >= songs.length - 1 ? 0 : ++index];
+  const message = `**${client.user.tag}** is now ready`;
+  const logChannel = client.channels.cache.get(process.env.LOGS_CHANNEL_ID);
 
-      client.user.setPresence({ activities: [{ name: song, type: ActivityType.Listening }] });
-    }, 3 * 60 * 1000);
+  if (logChannel && process.env.NODE_ENV !== 'development') {
+    const readyEmbed = new EmbedBuilder().setDescription(message).setColor(process.env.CONFIRM_COLOR);
 
-    const message = `**${client.user.tag}** is now ready`;
-    const logChannel = client.channels.cache.get(process.env.LOGS_CHANNEL_ID);
-
-    if (logChannel && process.env.NODE_ENV !== 'development') {
-      const readyEmbed = new EmbedBuilder().setDescription(message).setColor(process.env.CONFIRM_COLOR);
-
-      logChannel.send({ embeds: [readyEmbed] });
-    }
-
-    console.log(`[Discord] ${client.user.tag} is now ready`);
+    logChannel.send({ embeds: [readyEmbed] });
   }
-};
+
+  console.log(`[Discord] ${client.user.tag} is now ready`);
+}

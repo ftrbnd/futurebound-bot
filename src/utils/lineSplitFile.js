@@ -1,8 +1,8 @@
-const fs = require('fs');
+import { promises } from 'fs';
 
-const lineSplitFile = async (filename) => {
+export const lineSplitFile = async (filename) => {
   try {
-    const contents = await fs.promises.readFile(filename, 'utf-8');
+    const contents = await promises.readFile(filename, 'utf-8');
     const arr = contents.split(/\r?\n/);
 
     return arr;
@@ -10,5 +10,3 @@ const lineSplitFile = async (filename) => {
     console.error(err);
   }
 };
-
-module.exports = lineSplitFile;

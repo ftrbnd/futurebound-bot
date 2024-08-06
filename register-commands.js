@@ -1,19 +1,21 @@
-require('dotenv').config();
-const fs = require('fs');
-const { REST } = require('@discordjs/rest');
-const { Routes } = require('discord-api-types/v9');
+import dotenv from 'dotenv';
+dotenv.config();
+
+import { readdirSync } from 'fs';
+import { REST } from '@discordjs/rest';
+import { Routes } from 'discord-api-types/v9';
 
 const commands = [];
 
-const commandFiles = fs.readdirSync('./src/commands').filter((file) => file.endsWith('.js'));
+const commandFiles = readdirSync('./src/commands').filter((file) => file.endsWith('.js'));
 for (const file of commandFiles) {
-  const command = require(`./src/commands/${file}`);
+  const command = await import(`./src/commands/${file}`);
   commands.push(command.data.toJSON());
 }
 
-const musicCommandFiles = fs.readdirSync('./src/lib/distube/commands').filter((file) => file.endsWith('.js'));
+const musicCommandFiles = readdirSync('./src/lib/distube/commands').filter((file) => file.endsWith('.js'));
 for (const file of musicCommandFiles) {
-  const musicCommand = require(`./src/lib/distube/commands/${file}`);
+  const musicCommand = await import(`./src/lib/distube/commands/${file}`);
   commands.push(musicCommand.data.toJSON());
 }
 

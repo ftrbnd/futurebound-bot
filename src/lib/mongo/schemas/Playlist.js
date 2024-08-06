@@ -1,14 +1,17 @@
-const mongoose = require('mongoose');
+import { Schema, SchemaTypes, model } from 'mongoose';
 
-const PlaylistSchema = new mongoose.Schema({
+const PlaylistSchema = new Schema(
+  {
     name: {
-        type: mongoose.SchemaTypes.String,
-        required: true,
+      type: SchemaTypes.String,
+      required: true
     },
     link: {
-        type: mongoose.SchemaTypes.String,
-        required: true,
+      type: SchemaTypes.String,
+      required: true
     }
-}, { versionKey: false });
+  },
+  { versionKey: false }
+);
 
-module.exports = mongoose.model('Playlist', PlaylistSchema);
+export const Playlist = model('Playlist', PlaylistSchema);

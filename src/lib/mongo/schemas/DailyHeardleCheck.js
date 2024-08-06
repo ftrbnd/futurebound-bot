@@ -1,25 +1,25 @@
-const mongoose = require('mongoose');
+import { Schema, SchemaTypes, model } from 'mongoose';
 
-const DailyHeardleCheckSchema = new mongoose.Schema(
+const DailyHeardleCheckSchema = new Schema(
   {
     prevDay: {
-      type: mongoose.SchemaTypes.Number,
+      type: SchemaTypes.Number,
       required: true
     },
     prevSong: {
-      type: mongoose.SchemaTypes.String,
+      type: SchemaTypes.String,
       required: true
     },
     nextDay: {
-      type: mongoose.SchemaTypes.Number,
+      type: SchemaTypes.Number,
       required: false
     },
     nextSong: {
-      type: mongoose.SchemaTypes.String,
+      type: SchemaTypes.String,
       required: false
     }
   },
   { versionKey: false }
 );
 
-module.exports = mongoose.model('DailyHeardleCheck', DailyHeardleCheckSchema);
+export const DailyHeardleCheck = model('DailyHeardleCheck', DailyHeardleCheckSchema);

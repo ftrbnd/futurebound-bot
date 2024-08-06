@@ -1,14 +1,17 @@
-const mongoose = require('mongoose');
+import { Schema, SchemaTypes, model } from 'mongoose';
 
-const MusicPermissionSchema = new mongoose.Schema({
+const MusicPermissionSchema = new Schema(
+  {
     roleName: {
-        type: mongoose.SchemaTypes.String,
-        required: true,
+      type: SchemaTypes.String,
+      required: true
     },
     roleId: {
-        type: mongoose.SchemaTypes.String,
-        required: true,
+      type: SchemaTypes.String,
+      required: true
     }
-}, { versionKey: false });
+  },
+  { versionKey: false }
+);
 
-module.exports = mongoose.model('MusicPermission', MusicPermissionSchema);
+export const MusicPermission = model('MusicPermission', MusicPermissionSchema);

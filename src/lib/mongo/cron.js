@@ -1,7 +1,7 @@
-const { EmbedBuilder } = require('discord.js');
-const { CronJob } = require('cron');
-const User = require('./schemas/User');
-const Giveaway = require('./schemas/Giveaway');
+import { EmbedBuilder } from 'discord.js';
+import { CronJob } from 'cron';
+import { User } from './schemas/User.js';
+import { Giveaway } from './schemas/Giveaway.js';
 
 const numberEndings = new Map([
   [13, 'th'],
@@ -161,13 +161,9 @@ const checkGiveaways = async (discordClient) => {
   }
 };
 
-const registerDatabaseChecks = async (discordClient) => {
+export const registerDatabaseChecks = async (discordClient) => {
   const usersJob = new CronJob('* * * * *', async () => checkUsers(discordClient), null, true, 'utc');
   const giveawaysJob = new CronJob('* * * * *', async () => checkGiveaways(discordClient), null, true, 'utc');
 
   return [usersJob, giveawaysJob];
-};
-
-module.exports = {
-  registerDatabaseChecks
 };

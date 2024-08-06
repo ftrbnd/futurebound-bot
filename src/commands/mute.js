@@ -1,88 +1,85 @@
-const { EmbedBuilder, PermissionFlagsBits, SlashCommandBuilder } = require('discord.js');
-const User = require('../lib/mongo/schemas/User');
-const sendErrorEmbed = require('../utils/sendErrorEmbed');
+import { EmbedBuilder, PermissionFlagsBits, SlashCommandBuilder } from 'discord.js';
+import { User } from '../lib/mongo/schemas/User.js';
+import { sendErrorEmbed } from '../utils/sendErrorEmbed.js';
 
-module.exports = {
-  data: new SlashCommandBuilder()
-    .setName('mute')
-    .setDescription('Mute a user by giving them the Muted role')
-    .addUserOption((option) => option.setName('user').setDescription('The user to be muted').setRequired(true))
-    .addStringOption((option) => option.setName('reason').setDescription('The reason for the mute').setRequired(true))
-    .setDefaultMemberPermissions(PermissionFlagsBits.ManageRoles), // any permission that the Helper role has access to should work
+export const data = new SlashCommandBuilder()
+  .setName('mute')
+  .setDescription('Mute a user by giving them the Muted role')
+  .addUserOption((option) => option.setName('user').setDescription('The user to be muted').setRequired(true))
+  .addStringOption((option) => option.setName('reason').setDescription('The reason for the mute').setRequired(true))
+  .setDefaultMemberPermissions(PermissionFlagsBits.ManageRoles);
+export async function execute(interaction) {
+  try {
+    const userToMute = interaction.options.getUser('user');
+    const reasonForMute = interaction.options.getString('reason');
 
-  async execute(interaction) {
-    try {
-      const userToMute = interaction.options.getUser('user');
-      const reasonForMute = interaction.options.getString('reason');
+    const modChannel = interaction.guild.channels.cache.get(process.env.MODERATORS_CHANNEL_ID);
+    if (!modChannel) return;
 
-      const modChannel = interaction.guild.channels.cache.get(process.env.MODERATORS_CHANNEL_ID);
-      if (!modChannel) return;
+    const oneWeek = new Date();
+    oneWeek.setDate(oneWeek.getDate() + 7);
+    const user = await User.findOne({ discordId: userToMute.id });
 
-      const oneWeek = new Date();
-      oneWeek.setDate(oneWeek.getDate() + 7);
-      const user = await User.findOne({ discordId: userToMute.id });
-
-      if (!user) {
-        // if the user isn't already in the database, add their data
-        await User.create({
-          discordId: userToMute.id,
-          username: userToMute.username,
-          muteEnd: oneWeek
-        }).catch((err) => console.error(err));
-      } else {
-        // if they already were in the database, simply update and save
-        user.muteEnd = oneWeek;
-        user.username = userToMute.username;
-        await user.save();
-      }
-
-      try {
-        userToMuteMember = interaction.guild.members.cache.get(`${userToMute.id}`);
-        userToMuteMember.roles.set([process.env.MUTE_ROLE_ID]); // Mute role
-      } catch (err) {
-        return console.error(err);
-      }
-
-      const logEmbed = new EmbedBuilder()
-        .setTitle(userToMute.tag + ' was muted for a week.')
-        .addFields([
-          { name: 'User ID: ', value: `${userToMute.id}` },
-          { name: 'By: ', value: `${interaction.user}` },
-          { name: 'Reason: ', value: reasonForMute },
-          { name: 'Mute Ends: ', value: oneWeek.toDateString() }
-        ])
-        .setColor('000001')
-        .setThumbnail(userToMute.displayAvatarURL({ dynamic: true }))
-        .setFooter({
-          text: interaction.guild.name,
-          iconURL: interaction.guild.iconURL({ dynamic: true })
-        })
-        .setTimestamp();
-      modChannel.send({ embeds: [logEmbed] });
-
-      const muteEmbed = new EmbedBuilder()
-        .setTitle(`You were muted in **${interaction.guild.name}** for a week.`)
-        .addFields([
-          { name: 'Reason: ', value: reasonForMute },
-          { name: 'Mute Ends: ', value: oneWeek.toDateString() }
-        ])
-        .setColor('000001')
-        .setFooter({
-          text: interaction.guild.name,
-          iconURL: interaction.guild.iconURL({ dynamic: true })
-        })
-        .setTimestamp();
-
-      try {
-        await userToMute.send({ embeds: [muteEmbed] });
-      } catch (err) {
-        return console.error(err);
-      }
-
-      const mutedEmbed = new EmbedBuilder().setDescription(`${userToMute} was muted.`).setColor(process.env.CONFIRM_COLOR);
-      interaction.reply({ embeds: [mutedEmbed] });
-    } catch (err) {
-      sendErrorEmbed(interaction, err);
+    if (!user) {
+      // if the user isn't already in the database, add their data
+      await User.create({
+        discordId: userToMute.id,
+        username: userToMute.username,
+        muteEnd: oneWeek
+      }).catch((err) => console.error(err));
+    } else {
+      // if they already were in the database, simply update and save
+      user.muteEnd = oneWeek;
+      user.username = userToMute.username;
+      await user.save();
     }
+
+    try {
+      userToMuteMember = interaction.guild.members.cache.get(`${userToMute.id}`);
+      userToMuteMember.roles.set([process.env.MUTE_ROLE_ID]); // Mute role
+    } catch (err) {
+      return console.error(err);
+    }
+
+    const logEmbed = new EmbedBuilder()
+      .setTitle(userToMute.tag + ' was muted for a week.')
+      .addFields([
+        { name: 'User ID: ', value: `${userToMute.id}` },
+        { name: 'By: ', value: `${interaction.user}` },
+        { name: 'Reason: ', value: reasonForMute },
+        { name: 'Mute Ends: ', value: oneWeek.toDateString() }
+      ])
+      .setColor('000001')
+      .setThumbnail(userToMute.displayAvatarURL({ dynamic: true }))
+      .setFooter({
+        text: interaction.guild.name,
+        iconURL: interaction.guild.iconURL({ dynamic: true })
+      })
+      .setTimestamp();
+    modChannel.send({ embeds: [logEmbed] });
+
+    const muteEmbed = new EmbedBuilder()
+      .setTitle(`You were muted in **${interaction.guild.name}** for a week.`)
+      .addFields([
+        { name: 'Reason: ', value: reasonForMute },
+        { name: 'Mute Ends: ', value: oneWeek.toDateString() }
+      ])
+      .setColor('000001')
+      .setFooter({
+        text: interaction.guild.name,
+        iconURL: interaction.guild.iconURL({ dynamic: true })
+      })
+      .setTimestamp();
+
+    try {
+      await userToMute.send({ embeds: [muteEmbed] });
+    } catch (err) {
+      return console.error(err);
+    }
+
+    const mutedEmbed = new EmbedBuilder().setDescription(`${userToMute} was muted.`).setColor(process.env.CONFIRM_COLOR);
+    interaction.reply({ embeds: [mutedEmbed] });
+  } catch (err) {
+    sendErrorEmbed(interaction, err);
   }
-};
+}

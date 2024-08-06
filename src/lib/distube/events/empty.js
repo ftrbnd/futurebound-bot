@@ -1,14 +1,10 @@
-const { EmbedBuilder } = require('discord.js');
+import { EmbedBuilder } from 'discord.js';
 
-module.exports = {
-	name: 'empty',
-	async execute(queue) {
-        const emptyEmbed = new EmbedBuilder()
-            .setDescription(`**${queue.voiceChannel.name}** is empty - disconnecting...`)
-            .setColor(process.env.MUSIC_COLOR);
+export const name = 'empty';
+export async function execute(queue) {
+  const emptyEmbed = new EmbedBuilder().setDescription(`**${queue.voiceChannel.name}** is empty - disconnecting...`).setColor(process.env.MUSIC_COLOR);
 
-        if (queue.textChannel) {
-            queue.textChannel.send({ embeds: [emptyEmbed] });
-        }
-	},
+  if (queue.textChannel) {
+    queue.textChannel.send({ embeds: [emptyEmbed] });
+  }
 }

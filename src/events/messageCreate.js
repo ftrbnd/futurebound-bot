@@ -1,57 +1,55 @@
-const { EmbedBuilder, ChannelType, MessageType, ThreadAutoArchiveDuration } = require('discord.js');
+import { EmbedBuilder, ChannelType, MessageType, ThreadAutoArchiveDuration } from 'discord.js';
 
-module.exports = {
-  name: 'messageCreate',
-  async execute(message) {
-    if (message.webhookId === process.env.WEBHOOK_ID) {
-      handleWebhook(message);
+export const name = 'messageCreate';
+export async function execute(message) {
+  if (message.webhookId === process.env.WEBHOOK_ID) {
+    handleWebhook(message);
+  }
+
+  if (message.author.bot) return; // ignore bot messages
+
+  if (message.channel.type === ChannelType.DM) {
+    handleDirectMessage(message);
+  } else {
+    const introductionsChannel = message.guild.channels.cache.get(process.env.INTRODUCTIONS_CHANNEL_ID);
+    if (!introductionsChannel) return;
+
+    if (message.channel.id === process.env.INTRODUCTIONS_CHANNEL_ID) {
+      const kermitHearts = message.guild.emojis.cache.get(process.env.KERMITHEARTS_EMOJI_ID);
+      message.react(kermitHearts);
     }
 
-    if (message.author.bot) return; // ignore bot messages
+    if (message.channel.id === process.env.BOT_BAIT_CHANNEL_ID) {
+      handleBotBaitMessage(message);
+    }
 
-    if (message.channel.type === ChannelType.DM) {
-      handleDirectMessage(message);
-    } else {
-      const introductionsChannel = message.guild.channels.cache.get(process.env.INTRODUCTIONS_CHANNEL_ID);
-      if (!introductionsChannel) return;
+    switch (message.type) {
+      case MessageType.GuildBoostTier3:
+        handleServerBoosts(message, 3);
+        break;
+      case MessageType.GuildBoostTier2:
+        handleServerBoosts(message, 2);
+        break;
+      case MessageType.GuildBoostTier1:
+        handleServerBoosts(message, 1);
+        break;
+      case MessageType.GuildBoost:
+        handleServerBoosts(message, 0);
+        break;
+      case MessageType.RoleSubscriptionPurchase:
+        handleServerSubscriptions(message);
+        break;
+    }
 
-      if (message.channel.id === process.env.INTRODUCTIONS_CHANNEL_ID) {
-        const kermitHearts = message.guild.emojis.cache.get(process.env.KERMITHEARTS_EMOJI_ID);
-        message.react(kermitHearts);
-      }
-
-      if (message.channel.id === process.env.BOT_BAIT_CHANNEL_ID) {
-        handleBotBaitMessage(message);
-      }
-
-      switch (message.type) {
-        case MessageType.GuildBoostTier3:
-          handleServerBoosts(message, 3);
-          break;
-        case MessageType.GuildBoostTier2:
-          handleServerBoosts(message, 2);
-          break;
-        case MessageType.GuildBoostTier1:
-          handleServerBoosts(message, 1);
-          break;
-        case MessageType.GuildBoost:
-          handleServerBoosts(message, 0);
-          break;
-        case MessageType.RoleSubscriptionPurchase:
-          handleServerSubscriptions(message);
-          break;
-      }
-
-      if ((message.channel.id == process.env.BOTS_CHANNEL_ID || message.member.roles.cache.has(process.env.MODERATORS_ROLE_ID)) && message.mentions.has(message.client.user) && !message.author.bot) {
-        try {
-          await handleMentions(message);
-        } catch (e) {
-          console.error(e);
-        }
+    if ((message.channel.id == process.env.BOTS_CHANNEL_ID || message.member.roles.cache.has(process.env.MODERATORS_ROLE_ID)) && message.mentions.has(message.client.user) && !message.author.bot) {
+      try {
+        await handleMentions(message);
+      } catch (e) {
+        console.error(e);
       }
     }
   }
-};
+}
 
 function handleDirectMessage(message) {
   const logChannel = message.client.guilds.cache.get(process.env.GUILD_ID).channels.cache.get(process.env.LOGS_CHANNEL_ID);

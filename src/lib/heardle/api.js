@@ -1,10 +1,10 @@
-const { statusSquaresLeaderboard } = require('./guess-statuses');
-const { heardleAnnouncementSchema } = require('./announcement');
+import { statusSquaresLeaderboard } from './guess-statuses.js';
+import { heardleAnnouncementSchema } from './announcement.js';
 
 const SERVER = process.env.EDEN_HEARDLE_SERVER_URL;
 const ENDPOINT = `${SERVER}/api/heardles`;
 
-async function sendHealthCheck() {
+export async function sendHealthCheck() {
   const res = await fetch(`${SERVER}/healthcheck`, {
     headers: {
       Authorization: `Bearer ${process.env.DISCORD_TOKEN}`
@@ -16,7 +16,7 @@ async function sendHealthCheck() {
   return { data, res };
 }
 
-async function sendRetryRequest() {
+export async function sendRetryRequest() {
   const res = await fetch(`${ENDPOINT}/daily/retry`, {
     headers: {
       Authorization: `Bearer ${process.env.DISCORD_TOKEN}`
@@ -28,7 +28,7 @@ async function sendRetryRequest() {
   return { message };
 }
 
-async function getCurrentDailySong() {
+export async function getCurrentDailySong() {
   const res = await fetch(`${ENDPOINT}/daily`, {
     headers: {
       Authorization: `Bearer ${process.env.DISCORD_TOKEN}`
@@ -42,7 +42,7 @@ async function getCurrentDailySong() {
 }
 
 // user: Discord.js User
-async function getUserStats(user) {
+export async function getUserStats(user) {
   const res = await fetch(`${ENDPOINT}/statistics/${user.id}`, {
     headers: {
       Authorization: `Bearer ${process.env.DISCORD_TOKEN}`
@@ -55,7 +55,7 @@ async function getUserStats(user) {
   return { guesses, statistics };
 }
 
-async function getLeaderboard() {
+export async function getLeaderboard() {
   const res = await fetch(`${ENDPOINT}/leaderboard`, {
     headers: {
       Authorization: `Bearer ${process.env.DISCORD_TOKEN}`
@@ -76,7 +76,7 @@ const categories = new Map([
 ]);
 // leaderboard: Leaderboard
 // category: 'today' | 'winPercentages' | 'accuracies' | 'currentStreaks' | 'maxStreaks'
-function createLeaderboardDescription(leaderboard, category) {
+export function createLeaderboardDescription(leaderboard, category) {
   let dataRows = [];
 
   for (let i = 0; i < leaderboard[category].length; i++) {
@@ -93,7 +93,7 @@ function createLeaderboardDescription(leaderboard, category) {
   return { title, description };
 }
 
-async function setAnnouncement(showBanner, text, link, status) {
+export async function setAnnouncement(showBanner, text, link, status) {
   const body = heardleAnnouncementSchema.parse({ showBanner, text, link, status });
 
   const res = await fetch(`${ENDPOINT}/announcement`, {
@@ -109,13 +109,3 @@ async function setAnnouncement(showBanner, text, link, status) {
   const { announcement } = await res.json();
   return announcement;
 }
-
-module.exports = {
-  sendHealthCheck,
-  sendRetryRequest,
-  getCurrentDailySong,
-  getUserStats,
-  getLeaderboard,
-  createLeaderboardDescription,
-  setAnnouncement
-};

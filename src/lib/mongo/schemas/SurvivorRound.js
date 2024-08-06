@@ -1,31 +1,34 @@
-const mongoose = require('mongoose');
+import { Schema, SchemaTypes, model } from 'mongoose';
 
-const SurvivorRoundSchema = new mongoose.Schema({
+const SurvivorRoundSchema = new Schema(
+  {
     album: {
-        type: mongoose.SchemaTypes.String,
-        required: true,
+      type: SchemaTypes.String,
+      required: true
     },
     tracks: {
-        type: mongoose.SchemaTypes.Array,
-        required: true,
+      type: SchemaTypes.Array,
+      required: true
     },
     votes: {
-        type: mongoose.SchemaTypes.Map, // song: userId
-        of: mongoose.SchemaTypes.Array,
-        required: true,
+      type: SchemaTypes.Map, // song: userId
+      of: SchemaTypes.Array,
+      required: true
     },
     standings: {
-        type: mongoose.SchemaTypes.Array,
-        required: false,
+      type: SchemaTypes.Array,
+      required: false
     },
     lastMessageId: {
-        type: mongoose.SchemaTypes.String,
-        required: false,
+      type: SchemaTypes.String,
+      required: false
     },
     roundNumber: {
-        type: mongoose.SchemaTypes.Number,
-        required: false,
+      type: SchemaTypes.Number,
+      required: false
     }
-}, { versionKey: false });
+  },
+  { versionKey: false }
+);
 
-module.exports = mongoose.model('SurvivorRound', SurvivorRoundSchema);
+export const SurvivorRound = model('SurvivorRound', SurvivorRoundSchema);

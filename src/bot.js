@@ -1,9 +1,9 @@
-const { Client, Collection, Partials, GatewayIntentBits } = require('discord.js');
-const { registerDistubeClient } = require('./lib/distube');
-const fs = require('fs');
-const path = require('path');
+import { Client, Collection, Partials, GatewayIntentBits } from 'discord.js';
+import { registerDistubeClient } from './lib/distube/index.js';
+import { readdirSync } from 'fs';
+import { resolve } from 'path';
 
-const client = new Client({
+export const client = new Client({
   intents: [
     GatewayIntentBits.Guilds,
     GatewayIntentBits.GuildMembers,
@@ -16,19 +16,21 @@ const client = new Client({
   partials: [Partials.Channel]
 });
 
-const commandsFolder = path.resolve(__dirname, './commands');
-const eventsFolder = path.resolve(__dirname, './events');
+const __dirname = import.meta.dirname;
+
+const commandsFolder = resolve(__dirname, './commands');
+const eventsFolder = resolve(__dirname, './events');
 
 client.commands = new Collection();
-const commandFiles = fs.readdirSync(commandsFolder).filter((file) => file.endsWith('.js'));
+const commandFiles = readdirSync(commandsFolder).filter((file) => file.endsWith('.js'));
 for (const file of commandFiles) {
-  const command = require(`./commands/${file}`);
+  const command = await import(`./commands/${file}`);
   client.commands.set(command.data.name, command);
 }
 
-const eventFiles = fs.readdirSync(eventsFolder).filter((file) => file.endsWith('.js'));
+const eventFiles = readdirSync(eventsFolder).filter((file) => file.endsWith('.js'));
 for (const file of eventFiles) {
-  const event = require(`./events/${file}`);
+  const event = await import(`./events/${file}`);
   if (event.once) {
     client.once(event.name, (...args) => event.execute(...args));
   } else {
@@ -36,8 +38,4 @@ for (const file of eventFiles) {
   }
 }
 
-client.DisTube = registerDistubeClient(client);
-
-module.exports = {
-  client
-};
+client.DisTube = await registerDistubeClient(client);

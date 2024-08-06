@@ -1,53 +1,49 @@
-const imgur = require('imgur');
-const { SlashCommandBuilder } = require('discord.js');
-const sendErrorEmbed = require('../utils/sendErrorEmbed');
+import imgur from 'imgur';
+import { SlashCommandBuilder } from 'discord.js';
+import { sendErrorEmbed } from '../utils/sendErrorEmbed.js';
 
-module.exports = {
-  data: new SlashCommandBuilder().setName('eden').setDescription('Get a random picture of EDEN'),
+const { getAlbumInfo } = imgur;
 
-  async execute(interaction) {
-    try {
-      const edenAlbumOne = '3Zh414x';
-      const edenAlbumTwo = 'DZ913Hd';
-      const edenAlbumThree = 'PUfyYtt';
-      const edenImages = [];
+export const data = new SlashCommandBuilder().setName('eden').setDescription('Get a random picture of EDEN');
+export async function execute(interaction) {
+  try {
+    const edenAlbumOne = '3Zh414x';
+    const edenAlbumTwo = 'DZ913Hd';
+    const edenAlbumThree = 'PUfyYtt';
+    const edenImages = [];
 
-      imgur
-        .getAlbumInfo(edenAlbumOne)
-        .then((json) => {
-          json.images.forEach((image) => {
-            edenImages.push(image.link);
-          });
-        })
-        .catch((err) => {
-          console.error(err.message);
+    getAlbumInfo(edenAlbumOne)
+      .then((json) => {
+        json.images.forEach((image) => {
+          edenImages.push(image.link);
+        });
+      })
+      .catch((err) => {
+        console.error(err.message);
+      });
+
+    getAlbumInfo(edenAlbumTwo)
+      .then((json) => {
+        json.images.forEach((image) => {
+          edenImages.push(image.link);
+        });
+      })
+      .catch((err) => {
+        console.error(err.message);
+      });
+
+    getAlbumInfo(edenAlbumThree)
+      .then((json) => {
+        json.images.forEach((image) => {
+          edenImages.push(image.link);
         });
 
-      imgur
-        .getAlbumInfo(edenAlbumTwo)
-        .then((json) => {
-          json.images.forEach((image) => {
-            edenImages.push(image.link);
-          });
-        })
-        .catch((err) => {
-          console.error(err.message);
-        });
-
-      imgur
-        .getAlbumInfo(edenAlbumThree)
-        .then((json) => {
-          json.images.forEach((image) => {
-            edenImages.push(image.link);
-          });
-
-          interaction.reply({ files: [`${edenImages[Math.floor(Math.random() * edenImages.length)]}`] });
-        })
-        .catch((err) => {
-          console.error(err.message);
-        });
-    } catch (err) {
-      sendErrorEmbed(interaction, err);
-    }
+        interaction.reply({ files: [`${edenImages[Math.floor(Math.random() * edenImages.length)]}`] });
+      })
+      .catch((err) => {
+        console.error(err.message);
+      });
+  } catch (err) {
+    sendErrorEmbed(interaction, err);
   }
-};
+}

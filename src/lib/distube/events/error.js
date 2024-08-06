@@ -1,15 +1,10 @@
-const { EmbedBuilder } = require('discord.js');
+import { EmbedBuilder } from 'discord.js';
 
-module.exports = {
-	name: 'error',
-	async execute(channel, error) {
-        console.error(error);
-        
-        const errEmbed = new EmbedBuilder()
-            .setTitle(`${error.name}: An error occurred.`)
-            .setDescription(error.message)
-            .setColor(process.env.ERROR_COLOR);
+export const name = 'error';
+export async function execute(channel, error) {
+  console.error(error);
 
-        channel.send({ embeds: [errEmbed]});
-	},
+  const errEmbed = new EmbedBuilder().setTitle(`${error.name}: An error occurred.`).setDescription(error.message).setColor(process.env.ERROR_COLOR);
+
+  channel.send({ embeds: [errEmbed] });
 }

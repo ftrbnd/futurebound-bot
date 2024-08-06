@@ -1,7 +1,7 @@
-const db = require('mongoose');
-const { registerDatabaseChecks } = require('./cron');
+import db from 'mongoose';
+import { registerDatabaseChecks } from './cron.js';
 
-async function connectToDb(discordClient) {
+export async function connectToDb(discordClient) {
   try {
     db.set('strictQuery', true);
 
@@ -15,4 +15,3 @@ async function connectToDb(discordClient) {
 }
 
 // TODO: create /services folder to wrap db calls
-module.exports = { connectToDb };

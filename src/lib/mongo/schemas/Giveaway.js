@@ -1,26 +1,29 @@
-const mongoose = require('mongoose');
+import { Schema, SchemaTypes, model } from 'mongoose';
 
-const GiveawaySchema = new mongoose.Schema({
+const GiveawaySchema = new Schema(
+  {
     prize: {
-        type: mongoose.SchemaTypes.String,
-        required: true,
+      type: SchemaTypes.String,
+      required: true
     },
     description: {
-        type: mongoose.SchemaTypes.String,
-        required: true,
+      type: SchemaTypes.String,
+      required: true
     },
     endDate: {
-        type: mongoose.SchemaTypes.Date,
-        required: true,
+      type: SchemaTypes.Date,
+      required: true
     },
     entries: {
-        type: mongoose.SchemaTypes.Array,
-        required: false,
+      type: SchemaTypes.Array,
+      required: false
     },
     imageURL: {
-        type: mongoose.SchemaTypes.String,
-        required: false,
+      type: SchemaTypes.String,
+      required: false
     }
-}, { versionKey: false });
+  },
+  { versionKey: false }
+);
 
-module.exports = mongoose.model('Giveaway', GiveawaySchema);
+export const Giveaway = model('Giveaway', GiveawaySchema);

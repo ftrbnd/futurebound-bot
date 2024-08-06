@@ -1,10 +1,12 @@
-const { DisTube } = require('distube');
-const { SpotifyPlugin } = require('@distube/spotify');
-const { SoundCloudPlugin } = require('@distube/soundcloud');
-const fs = require('fs');
-const path = require('path');
+import { DisTube } from 'distube';
+import { SpotifyPlugin } from '@distube/spotify';
+import { SoundCloudPlugin } from '@distube/soundcloud';
+import { readdirSync } from 'fs';
+import { resolve } from 'path';
 
-function registerDistubeClient(discordClient) {
+const __dirname = import.meta.dirname;
+
+export async function registerDistubeClient(discordClient) {
   const distube = new DisTube(discordClient, {
     leaveOnStop: false,
     leaveOnEmpty: true,
@@ -23,18 +25,18 @@ function registerDistubeClient(discordClient) {
     ]
   });
 
-  const commandsFolder = path.resolve(__dirname, './commands');
-  const eventsFolder = path.resolve(__dirname, './events');
+  const commandsFolder = resolve(__dirname, './commands');
+  const eventsFolder = resolve(__dirname, './events');
 
-  const commandFiles = fs.readdirSync(commandsFolder).filter((file) => file.endsWith('.js'));
+  const commandFiles = readdirSync(commandsFolder).filter((file) => file.endsWith('.js'));
   for (const file of commandFiles) {
-    const command = require(`./commands/${file}`);
+    const command = await import(`./commands/${file}`);
     discordClient.commands.set(command.data.name, command);
   }
 
-  const eventFiles = fs.readdirSync(eventsFolder).filter((file) => file.endsWith('.js'));
+  const eventFiles = readdirSync(eventsFolder).filter((file) => file.endsWith('.js'));
   for (const file of eventFiles) {
-    const event = require(`./events/${file}`);
+    const event = await import(`./events/${file}`);
     if (event.once) {
       distube.once(event.name, (...args) => event.execute(...args));
     } else {
@@ -44,5 +46,3 @@ function registerDistubeClient(discordClient) {
 
   return distube;
 }
-
-module.exports = { registerDistubeClient };
