@@ -1,6 +1,6 @@
 import { EmbedBuilder, PermissionFlagsBits, SlashCommandBuilder } from 'discord.js';
-import { User } from '../lib/mongo/schemas/User.js';
 import { sendErrorEmbed } from '../utils/sendErrorEmbed.js';
+import { createUser, getUser, updateUserMute } from '../lib/mongo/services/User.js';
 
 export const data = new SlashCommandBuilder()
   .setName('mute')
@@ -18,20 +18,18 @@ export async function execute(interaction) {
 
     const oneWeek = new Date();
     oneWeek.setDate(oneWeek.getDate() + 7);
-    const user = await User.findOne({ discordId: userToMute.id });
+    const user = await getUser({ discordId: userToMute.id });
 
     if (!user) {
       // if the user isn't already in the database, add their data
-      await User.create({
+      await createUser({
         discordId: userToMute.id,
         username: userToMute.username,
         muteEnd: oneWeek
-      }).catch((err) => console.error(err));
+      });
     } else {
       // if they already were in the database, simply update and save
-      user.muteEnd = oneWeek;
-      user.username = userToMute.username;
-      await user.save();
+      await updateUserMute(user, oneWeek, userToMute.username);
     }
 
     try {

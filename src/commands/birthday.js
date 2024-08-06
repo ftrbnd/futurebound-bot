@@ -1,7 +1,7 @@
 import { EmbedBuilder, SlashCommandBuilder } from 'discord.js';
 import { getTimeZones, timeZonesNames } from '@vvo/tzdb';
-import { User } from '../lib/mongo/schemas/User.js';
 import { sendErrorEmbed } from '../utils/sendErrorEmbed.js';
+import { createUser, getUser, updateUserBirthday } from '../lib/mongo/services/User.js';
 
 export const data = new SlashCommandBuilder()
   .setName('birthday')
@@ -90,10 +90,10 @@ export async function execute(interaction) {
 
     const theirBirthday = new Date(`${monthOption} ${dayOption} ${yearOption}`);
 
-    const user = await User.findOne({ discordId: interaction.user.id }, { upsert: true });
+    const user = await getUser({ discordId: interaction.user.id });
     if (!user) {
       // if the user isn't already in the database, add their data
-      await User.create({
+      await createUser({
         discordId: interaction.user.id,
         username: interaction.user.username,
         birthday: birthdayAttempt,
@@ -114,10 +114,7 @@ export async function execute(interaction) {
       return interaction.reply({ embeds: [personalEmbed], ephemeral: true });
     } else {
       // if they already were in the database, simply update and save
-      user.username = interaction.user.username;
-      user.birthday = birthdayAttempt;
-      user.timezone = timezoneOption;
-      await user.save();
+      await updateUserBirthday(user, interaction.user.username, birthdayAttempt, timezoneOption);
 
       console.log(`${interaction.user.username} updated their birthday to ${theirBirthday.toLocaleDateString()}: ${birthdayAttempt}`);
 

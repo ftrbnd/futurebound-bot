@@ -1,7 +1,7 @@
 import { EmbedBuilder } from 'discord.js';
 import { CronJob } from 'cron';
-import { User } from './schemas/User.js';
 import { Giveaway } from './schemas/Giveaway.js';
+import { getUsers } from './services/User.js';
 
 const numberEndings = new Map([
   [13, 'th'],
@@ -16,7 +16,7 @@ const numberEndings = new Map([
 const checkUsers = async (discordClient) => {
   const today = new Date();
 
-  const users = await User.find({});
+  const users = await getUsers();
   // is there a birthday today?
   if (users) {
     // console.log(`Checking for birthdays/mutes - today's date: ${today}`)
@@ -59,31 +59,27 @@ const checkUsers = async (discordClient) => {
           // }
           // let bdayDescription = `It's ${user.username}'s birthday today! 🥳🎈🎉`
 
-          const birthdayPerson = server.members
-            .fetch(user.discordId)
-            .then((birthdayPerson) => {
-              const birthdayEmbed = new EmbedBuilder()
-                .setTitle(`It's ${birthdayPerson.displayName}'s birthday today!`)
-                .setDescription(' 🥳🎈🎉')
-                .setColor('ffffc5')
-                .setThumbnail(birthdayPerson.user.displayAvatarURL({ dynamic: true }))
-                .setFooter({
-                  text: `Use /birthday in #bots to set your own birthday`,
-                  iconURL: `${server.iconURL({ dynamic: true })}`
-                });
+          const birthdayPerson = await server.members.fetch(user.discordId);
+          const birthdayEmbed = new EmbedBuilder()
+            .setTitle(`It's ${birthdayPerson.displayName}'s birthday today!`)
+            .setDescription(' 🥳🎈🎉')
+            .setColor('ffffc5')
+            .setThumbnail(birthdayPerson.user.displayAvatarURL({ dynamic: true }))
+            .setFooter({
+              text: `Use /birthday in #bots to set your own birthday`,
+              iconURL: `${server.iconURL({ dynamic: true })}`
+            });
 
-              try {
-                birthdayPerson.send({ content: 'happy birthday!! 🥳' });
-              } catch (error) {
-                console.log(`Failed to dm ${user.username}`);
-                console.log(error);
-              }
+          try {
+            birthdayPerson.send({ content: 'happy birthday!! 🥳' });
+          } catch (error) {
+            console.log(`Failed to dm ${user.username}`);
+            console.log(error);
+          }
 
-              const generalChannel = discordClient.channels.cache.get(process.env.GENERAL_CHANNEL_ID);
-              generalChannel.send({ embeds: [birthdayEmbed] });
-              console.log(`It's ${user.username}'s ${age}${ageSuffix} birthday today! - ${user.birthday}`);
-            })
-            .catch(console.error);
+          const generalChannel = discordClient.channels.cache.get(process.env.GENERAL_CHANNEL_ID);
+          generalChannel.send({ embeds: [birthdayEmbed] });
+          console.log(`It's ${user.username}'s ${age}${ageSuffix} birthday today! - ${user.birthday}`);
         }
       }
 
@@ -110,8 +106,7 @@ const checkUsers = async (discordClient) => {
           await modChannel.send({ embeds: [logEmbed] });
 
           // remove the muteEnd date in the database so it doesn't trigger again
-          user.muteEnd = null;
-          await user.save();
+          await updateUserMute(user, null, user.username);
         }
       }
     });

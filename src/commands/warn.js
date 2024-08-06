@@ -1,6 +1,6 @@
 import { EmbedBuilder, PermissionFlagsBits, SlashCommandBuilder } from 'discord.js';
-import { User } from '../lib/mongo/schemas/User.js';
 import { sendErrorEmbed } from '../utils/sendErrorEmbed.js';
+import { createUser, getUser, updateUserWarning } from '../lib/mongo/services/User.js';
 
 export const data = new SlashCommandBuilder()
   .setName('warn')
@@ -15,26 +15,17 @@ export async function execute(interaction) {
     const modChannel = interaction.guild.channels.cache.get(process.env.MODERATORS_CHANNEL_ID);
     if (!modChannel) return;
 
-    let warnCount;
-    const user = await User.findOne({ discordId: userToWarn.id });
-    if (!user) {
-      // if the user isn't already in the database, add their data
-      await User.create({
+    const user = await getUser({ discordId: userToWarn.id });
+    const warnCount = user ? user.warnings : 1;
+
+    if (user) {
+      await updateUserWarning(user, userToWarn.username, warnCount);
+    } else {
+      await createUser({
         discordId: userToWarn.id,
         username: userToWarn.username,
         warnings: 1
       });
-      warnCount = 1;
-    } else {
-      // if they already were in the database, simply update and save
-      if (!user.warnings) {
-        user.warnings = 1;
-      } else {
-        user.warnings += 1;
-      }
-      user.username = userToWarn.username;
-      await user.save();
-      warnCount = data.warnings;
     }
 
     const logEmbed = new EmbedBuilder()
