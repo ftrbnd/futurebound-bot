@@ -4,7 +4,7 @@ const SurvivorRound = require('../schemas/SurvivorRoundSchema');
 const Giveaway = require('../schemas/GiveawaySchema');
 const sendErrorEmbed = require('../utils/sendErrorEmbed');
 const DailyHeardleCheck = require('../schemas/DailyHeardleCheckSchema');
-const { getLeaderboard, sendRetryRequest, createLeaderboardDescription } = require('../lib/heardle-api');
+const { getLeaderboard, sendRetryRequest, createLeaderboardDescription } = require('../lib/heardle/api');
 
 module.exports = {
   name: 'interactionCreate',

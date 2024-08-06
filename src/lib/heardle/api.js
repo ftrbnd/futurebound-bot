@@ -1,5 +1,5 @@
-const { statusSquaresLeaderboard } = require('../utils/heardleStatusFunctions');
-const { heardleAnnouncementSchema } = require('../utils/schema');
+const { statusSquaresLeaderboard } = require('./guess-statuses');
+const { heardleAnnouncementSchema } = require('./announcement');
 
 const SERVER = process.env.EDEN_HEARDLE_SERVER_URL;
 const ENDPOINT = `${SERVER}/api/heardles`;

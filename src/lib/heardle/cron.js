@@ -1,7 +1,7 @@
-const DailyHeardleCheck = require('../schemas/DailyHeardleCheckSchema');
+const DailyHeardleCheck = require('../../schemas/DailyHeardleCheckSchema');
 const { CronJob } = require('cron');
 const { EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle } = require('discord.js');
-const { getCurrentDailySong } = require('./heardle-api');
+const { getCurrentDailySong } = require('./api');
 
 async function snapshotPrev() {
   const prev = await getCurrentDailySong();

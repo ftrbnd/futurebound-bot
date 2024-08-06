@@ -11,9 +11,9 @@ for (const file of commandFiles) {
   commands.push(command.data.toJSON());
 }
 
-const musicCommandFiles = fs.readdirSync('./src/musicCommands').filter((file) => file.endsWith('.js'));
+const musicCommandFiles = fs.readdirSync('./src/lib/distube/commands').filter((file) => file.endsWith('.js'));
 for (const file of musicCommandFiles) {
-  const musicCommand = require(`./src/musicCommands/${file}`);
+  const musicCommand = require(`./src/lib/distube/commands/${file}`);
   commands.push(musicCommand.data.toJSON());
 }
 

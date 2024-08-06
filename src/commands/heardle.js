@@ -1,8 +1,8 @@
 const { ActionRowBuilder, ButtonBuilder } = require('@discordjs/builders');
-const { SlashCommandBuilder, ButtonStyle, EmbedBuilder } = require('discord.js');
+const { SlashCommandBuilder, ButtonStyle, EmbedBuilder, PermissionFlagsBits } = require('discord.js');
 const sendErrorEmbed = require('../utils/sendErrorEmbed');
-const { statusSquares } = require('../utils/heardleStatusFunctions');
-const { getUserStats, getLeaderboard, createLeaderboardDescription, setAnnouncement } = require('../lib/heardle-api');
+const { statusSquares } = require('../lib/heardle/guess-statuses');
+const { getUserStats, getLeaderboard, createLeaderboardDescription, setAnnouncement, sendHealthCheck } = require('../lib/heardle/api');
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -28,7 +28,9 @@ module.exports = {
             .setDescription("The status determines the banner's color")
             .addChoices({ name: 'Success', value: 'success' }, { name: 'Info', value: 'info' }, { name: 'Error', value: 'error' })
         )
-    ),
+    )
+    .addSubcommand((subcommand) => subcommand.setName('health-check').setDescription('Ping the EDEN Heardle server'))
+    .setDefaultMemberPermissions(PermissionFlagsBits.Administrator),
 
   async execute(interaction) {
     try {
@@ -94,6 +96,20 @@ module.exports = {
           .setColor(process.env.CONFIRM_COLOR);
 
         await interaction.reply({ embeds: [confirmEmbed] });
+      } else if (interaction.options.getSubcommand() === 'health-check') {
+        const owner = await interaction.guild.fetchOwner();
+        if (interaction.member.id !== owner.id) {
+          const embed = new EmbedBuilder().setDescription('You are not the server owner.').setColor(process.env.ERROR_COLOR);
+          return interaction.reply({ embeds: [embed] });
+        }
+
+        await interaction.deferReply({ ephemeral: true });
+
+        const { data, res } = await sendHealthCheck();
+
+        const responseEmbed = new EmbedBuilder().setTitle(`${res.status} ${res.statusText}`).setDescription(JSON.stringify(data)).setColor(process.env.CONFIRM_COLOR);
+
+        await interaction.editReply({ embeds: [responseEmbed], ephemeral: true });
       }
     } catch (err) {
       sendErrorEmbed(interaction, err);
