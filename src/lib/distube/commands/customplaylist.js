@@ -1,6 +1,6 @@
 const { EmbedBuilder, SlashCommandBuilder, PermissionFlagsBits, ChannelType } = require('discord.js');
-const Playlist = require('../schemas/PlaylistSchema');
-const sendErrorEmbed = require('../utils/sendErrorEmbed');
+const Playlist = require('../../../schemas/PlaylistSchema');
+const sendErrorEmbed = require('../../../utils/sendErrorEmbed');
 
 module.exports = {
   data: new SlashCommandBuilder()

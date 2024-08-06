@@ -1,6 +1,6 @@
 const { EmbedBuilder, SlashCommandBuilder, PermissionFlagsBits } = require('discord.js');
-const MusicPermission = require('../schemas/MusicPermissionSchema');
-const sendErrorEmbed = require('../utils/sendErrorEmbed');
+const MusicPermission = require('../../../schemas/MusicPermissionSchema');
+const sendErrorEmbed = require('../../../utils/sendErrorEmbed');
 
 module.exports = {
   data: new SlashCommandBuilder()

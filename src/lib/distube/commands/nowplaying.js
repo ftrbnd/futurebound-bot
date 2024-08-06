@@ -1,9 +1,9 @@
 const { EmbedBuilder, SlashCommandBuilder } = require('discord.js');
-const getAllowedRoleId = require('../utils/getAllowedRoleId');
-const sendErrorEmbed = require('../utils/sendErrorEmbed');
+const getAllowedRoleId = require('../../../utils/getAllowedRoleId');
+const sendErrorEmbed = require('../../../utils/sendErrorEmbed');
 
 module.exports = {
-  data: new SlashCommandBuilder().setName('shuffle').setDescription('Shuffle the queue'),
+  data: new SlashCommandBuilder().setName('nowplaying').setDescription('See what song is currently playing'),
 
   async execute(interaction) {
     try {
@@ -13,22 +13,20 @@ module.exports = {
         return interaction.reply({ embeds: [errEmbed] });
       }
 
-      const voiceChannel = interaction.member.voice.channel;
+      const voiceChannel = interaction.client.DisTube.voices.get(interaction.member.voice.channel);
       if (!voiceChannel) {
-        const errEmbed = new EmbedBuilder().setDescription(`You must join a voice channel!`).setColor(process.env.ERROR_COLOR);
+        const errEmbed = new EmbedBuilder().setDescription(`Not in a voice channel`).setColor(process.env.ERROR_COLOR);
         return interaction.reply({ embeds: [errEmbed] });
       }
 
       const queue = interaction.client.DisTube.getQueue(interaction.guild);
       if (!queue) {
-        const errEmbed = new EmbedBuilder().setDescription(`The queue is empty`).setColor(process.env.ERROR_COLOR);
+        const errEmbed = new EmbedBuilder().setDescription(`There is nothing playing`).setColor(process.env.ERROR_COLOR);
         return interaction.reply({ embeds: [errEmbed] });
       }
 
-      queue.shuffle();
-
-      const shuffleEmbed = new EmbedBuilder().setDescription('Shuffled the queue').setColor(process.env.MUSIC_COLOR);
-      interaction.reply({ embeds: [shuffleEmbed] });
+      const npEmbed = new EmbedBuilder().setDescription(`Now playing [${queue.songs[0].name}](${queue.songs[0].url}) [${queue.songs[0].user}]`).setColor(process.env.MUSIC_COLOR);
+      interaction.reply({ embeds: [npEmbed] });
     } catch (err) {
       sendErrorEmbed(interaction, err);
     }

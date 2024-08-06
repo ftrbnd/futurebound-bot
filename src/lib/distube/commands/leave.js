@@ -1,6 +1,6 @@
 const { EmbedBuilder, SlashCommandBuilder } = require('discord.js');
-const getAllowedRoleId = require('../utils/getAllowedRoleId');
-const sendErrorEmbed = require('../utils/sendErrorEmbed');
+const getAllowedRoleId = require('../../../utils/getAllowedRoleId');
+const sendErrorEmbed = require('../../../utils/sendErrorEmbed');
 
 module.exports = {
   data: new SlashCommandBuilder().setName('leave').setDescription('Leave your voice channel'),

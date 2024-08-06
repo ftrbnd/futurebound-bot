@@ -1,9 +1,9 @@
 const { EmbedBuilder, SlashCommandBuilder } = require('discord.js');
-const getAllowedRoleId = require('../utils/getAllowedRoleId');
-const sendErrorEmbed = require('../utils/sendErrorEmbed');
+const getAllowedRoleId = require('../../../utils/getAllowedRoleId');
+const sendErrorEmbed = require('../../../utils/sendErrorEmbed');
 
 module.exports = {
-  data: new SlashCommandBuilder().setName('stop').setDescription('Stop the music and delete the queue'),
+  data: new SlashCommandBuilder().setName('resume').setDescription('Resume playing the song'),
 
   async execute(interaction) {
     try {
@@ -25,10 +25,14 @@ module.exports = {
         return interaction.reply({ embeds: [errEmbed] });
       }
 
-      queue.stop();
+      if (!queue.paused) {
+        const errEmbed = new EmbedBuilder().setDescription(`The queue is already playing`).setColor(process.env.ERROR_COLOR);
+        return interaction.reply({ embeds: [errEmbed] });
+      }
 
-      const stopEmbed = new EmbedBuilder().setDescription('Stopped the queue').setColor(process.env.MUSIC_COLOR);
-      interaction.reply({ embeds: [stopEmbed] });
+      queue.resume();
+      const pauseEmbed = new EmbedBuilder().setDescription(`Resumed the queue`).setColor(process.env.MUSIC_COLOR);
+      interaction.reply({ embeds: [pauseEmbed] });
     } catch (err) {
       sendErrorEmbed(interaction, err);
     }

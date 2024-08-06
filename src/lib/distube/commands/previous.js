@@ -1,9 +1,9 @@
 const { EmbedBuilder, SlashCommandBuilder } = require('discord.js');
-const getAllowedRoleId = require('../utils/getAllowedRoleId');
-const sendErrorEmbed = require('../utils/sendErrorEmbed');
+const getAllowedRoleId = require('../../../utils/getAllowedRoleId');
+const sendErrorEmbed = require('../../../utils/sendErrorEmbed');
 
 module.exports = {
-  data: new SlashCommandBuilder().setName('pause').setDescription('Pause the currently playing song'),
+  data: new SlashCommandBuilder().setName('previous').setDescription('Play the previous song in the queue'),
 
   async execute(interaction) {
     try {
@@ -21,19 +21,20 @@ module.exports = {
 
       const queue = interaction.client.DisTube.getQueue(interaction.guild);
       if (!queue) {
-        const errEmbed = new EmbedBuilder().setDescription(`The queue is empty`).setColor(process.env.ERROR_COLOR);
+        const errEmbed = new EmbedBuilder().setDescription(`The queue is empty!`).setColor(process.env.ERROR_COLOR);
         return interaction.reply({ embeds: [errEmbed] });
       }
 
-      if (queue.paused) {
-        queue.resume();
-        const pauseEmbed = new EmbedBuilder().setDescription(`Resumed the song`).setColor(process.env.MUSIC_COLOR);
-        return interaction.reply({ embeds: [pauseEmbed] });
-      }
+      try {
+        const song = await queue.previous();
 
-      queue.pause();
-      const pauseEmbed = new EmbedBuilder().setDescription(`Paused the song`).setColor(process.env.MUSIC_COLOR);
-      return interaction.reply({ embeds: [pauseEmbed] });
+        const queueEmbed = new EmbedBuilder().setDescription(`Playing previous song **${song.name}**`).setColor(process.env.MUSIC_COLOR);
+        interaction.reply({ embeds: [queueEmbed] });
+      } catch (error) {
+        console.error(error);
+        const errEmbed = new EmbedBuilder().setDescription(`There is no previous song in this queue`).setColor(process.env.ERROR_COLOR);
+        interaction.reply({ embeds: [errEmbed] });
+      }
     } catch (err) {
       sendErrorEmbed(interaction, err);
     }

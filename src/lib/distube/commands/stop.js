@@ -1,9 +1,9 @@
 const { EmbedBuilder, SlashCommandBuilder } = require('discord.js');
-const getAllowedRoleId = require('../utils/getAllowedRoleId');
-const sendErrorEmbed = require('../utils/sendErrorEmbed');
+const getAllowedRoleId = require('../../../utils/getAllowedRoleId');
+const sendErrorEmbed = require('../../../utils/sendErrorEmbed');
 
 module.exports = {
-  data: new SlashCommandBuilder().setName('nowplaying').setDescription('See what song is currently playing'),
+  data: new SlashCommandBuilder().setName('stop').setDescription('Stop the music and delete the queue'),
 
   async execute(interaction) {
     try {
@@ -13,20 +13,22 @@ module.exports = {
         return interaction.reply({ embeds: [errEmbed] });
       }
 
-      const voiceChannel = interaction.client.DisTube.voices.get(interaction.member.voice.channel);
+      const voiceChannel = interaction.member.voice.channel;
       if (!voiceChannel) {
-        const errEmbed = new EmbedBuilder().setDescription(`Not in a voice channel`).setColor(process.env.ERROR_COLOR);
+        const errEmbed = new EmbedBuilder().setDescription(`You must join a voice channel!`).setColor(process.env.ERROR_COLOR);
         return interaction.reply({ embeds: [errEmbed] });
       }
 
       const queue = interaction.client.DisTube.getQueue(interaction.guild);
       if (!queue) {
-        const errEmbed = new EmbedBuilder().setDescription(`There is nothing playing`).setColor(process.env.ERROR_COLOR);
+        const errEmbed = new EmbedBuilder().setDescription(`The queue is empty`).setColor(process.env.ERROR_COLOR);
         return interaction.reply({ embeds: [errEmbed] });
       }
 
-      const npEmbed = new EmbedBuilder().setDescription(`Now playing [${queue.songs[0].name}](${queue.songs[0].url}) [${queue.songs[0].user}]`).setColor(process.env.MUSIC_COLOR);
-      interaction.reply({ embeds: [npEmbed] });
+      queue.stop();
+
+      const stopEmbed = new EmbedBuilder().setDescription('Stopped the queue').setColor(process.env.MUSIC_COLOR);
+      interaction.reply({ embeds: [stopEmbed] });
     } catch (err) {
       sendErrorEmbed(interaction, err);
     }

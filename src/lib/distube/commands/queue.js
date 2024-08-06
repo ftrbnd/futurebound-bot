@@ -1,9 +1,9 @@
 const { EmbedBuilder, SlashCommandBuilder } = require('discord.js');
-const getAllowedRoleId = require('../utils/getAllowedRoleId');
-const sendErrorEmbed = require('../utils/sendErrorEmbed');
+const getAllowedRoleId = require('../../../utils/getAllowedRoleId');
+const sendErrorEmbed = require('../../../utils/sendErrorEmbed');
 
 module.exports = {
-  data: new SlashCommandBuilder().setName('resume').setDescription('Resume playing the song'),
+  data: new SlashCommandBuilder().setName('queue').setDescription('View the current queue'),
 
   async execute(interaction) {
     try {
@@ -25,14 +25,28 @@ module.exports = {
         return interaction.reply({ embeds: [errEmbed] });
       }
 
-      if (!queue.paused) {
-        const errEmbed = new EmbedBuilder().setDescription(`The queue is already playing`).setColor(process.env.ERROR_COLOR);
-        return interaction.reply({ embeds: [errEmbed] });
+      const queueList = queue.songs.map((song, id) => `${id + 1}) [${song.name}](${song.url}) - \`${song.formattedDuration}\``).join('\n');
+
+      let repeatMode = '';
+      switch (queue.repeatMode) {
+        case 0:
+          repeatMode = 'Off';
+          break;
+        case 1:
+          repeatMode = 'Song';
+          break;
+        case 2:
+          repeatMode = 'Queue';
+          break;
       }
 
-      queue.resume();
-      const pauseEmbed = new EmbedBuilder().setDescription(`Resumed the queue`).setColor(process.env.MUSIC_COLOR);
-      interaction.reply({ embeds: [pauseEmbed] });
+      const queueEmbed = new EmbedBuilder()
+        .setDescription(queueList)
+        .setColor(process.env.MUSIC_COLOR)
+        .setFooter({
+          text: `Repeat mode: ${repeatMode}`
+        });
+      interaction.reply({ embeds: [queueEmbed] });
     } catch (err) {
       sendErrorEmbed(interaction, err);
     }
