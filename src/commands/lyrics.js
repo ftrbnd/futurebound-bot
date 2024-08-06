@@ -14,7 +14,7 @@ module.exports = {
     try {
       let song = interaction.options.getString('song').toLowerCase();
 
-      const lyricsFolder = path.resolve(__dirname, '../lyrics');
+      const lyricsFolder = path.resolve(__dirname, '../text-files/lyrics');
       const songFiles = fs.readdirSync(lyricsFolder).filter((file) => file.endsWith('.txt'));
 
       for (let i = 0; i < songFiles.length; i++) {
@@ -46,7 +46,7 @@ module.exports = {
 
           let lyricsEmbed = new EmbedBuilder().setTitle(songName).setDescription(lyricsString).setColor(process.env.ERROR_COLOR);
 
-          const albumsFolder = path.resolve(__dirname, '../albums');
+          const albumsFolder = path.resolve(__dirname, '../text-files/albums');
           const albumFiles = fs.readdirSync(albumsFolder).filter((file) => file.endsWith('.txt'));
           for (let i = 0; i < albumFiles.length; i++) {
             // check if the song belongs to any album

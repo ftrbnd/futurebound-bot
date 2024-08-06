@@ -62,7 +62,7 @@ module.exports = {
       const survivorPing = interaction.guild.roles.cache.get(process.env.SURVIVOR_ROLE_ID);
       const albumName = interaction.options.getString('album');
 
-      const albumsFolder = path.resolve(__dirname, '../albums');
+      const albumsFolder = path.resolve(__dirname, '../text-files/albums');
       let albumTracks = await lineSplitFile(`${albumsFolder}/${albumName}.txt`);
       const embedColor = `${albumTracks.pop()}`;
       const albumCover = albumTracks.pop();

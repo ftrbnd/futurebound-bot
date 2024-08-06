@@ -9,7 +9,7 @@ module.exports = {
 
   async execute(interaction) {
     try {
-      const lyricsFolder = path.resolve(__dirname, '../lyrics');
+      const lyricsFolder = path.resolve(__dirname, '../text-files/lyrics');
 
       const songFiles = fs.readdirSync(lyricsFolder).filter((file) => file.endsWith('.txt'));
       let randomSongFile = songFiles[Math.floor(Math.random() * songFiles.length)]; // choose a random song.txt

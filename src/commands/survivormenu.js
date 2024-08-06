@@ -61,7 +61,7 @@ module.exports = {
         }
 
         const albumName = interaction.options.getString('album');
-        const albumsFolder = path.resolve(__dirname, '../albums');
+        const albumsFolder = path.resolve(__dirname, '../text-files/albums');
         let albumTracks = await lineSplitFile(`${albumsFolder}/${albumName}.txt`); // get all of the album tracks
         const embedColor = `${albumTracks.pop()}`;
         const albumCover = albumTracks.pop();
