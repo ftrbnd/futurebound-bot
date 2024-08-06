@@ -11,7 +11,7 @@
     "start": "node src/index.js",
     "dev": "nodemon",
     "register-commands": "node register-commands.js",
-    "postinstall": "yarn register-commands"
+    "prestart": "yarn register-commands"
   },
   "author": "Giovanni Salas",
   "license": "ISC",
