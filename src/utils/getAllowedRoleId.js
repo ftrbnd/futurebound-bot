@@ -1,5 +1,4 @@
-const { EmbedBuilder } = require('discord.js');
-const MusicPermission = require('../schemas/MusicPermissionSchema');
+const MusicPermission = require('../lib/mongo/schemas/MusicPermissionSchema');
 
 const getAllowedRoleId = async () => {
   const roleData = await MusicPermission.find({});

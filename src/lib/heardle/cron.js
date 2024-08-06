@@ -1,4 +1,4 @@
-const DailyHeardleCheck = require('../../schemas/DailyHeardleCheckSchema');
+const DailyHeardleCheck = require('../mongo/schemas/DailyHeardleCheckSchema');
 const { CronJob } = require('cron');
 const { EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle } = require('discord.js');
 const { getCurrentDailySong } = require('./api');

@@ -1,7 +1,6 @@
-const fs = require('fs');
 const path = require('path');
 const { EmbedBuilder, PermissionFlagsBits, SlashCommandBuilder } = require('discord.js');
-const Album = require('../schemas/AlbumSchema');
+const Album = require('../lib/mongo/schemas/AlbumSchema');
 const sendErrorEmbed = require('../utils/sendErrorEmbed');
 const lineSplitFile = require('../utils/lineSplitFile');
 

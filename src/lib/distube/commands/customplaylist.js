@@ -1,5 +1,5 @@
 const { EmbedBuilder, SlashCommandBuilder, PermissionFlagsBits, ChannelType } = require('discord.js');
-const Playlist = require('../../../schemas/PlaylistSchema');
+const Playlist = require('../../../lib/mongo/schemas/PlaylistSchema');
 const sendErrorEmbed = require('../../../utils/sendErrorEmbed');
 
 module.exports = {

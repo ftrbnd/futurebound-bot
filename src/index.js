@@ -1,12 +1,11 @@
 require('dotenv').config();
 
 const { client } = require('./bot');
-const { registerDatabaseChecks } = require('./lib/mongoDB');
+const { connectToDb } = require('./lib/mongo');
 const { registerPrevHeardleCheck, registerNextHeardleCheck } = require('./lib/heardle/cron');
 
 client.login(process.env.DISCORD_TOKEN);
 
-registerDatabaseChecks(client);
-
+connectToDb(client);
 registerPrevHeardleCheck();
-registerNextHeardleCheck(client);
+registerNextHeardleCheck();

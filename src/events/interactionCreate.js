@@ -1,9 +1,9 @@
 // Interactions: slash commands, buttons, select menus
 const { EmbedBuilder, InteractionType } = require('discord.js');
-const SurvivorRound = require('../schemas/SurvivorRoundSchema');
-const Giveaway = require('../schemas/GiveawaySchema');
+const SurvivorRound = require('../lib/mongo/schemas/SurvivorRoundSchema');
+const Giveaway = require('../lib/mongo/schemas/GiveawaySchema');
 const sendErrorEmbed = require('../utils/sendErrorEmbed');
-const DailyHeardleCheck = require('../schemas/DailyHeardleCheckSchema');
+const DailyHeardleCheck = require('../lib/mongo/schemas/DailyHeardleCheckSchema');
 const { getLeaderboard, sendRetryRequest, createLeaderboardDescription } = require('../lib/heardle/api');
 
 module.exports = {

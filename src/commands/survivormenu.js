@@ -1,8 +1,7 @@
-const fs = require('fs');
 const path = require('path');
 
 const { EmbedBuilder, PermissionFlagsBits, SlashCommandBuilder, ActionRowBuilder, StringSelectMenuBuilder } = require('discord.js');
-const SurvivorRound = require('../schemas/SurvivorRoundSchema');
+const SurvivorRound = require('../lib/mongo/schemas/SurvivorRoundSchema');
 const sendErrorEmbed = require('../utils/sendErrorEmbed');
 const lineSplitFile = require('../utils/lineSplitFile');
 

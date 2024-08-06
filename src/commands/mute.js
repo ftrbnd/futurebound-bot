@@ -1,5 +1,5 @@
 const { EmbedBuilder, PermissionFlagsBits, SlashCommandBuilder } = require('discord.js');
-const User = require('../schemas/UserSchema');
+const User = require('../lib/mongo/schemas/UserSchema');
 const sendErrorEmbed = require('../utils/sendErrorEmbed');
 
 module.exports = {

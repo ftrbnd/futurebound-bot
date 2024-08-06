@@ -1,8 +1,5 @@
-const mongoose = require('mongoose');
-mongoose.set('strictQuery', true);
-
-const User = require('../schemas/UserSchema');
-const Giveaway = require('../schemas/GiveawaySchema');
+const User = require('./schemas/UserSchema');
+const Giveaway = require('./schemas/GiveawaySchema');
 const { EmbedBuilder } = require('discord.js');
 
 const numberEndings = new Map([
@@ -15,13 +12,6 @@ const numberEndings = new Map([
 ]);
 
 const registerDatabaseChecks = async (client) => {
-  mongoose
-    .connect(process.env.MONGODB_URI)
-    .then((m) => {
-      console.log(`[Mongo] Connected to ${m.connections[0].name}`);
-    })
-    .catch((err) => console.log(err));
-
   setInterval(async () => {
     const today = new Date();
 

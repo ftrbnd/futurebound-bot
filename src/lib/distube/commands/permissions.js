@@ -1,5 +1,5 @@
 const { EmbedBuilder, SlashCommandBuilder, PermissionFlagsBits } = require('discord.js');
-const MusicPermission = require('../../../schemas/MusicPermissionSchema');
+const MusicPermission = require('../../../lib/mongo/schemas/MusicPermissionSchema');
 const sendErrorEmbed = require('../../../utils/sendErrorEmbed');
 
 module.exports = {
