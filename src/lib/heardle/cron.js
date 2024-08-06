@@ -1,4 +1,4 @@
-const DailyHeardleCheck = require('../mongo/schemas/DailyHeardleCheckSchema');
+const DailyHeardleCheck = require('../mongo/schemas/DailyHeardleCheck');
 const { CronJob } = require('cron');
 const { EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle } = require('discord.js');
 const { getCurrentDailySong } = require('./api');
@@ -53,23 +53,18 @@ async function snapshotNext(client) {
   }
 }
 
-const registerPrevHeardleCheck = async () => {
+const registerHeardleJobs = async (client) => {
   // 8:55 pm PT
-  const cron = new CronJob(`55 3 * * *`, async () => snapshotPrev(), null, true, 'utc');
+  const prevCron = new CronJob(`55 3 * * *`, async () => snapshotPrev(), null, true, 'utc');
 
-  return cron;
-};
-
-const registerNextHeardleCheck = async (client) => {
   // 9:05 pm PT
-  const cron = new CronJob(`5 4 * * *`, async () => snapshotNext(client), null, true, 'utc');
+  const nextCron = new CronJob(`5 4 * * *`, async () => snapshotNext(client), null, true, 'utc');
 
-  return cron;
+  return [prevCron, nextCron];
 };
 
 module.exports = {
   snapshotPrev,
   snapshotNext,
-  registerPrevHeardleCheck,
-  registerNextHeardleCheck
+  registerHeardleJobs
 };

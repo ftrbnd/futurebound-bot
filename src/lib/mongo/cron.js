@@ -1,6 +1,7 @@
-const User = require('./schemas/UserSchema');
-const Giveaway = require('./schemas/GiveawaySchema');
 const { EmbedBuilder } = require('discord.js');
+const { CronJob } = require('cron');
+const User = require('./schemas/User');
+const Giveaway = require('./schemas/Giveaway');
 
 const numberEndings = new Map([
   [13, 'th'],
@@ -12,14 +13,14 @@ const numberEndings = new Map([
 ]);
 
 // birthdays + muted roles
-const checkUsers = async (client) => {
+const checkUsers = async (discordClient) => {
   const today = new Date();
 
   const users = await User.find({});
   // is there a birthday today?
   if (users) {
     // console.log(`Checking for birthdays/mutes - today's date: ${today}`)
-    const server = client.guilds.cache.get(process.env.GUILD_ID);
+    const server = discordClient.guilds.cache.get(process.env.GUILD_ID);
     const modChannel = server.channels.cache.get(process.env.MODERATORS_CHANNEL_ID);
     if (!modChannel) return;
 
@@ -78,7 +79,7 @@ const checkUsers = async (client) => {
                 console.log(error);
               }
 
-              const generalChannel = client.channels.cache.get(process.env.GENERAL_CHANNEL_ID);
+              const generalChannel = discordClient.channels.cache.get(process.env.GENERAL_CHANNEL_ID);
               generalChannel.send({ embeds: [birthdayEmbed] });
               console.log(`It's ${user.username}'s ${age}${ageSuffix} birthday today! - ${user.birthday}`);
             })
@@ -117,7 +118,7 @@ const checkUsers = async (client) => {
   }
 };
 
-const checkGiveaways = async (client) => {
+const checkGiveaways = async (discordClient) => {
   const today = new Date();
 
   const giveaways = await Giveaway.find({});
@@ -132,7 +133,7 @@ const checkGiveaways = async (client) => {
       ) {
         if (giveaway.entries.length == 0) return console.log('No entries for this giveaway.');
 
-        const server = client.guilds.cache.get(process.env.GUILD_ID);
+        const server = discordClient.guilds.cache.get(process.env.GUILD_ID);
         const giveawayChannel = server.channels.cache.get(process.env.GIVEAWAY_CHANNEL_ID);
 
         const winnerId = giveaway.entries[Math.floor(Math.random() * giveaway.entries.length)];
@@ -160,9 +161,9 @@ const checkGiveaways = async (client) => {
   }
 };
 
-const registerDatabaseChecks = async (client) => {
-  const usersJob = new CronJob('* * * * *', async () => checkUsers(client), null, true, 'utc');
-  const giveawaysJob = new CronJob('* * * * *', async () => checkGiveaways(client), null, true, 'utc');
+const registerDatabaseChecks = async (discordClient) => {
+  const usersJob = new CronJob('* * * * *', async () => checkUsers(discordClient), null, true, 'utc');
+  const giveawaysJob = new CronJob('* * * * *', async () => checkGiveaways(discordClient), null, true, 'utc');
 
   return [usersJob, giveawaysJob];
 };

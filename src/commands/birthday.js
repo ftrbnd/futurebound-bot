@@ -1,6 +1,6 @@
 const { EmbedBuilder, SlashCommandBuilder } = require('discord.js');
 const { getTimeZones, timeZonesNames } = require('@vvo/tzdb');
-const User = require('../lib/mongo/schemas/UserSchema');
+const User = require('../lib/mongo/schemas/User');
 const sendErrorEmbed = require('../utils/sendErrorEmbed');
 
 module.exports = {

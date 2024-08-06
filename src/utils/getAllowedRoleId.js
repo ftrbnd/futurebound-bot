@@ -1,4 +1,4 @@
-const MusicPermission = require('../lib/mongo/schemas/MusicPermissionSchema');
+const MusicPermission = require('../lib/mongo/schemas/MusicPermission');
 
 const getAllowedRoleId = async () => {
   const roleData = await MusicPermission.find({});

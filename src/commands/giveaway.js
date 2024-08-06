@@ -1,5 +1,5 @@
 const { EmbedBuilder, PermissionFlagsBits, SlashCommandBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle } = require('discord.js');
-const Giveaway = require('../lib/mongo/schemas/GiveawaySchema');
+const Giveaway = require('../lib/mongo/schemas/Giveaway');
 const sendErrorEmbed = require('../utils/sendErrorEmbed');
 
 module.exports = {
