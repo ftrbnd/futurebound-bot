@@ -1,6 +1,7 @@
 import { readdirSync } from 'fs';
 import { EmbedBuilder, SlashCommandBuilder } from 'discord.js';
 import { sendErrorEmbed } from '../utils/sendErrorEmbed.js';
+import { env } from '../utils/env.js';
 
 export const data = new SlashCommandBuilder().setName('help').setDescription('Get a list of the commands for this bot');
 export async function execute(interaction) {
@@ -38,7 +39,7 @@ export async function execute(interaction) {
       musicCommandsList += `/${file.replace('.js', '')}\n`;
     }
 
-    if (interaction.member.roles.cache.has(process.env.MODERATORS_ROLE_ID)) {
+    if (interaction.member.roles.cache.has(env.MODERATORS_ROLE_ID)) {
       // Moderator role
       helpEmbed.addFields([
         { name: 'Moderator Commands', value: modCommandsList, inline: true },
@@ -46,7 +47,7 @@ export async function execute(interaction) {
         { name: '@everyone Commands', value: everyoneCommandsList, inline: true },
         { name: 'Music Commands', value: musicCommandsList, inline: true }
       ]);
-    } else if (interaction.member.roles.cache.has(process.env.HELPER_ROLE_ID)) {
+    } else if (interaction.member.roles.cache.has(env.HELPERS_ROLE_ID)) {
       // Helper role
       helpEmbed.addFields([
         { name: 'Helper Commands', value: helperCommandsList },

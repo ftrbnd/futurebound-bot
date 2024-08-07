@@ -1,5 +1,6 @@
 import { EmbedBuilder, PermissionFlagsBits, SlashCommandBuilder, ChannelType, GuildScheduledEventPrivacyLevel, GuildScheduledEventEntityType } from 'discord.js';
 import { sendErrorEmbed } from '../utils/sendErrorEmbed.js';
+import { env } from '../utils/env.js';
 
 export const data = new SlashCommandBuilder()
   .setName('listeningparty')
@@ -111,7 +112,7 @@ export async function execute(interaction) {
         });
       }
 
-      const confirmEmbed = new EmbedBuilder().setDescription(`**${listeningPartyName}** channels have been created!`).setColor(process.env.CONFIRM_COLOR);
+      const confirmEmbed = new EmbedBuilder().setDescription(`**${listeningPartyName}** channels have been created!`).setColor(env.CONFIRM_COLOR);
       return interaction.reply({ embeds: [confirmEmbed] });
     } else if (interaction.options.getSubcommand() === 'preview') {
       const categoryChannel = await interaction.guild.channels.cache.find((channel) => channel.name === 'Listening Party');
@@ -159,7 +160,7 @@ export async function execute(interaction) {
       });
       stageChannel.setTopic(`Listening to ${stageChannel.name}!`);
 
-      const confirmEmbed = new EmbedBuilder().setDescription(`**${stageChannel.name}** channels are now public but locked.`).setColor(process.env.CONFIRM_COLOR);
+      const confirmEmbed = new EmbedBuilder().setDescription(`**${stageChannel.name}** channels are now public but locked.`).setColor(env.CONFIRM_COLOR);
       interaction.reply({ embeds: [confirmEmbed] });
     } else if (interaction.options.getSubcommand() === 'announce') {
       const description = interaction.options.getString('event-description');
@@ -167,7 +168,7 @@ export async function execute(interaction) {
       // check if the Stage channel has been created yet
       const stageChannel = await interaction.guild.channels.cache.find((channel) => channel.type === ChannelType.GuildStageVoice);
       if (!stageChannel) {
-        const errEmbed = new EmbedBuilder().setDescription('Please use **/listeningparty create** before using this command').setColor(process.env.ERROR_COLOR);
+        const errEmbed = new EmbedBuilder().setDescription('Please use **/listeningparty create** before using this command').setColor(env.ERROR_COLOR);
         return interaction.reply({ embeds: [errEmbed] });
       }
 
@@ -187,7 +188,7 @@ export async function execute(interaction) {
         return console.error(err);
       }
 
-      const confirmEmbed = new EmbedBuilder().setDescription(`The **${stageChannel.name}** Event has been created!`).setColor(process.env.CONFIRM_COLOR);
+      const confirmEmbed = new EmbedBuilder().setDescription(`The **${stageChannel.name}** Event has been created!`).setColor(env.CONFIRM_COLOR);
       const announcementEmbed = new EmbedBuilder().setDescription(`Now, please enter the message that will be posted in **#announcements** without mentioning @everyone`).setColor('fffb25');
 
       // once created, ask for the announcement text
@@ -201,7 +202,7 @@ export async function execute(interaction) {
 
       collector.on('collect', (m) => {
         const announcementText = `${m.content} @everyone ${scheduledEvent.url}`;
-        const announcementChannel = interaction.guild.channels.cache.get(process.env.ANNOUNCEMENTS_CHANNEL_ID);
+        const announcementChannel = interaction.guild.channels.cache.get(env.ANNOUNCEMENTS_CHANNEL_ID);
 
         announcementChannel.send({ content: announcementText });
 
@@ -213,14 +214,14 @@ export async function execute(interaction) {
           // if no message was entered
           const couldntFindEmbed = new EmbedBuilder()
             .setDescription(`You did not type within 3 minutes, please use the **/say** command to post the announcement.`)
-            .setColor(process.env.ERROR_COLOR)
+            .setColor(env.ERROR_COLOR)
             .setFooter({
               text: interaction.guild.name,
               iconURL: interaction.guild.iconURL({ dynamic: true })
             });
           interaction.followUp({ embeds: [couldntFindEmbed], ephemeral: true });
         } else {
-          const announcedEmbed = new EmbedBuilder().setDescription(`The announcement was sent!`).setColor(process.env.CONFIRM_COLOR);
+          const announcedEmbed = new EmbedBuilder().setDescription(`The announcement was sent!`).setColor(env.CONFIRM_COLOR);
           const editDateEmbed = new EmbedBuilder().setDescription(`Now manually edit the Event's start time.`).setColor('fffb25');
           interaction.followUp({ embeds: [announcedEmbed, editDateEmbed] });
         }
@@ -229,7 +230,7 @@ export async function execute(interaction) {
       // on joining the stage channel, change the permissions so only admins can use the music commands
       const categoryChannel = await interaction.guild.channels.cache.find((channel) => channel.name === 'Listening Party');
       if (!categoryChannel) {
-        const errEmbed = new EmbedBuilder().setDescription(`Listening party channels don't exist!`).setColor(process.env.ERROR_COLOR);
+        const errEmbed = new EmbedBuilder().setDescription(`Listening party channels don't exist!`).setColor(env.ERROR_COLOR);
         return interaction.reply({ embeds: [errEmbed] });
       }
 
@@ -251,7 +252,7 @@ export async function execute(interaction) {
           textChannel: interaction.channel
         }).catch((err) => {
           console.error(err);
-          const errEmbed = new EmbedBuilder().setDescription(`An error occurred in /play.`).setColor(process.env.ERROR_COLOR);
+          const errEmbed = new EmbedBuilder().setDescription(`An error occurred in /play.`).setColor(env.ERROR_COLOR);
           return interaction.reply({ embeds: [errEmbed] });
         });
 
@@ -263,13 +264,13 @@ export async function execute(interaction) {
           });
         }
 
-        const joinEmbed = new EmbedBuilder().setDescription(`Joined **${voiceChannel.name}** and queued your playlist!`).setColor(process.env.MUSIC_COLOR).setFooter({
+        const joinEmbed = new EmbedBuilder().setDescription(`Joined **${voiceChannel.name}** and queued your playlist!`).setColor(env.MUSIC_COLOR).setFooter({
           text: 'Use /play to add more songs'
         });
 
         interaction.reply({ embeds: [joinEmbed] });
       } else {
-        const errEmbed = new EmbedBuilder().setDescription(`You must join the Stage channel!`).setColor(process.env.ERROR_COLOR);
+        const errEmbed = new EmbedBuilder().setDescription(`You must join the Stage channel!`).setColor(env.ERROR_COLOR);
         return interaction.reply({ embeds: [errEmbed] });
       }
     } else if (interaction.options.getSubcommand() === 'open') {
@@ -316,7 +317,7 @@ export async function execute(interaction) {
       });
       stageChannel.setTopic(`Listening to ${stageChannel.name}!`);
 
-      const confirmEmbed = new EmbedBuilder().setDescription(`**${stageChannel.name}** channels have been opened to everyone!`).setColor(process.env.CONFIRM_COLOR);
+      const confirmEmbed = new EmbedBuilder().setDescription(`**${stageChannel.name}** channels have been opened to everyone!`).setColor(env.CONFIRM_COLOR);
       interaction.reply({ embeds: [confirmEmbed] });
     } else if (interaction.options.getSubcommand() === 'close') {
       const categoryChannel = await interaction.guild.channels.cache.find((channel) => channel.name === 'Listening Party');
@@ -365,7 +366,7 @@ export async function execute(interaction) {
         ]
       });
 
-      const confirmEmbed = new EmbedBuilder().setDescription(`**${stageChannel.name}** channels have been closed.`).setColor(process.env.CONFIRM_COLOR);
+      const confirmEmbed = new EmbedBuilder().setDescription(`**${stageChannel.name}** channels have been closed.`).setColor(env.CONFIRM_COLOR);
       interaction.reply({ embeds: [confirmEmbed] });
     } else if (interaction.options.getSubcommand() === 'archive') {
       const categoryChannel = await interaction.guild.channels.cache.find((channel) => channel.name === 'Listening Party');
@@ -380,7 +381,7 @@ export async function execute(interaction) {
       await stageChannel.delete();
       await categoryChannel.delete();
 
-      const confirmEmbed = new EmbedBuilder().setDescription(`**${listeningPartyChat.name}** has been archived.`).setColor(process.env.CONFIRM_COLOR);
+      const confirmEmbed = new EmbedBuilder().setDescription(`**${listeningPartyChat.name}** has been archived.`).setColor(env.CONFIRM_COLOR);
       interaction.reply({ embeds: [confirmEmbed] });
     }
   } catch (err) {

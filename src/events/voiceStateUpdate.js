@@ -1,15 +1,16 @@
 import { EmbedBuilder, PermissionFlagsBits, ChannelType } from 'discord.js';
+import { env } from '../utils/env.js';
 
 export const name = 'voiceStateUpdate';
 export async function execute(oldState, newState) {
   if (newState.member.user.bot) return; // ignore bots
 
-  const logChannel = oldState.guild.channels.cache.get(process.env.LOGS_CHANNEL_ID);
+  const logChannel = oldState.guild.channels.cache.get(env.LOGS_CHANNEL_ID);
   if (!logChannel) return;
-  const voiceChat = oldState.guild.channels.cache.get(process.env.VOICE_CHAT_ID);
+  const voiceChat = oldState.guild.channels.cache.get(env.VOICE_CHAT_CHANNEL_ID);
   if (!voiceChat) return;
 
-  if (newState.channel !== null && newState.channel.id === process.env.JOIN_TO_CREATE_ID) {
+  if (newState.channel !== null && newState.channel.id === env.JOIN_TO_CREATE_CHANNEL_ID) {
     // if they join the 'join to create' vc
     const parentCategory = newState.channel.parent;
 
@@ -30,7 +31,7 @@ export async function execute(oldState, newState) {
       .setDescription(
         'You just created your own voice channel! Feel free to edit the channel name to let others know what your channel is about. \nNOTE: Make sure you have **Two-Factor Authentication** enabled on your Discord account.'
       )
-      .setColor(process.env.CONFIRM_COLOR)
+      .setColor(env.CONFIRM_COLOR)
       .setFooter({
         text: newState.guild.name,
         iconURL: newState.guild.iconURL({ dynamic: true })
@@ -42,7 +43,7 @@ export async function execute(oldState, newState) {
 
     const vcUpdateEmbed = new EmbedBuilder()
       .setDescription(`${newState.member.user.tag} created **${customVoiceChannel.name}**`)
-      .setColor(process.env.CONFIRM_COLOR)
+      .setColor(env.CONFIRM_COLOR)
       .setFooter({
         text: `User ID: ${newState.member.user.id}`,
         iconURL: newState.member.user.displayAvatarURL({ dynamic: true })
@@ -54,7 +55,7 @@ export async function execute(oldState, newState) {
     // if they join a channel
     const joinEmbed = new EmbedBuilder()
       .setDescription(`${newState.member.user} joined **${newState.channel.name}**`)
-      .setColor(process.env.CONFIRM_COLOR)
+      .setColor(env.CONFIRM_COLOR)
       .setTimestamp()
       .setFooter({
         text: `User ID: ${newState.member.user.id}`,
@@ -66,7 +67,7 @@ export async function execute(oldState, newState) {
     // if they leave a channel
     const leaveEmbed = new EmbedBuilder()
       .setDescription(`${oldState.member.user} left **${oldState.channel.name}**`)
-      .setColor(process.env.ERROR_COLOR)
+      .setColor(env.ERROR_COLOR)
       .setTimestamp()
       .setFooter({
         text: `User ID: ${oldState.member.user.id}`,
@@ -76,16 +77,16 @@ export async function execute(oldState, newState) {
     logChannel.send({ embeds: [leaveEmbed] });
   }
 
-  if (oldState.channel.members.size === 0 && oldState.channel.parent.id === process.env.JOIN_TO_CREATE_CATEGORY_ID && oldState.channel.id !== process.env.JOIN_TO_CREATE_ID) {
+  if (oldState.channel.members.size === 0 && oldState.channel.parent.id === env.JOIN_TO_CREATE_CATEGORY_ID && oldState.channel.id !== env.JOIN_TO_CREATE_CHANNEL_ID) {
     // once a custom channel is empty
-    const vcUpdateEmbed = new EmbedBuilder().setDescription(`**${oldState.channel.name}** was deleted after being empty.`).setColor(process.env.ERROR_COLOR).setTimestamp();
+    const vcUpdateEmbed = new EmbedBuilder().setDescription(`**${oldState.channel.name}** was deleted after being empty.`).setColor(env.ERROR_COLOR).setTimestamp();
 
     oldState.channel.delete(`**${oldState.channel.name}** was deleted after being empty.`);
 
     logChannel.send({ embeds: [vcUpdateEmbed] });
-  } else if (oldState.channel.members.size === 1 && oldState.channel.members.has(process.env.CLIENT_ID) && oldState.channel.parentId === process.env.JOIN_TO_CREATE_CATEGORY_ID) {
+  } else if (oldState.channel.members.size === 1 && oldState.channel.members.has(env.DISCORD_CLIENT_ID) && oldState.channel.parentId === env.JOIN_TO_CREATE_CATEGORY_ID) {
     // bot is only one left in custom channel
-    const vcUpdateEmbed = new EmbedBuilder().setDescription(`**${oldState.channel.name}** was deleted after being empty.`).setColor(process.env.ERROR_COLOR).setTimestamp();
+    const vcUpdateEmbed = new EmbedBuilder().setDescription(`**${oldState.channel.name}** was deleted after being empty.`).setColor(env.ERROR_COLOR).setTimestamp();
 
     oldState.channel.delete(`**${oldState.channel.name}** was deleted after being empty.`);
 

@@ -1,6 +1,7 @@
 import { EmbedBuilder, PermissionFlagsBits, SlashCommandBuilder } from 'discord.js';
 import { sendErrorEmbed } from '../utils/sendErrorEmbed.js';
 import { createUser, getUser, updateUserMute } from '../lib/mongo/services/User.js';
+import { env } from '../utils/env.js';
 
 export const data = new SlashCommandBuilder()
   .setName('mute')
@@ -13,7 +14,7 @@ export async function execute(interaction) {
     const userToMute = interaction.options.getUser('user');
     const reasonForMute = interaction.options.getString('reason');
 
-    const modChannel = interaction.guild.channels.cache.get(process.env.MODERATORS_CHANNEL_ID);
+    const modChannel = interaction.guild.channels.cache.get(env.MODERATORS_CHANNEL_ID);
     if (!modChannel) return;
 
     const oneWeek = new Date();
@@ -34,7 +35,7 @@ export async function execute(interaction) {
 
     try {
       userToMuteMember = interaction.guild.members.cache.get(`${userToMute.id}`);
-      userToMuteMember.roles.set([process.env.MUTE_ROLE_ID]); // Mute role
+      userToMuteMember.roles.set([env.MUTED_ROLE_ID]); // Mute role
     } catch (err) {
       return console.error(err);
     }
@@ -75,7 +76,7 @@ export async function execute(interaction) {
       return console.error(err);
     }
 
-    const mutedEmbed = new EmbedBuilder().setDescription(`${userToMute} was muted.`).setColor(process.env.CONFIRM_COLOR);
+    const mutedEmbed = new EmbedBuilder().setDescription(`${userToMute} was muted.`).setColor(env.CONFIRM_COLOR);
     interaction.reply({ embeds: [mutedEmbed] });
   } catch (err) {
     sendErrorEmbed(interaction, err);

@@ -1,6 +1,7 @@
 import { EmbedBuilder, PermissionFlagsBits, SlashCommandBuilder } from 'discord.js';
 import { sendErrorEmbed } from '../utils/sendErrorEmbed.js';
 import { createUser, getUser, updateUserWarning } from '../lib/mongo/services/User.js';
+import { env } from '../utils/env.js';
 
 export const data = new SlashCommandBuilder()
   .setName('warn')
@@ -12,7 +13,7 @@ export async function execute(interaction) {
   try {
     const userToWarn = interaction.options.getUser('user');
     const reasonForWarn = interaction.options.getString('reason');
-    const modChannel = interaction.guild.channels.cache.get(process.env.MODERATORS_CHANNEL_ID);
+    const modChannel = interaction.guild.channels.cache.get(env.MODERATORS_CHANNEL_ID);
     if (!modChannel) return;
 
     const user = await getUser({ discordId: userToWarn.id });

@@ -3,6 +3,7 @@ import { resolve } from 'path';
 import { EmbedBuilder, SlashCommandBuilder } from 'discord.js';
 import { sendErrorEmbed } from '../utils/sendErrorEmbed.js';
 import { lineSplitFile } from '../utils/lineSplitFile.js';
+import { env } from '../utils/env.js';
 
 const __dirname = import.meta.dirname;
 
@@ -44,7 +45,7 @@ export async function execute(interaction) {
 
         if (songName.toLowerCase() === 'Fumes'.toLowerCase()) songName = 'Fumes (feat. gnash)';
 
-        let lyricsEmbed = new EmbedBuilder().setTitle(songName).setDescription(lyricsString).setColor(process.env.ERROR_COLOR);
+        let lyricsEmbed = new EmbedBuilder().setTitle(songName).setDescription(lyricsString).setColor(env.ERROR_COLOR);
 
         const albumsFolder = resolve(__dirname, '../text-files/albums');
         const albumFiles = readdirSync(albumsFolder).filter((file) => file.endsWith('.txt'));
@@ -69,7 +70,7 @@ export async function execute(interaction) {
     }
 
     if (!songFiles.includes(song)) {
-      const errEmbed = new EmbedBuilder().setDescription(`**${song}** is not a valid song, please try again!`).setColor(process.env.ERROR_COLOR);
+      const errEmbed = new EmbedBuilder().setDescription(`**${song}** is not a valid song, please try again!`).setColor(env.ERROR_COLOR);
       return interaction.reply({ embeds: [errEmbed], ephemeral: true });
     }
   } catch (err) {

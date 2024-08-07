@@ -1,6 +1,7 @@
 import { EmbedBuilder, SlashCommandBuilder } from 'discord.js';
 import validateColor from 'validate-color';
 import { sendErrorEmbed } from '../utils/sendErrorEmbed.js';
+import { env } from '../utils/env.js';
 
 const { validateHTMLColorHex } = validateColor;
 
@@ -10,11 +11,11 @@ export const data = new SlashCommandBuilder()
   .addStringOption((option) => option.setName('hex').setDescription('hex color code (ex: #8dbff3)').setRequired(true));
 export async function execute(interaction) {
   try {
-    if (!interaction.member.roles.cache.has(process.env.SUBSCRIBER_ROLE_ID)) {
+    if (!interaction.member.roles.cache.has(env.SUBSCRIBER_ROLE_ID)) {
       const permsEmbed = new EmbedBuilder()
         .setTitle('You are not a Server Subscriber!')
         .setDescription(`https://discord.com/channels/${interaction.guild.id}/role-subscriptions`)
-        .setColor(process.env.ERROR_COLOR);
+        .setColor(env.ERROR_COLOR);
       return interaction.reply({ embeds: [permsEmbed], ephemeral: true });
     }
 
@@ -22,7 +23,7 @@ export async function execute(interaction) {
     if (!color.startsWith('#')) color = `#${color}`;
 
     if (!validateHTMLColorHex(color)) {
-      const permsEmbed = new EmbedBuilder().setDescription('Please enter a valid hex color code.').setColor(process.env.ERROR_COLOR);
+      const permsEmbed = new EmbedBuilder().setDescription('Please enter a valid hex color code.').setColor(env.ERROR_COLOR);
       return interaction.reply({ embeds: [permsEmbed], ephemeral: true });
     }
 
@@ -35,7 +36,7 @@ export async function execute(interaction) {
       const colorRole = await interaction.guild.roles.create({
         name: 'Subscriber Custom Color',
         color: color,
-        position: interaction.guild.roles.cache.get(process.env.TIER_3_ROLE_ID).position + 1
+        position: interaction.guild.roles.cache.get(env.TIER_3_ROLE_ID).position + 1
       });
 
       interaction.member.roles.add(colorRole);

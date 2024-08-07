@@ -3,6 +3,7 @@ import { EmbedBuilder, PermissionFlagsBits, SlashCommandBuilder } from 'discord.
 import { sendErrorEmbed } from '../utils/sendErrorEmbed.js';
 import { lineSplitFile } from '../utils/lineSplitFile.js';
 import { createAlbum, getAlbum, removeTrack, resetTracks } from '../lib/mongo/services/Album.js';
+import { env } from '../utils/env.js';
 
 const __dirname = import.meta.dirname;
 
@@ -52,13 +53,13 @@ export const data = new SlashCommandBuilder()
   .setDefaultMemberPermissions(PermissionFlagsBits.Administrator);
 export async function execute(interaction) {
   try {
-    const survivorChannel = interaction.guild.channels.cache.find((channel) => channel.name === process.env.SURVIVOR_CHANNEL_NAME);
+    const survivorChannel = interaction.guild.channels.cache.find((channel) => channel.id === env.SURVIVOR_CHANNEL_ID);
     if (!survivorChannel) {
-      const errEmbed = new EmbedBuilder().setDescription(`There is no channel named **${process.env.SURVIVOR_CHANNEL_NAME}** - please create one!`).setColor(process.env.ERROR_COLOR);
+      const errEmbed = new EmbedBuilder().setDescription(`There is no survivor channel - please create one!`).setColor(env.ERROR_COLOR);
       return interaction.reply({ embeds: [errEmbed] });
     }
 
-    const survivorPing = interaction.guild.roles.cache.get(process.env.SURVIVOR_ROLE_ID);
+    const survivorPing = interaction.guild.roles.cache.get(env.SURVIVOR_ROLE_ID);
     const albumName = interaction.options.getString('album');
 
     const albumsFolder = resolve(__dirname, '../text-files/albums');
@@ -83,17 +84,17 @@ export async function execute(interaction) {
         // if they already were in the database, remove the loser track
         if (loser) {
           if (!albumTracks.includes(loser)) {
-            const errEmbed = new EmbedBuilder().setDescription(`**${loser}** is not a song in **${albumName}**, please try again!`).setColor(process.env.ERROR_COLOR);
+            const errEmbed = new EmbedBuilder().setDescription(`**${loser}** is not a song in **${albumName}**, please try again!`).setColor(env.ERROR_COLOR);
             return await interaction.reply({ embeds: [errEmbed] });
           }
 
           if (album.tracks.length == 2) {
-            const errEmbed = new EmbedBuilder().setDescription(`There are only 2 songs left - use **/survivor winner**!`).setColor(process.env.ERROR_COLOR);
+            const errEmbed = new EmbedBuilder().setDescription(`There are only 2 songs left - use **/survivor winner**!`).setColor(env.ERROR_COLOR);
             return await interaction.reply({ embeds: [errEmbed] });
           }
 
           if (!album.tracks.includes(loser)) {
-            const errEmbed = new EmbedBuilder().setDescription(`**${loser}** was already eliminated!`).setColor(process.env.ERROR_COLOR);
+            const errEmbed = new EmbedBuilder().setDescription(`**${loser}** was already eliminated!`).setColor(env.ERROR_COLOR);
             return await interaction.reply({ embeds: [errEmbed] });
           }
 
@@ -103,7 +104,7 @@ export async function execute(interaction) {
         } else {
           // first round - no loser
           if (album.tracks.length < albumTracks.length) {
-            const errEmbed = new EmbedBuilder().setDescription(`There is already a round of **${albumName}** Survivor!`).setColor(process.env.ERROR_COLOR);
+            const errEmbed = new EmbedBuilder().setDescription(`There is already a round of **${albumName}** Survivor!`).setColor(env.ERROR_COLOR);
             return await interaction.reply({ embeds: [errEmbed] });
           }
           await createSurvivorEmbed(albumTracks, true);
@@ -164,7 +165,7 @@ export async function execute(interaction) {
           await message.react(numberEmojis[i]);
         }
 
-        const confirmEmbed = new EmbedBuilder().setDescription(`New round of **${albumName} Survivor** sent in ${survivorChannel}`).setColor(process.env.CONFIRM_COLOR);
+        const confirmEmbed = new EmbedBuilder().setDescription(`New round of **${albumName} Survivor** sent in ${survivorChannel}`).setColor(env.CONFIRM_COLOR);
 
         await interaction.reply({ embeds: [confirmEmbed] });
       }
@@ -174,23 +175,23 @@ export async function execute(interaction) {
       const album = await getAlbum({ album: albumName });
       if (!album) {
         // if the survivor album isn't in the database, there was no survivor round; no winner possible
-        const errEmbed = new EmbedBuilder().setDescription(`There is no current round of **${albumName}** Survivor.`).setColor(process.env.ERROR_COLOR);
+        const errEmbed = new EmbedBuilder().setDescription(`There is no current round of **${albumName}** Survivor.`).setColor(env.ERROR_COLOR);
         return await interaction.reply({ embeds: [errEmbed] });
       }
 
       // if the album was already in the database, announce the winner and delete the survivor album from the database
       if (!albumTracks.includes(winner)) {
-        const errEmbed = new EmbedBuilder().setDescription(`**${winner}** is not a song in **${albumName}**, please try again!`).setColor(process.env.ERROR_COLOR);
+        const errEmbed = new EmbedBuilder().setDescription(`**${winner}** is not a song in **${albumName}**, please try again!`).setColor(env.ERROR_COLOR);
         return await interaction.reply({ embeds: [errEmbed] });
       }
 
       if (!album.tracks.includes(winner)) {
-        const errEmbed = new EmbedBuilder().setDescription(`**${winner}** was already eliminated, please try again!`).setColor(process.env.ERROR_COLOR);
+        const errEmbed = new EmbedBuilder().setDescription(`**${winner}** was already eliminated, please try again!`).setColor(env.ERROR_COLOR);
         return await interaction.reply({ embeds: [errEmbed] });
       }
 
       if (album.tracks.length > 2) {
-        const errEmbed = new EmbedBuilder().setDescription(`There are still more than 2 songs left!`).setColor(process.env.ERROR_COLOR);
+        const errEmbed = new EmbedBuilder().setDescription(`There are still more than 2 songs left!`).setColor(env.ERROR_COLOR);
         return await interaction.reply({ embeds: [errEmbed] });
       }
 
@@ -208,7 +209,7 @@ export async function execute(interaction) {
 
       survivorChannel.send({ content: `${survivorPing}`, embeds: [winnerEmbed] });
 
-      const confirmEmbed = new EmbedBuilder().setDescription(`Winner of **${albumName} Survivor** sent in ${survivorChannel}`).setColor(process.env.CONFIRM_COLOR);
+      const confirmEmbed = new EmbedBuilder().setDescription(`Winner of **${albumName} Survivor** sent in ${survivorChannel}`).setColor(env.CONFIRM_COLOR);
 
       await interaction.reply({ embeds: [confirmEmbed] });
     }

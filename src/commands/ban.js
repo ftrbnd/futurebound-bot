@@ -1,5 +1,6 @@
 import { EmbedBuilder, PermissionFlagsBits, SlashCommandBuilder } from 'discord.js';
 import { sendErrorEmbed } from '../utils/sendErrorEmbed.js';
+import { env } from '../utils/env.js';
 
 export const data = new SlashCommandBuilder()
   .setName('ban')
@@ -12,7 +13,7 @@ export async function execute(interaction) {
     const userToBan = interaction.options.getUser('user');
     const reasonForBan = interaction.options.getString('reason');
 
-    const modChannel = interaction.guild.channels.cache.get(process.env.MODERATORS_CHANNEL_ID);
+    const modChannel = interaction.guild.channels.cache.get(env.MODERATORS_CHANNEL_ID);
     if (!modChannel) return;
 
     try {
@@ -28,7 +29,7 @@ export async function execute(interaction) {
         { name: 'By: ', value: `${interaction.user}` },
         { name: 'Reason: ', value: reasonForBan }
       ])
-      .setColor(process.env.ERROR_COLOR)
+      .setColor(env.ERROR_COLOR)
       .setThumbnail(userToBan.displayAvatarURL({ dynamic: true }))
       .setFooter({
         text: interaction.guild.name,
@@ -40,7 +41,7 @@ export async function execute(interaction) {
     const banEmbed = new EmbedBuilder()
       .setTitle(`You were banned from **${interaction.guild.name}**.`)
       .setDescription(reasonForBan)
-      .setColor(process.env.ERROR_COLOR)
+      .setColor(env.ERROR_COLOR)
       .setFooter({
         text: interaction.guild.name,
         iconURL: interaction.guild.iconURL({ dynamic: true })
@@ -51,11 +52,11 @@ export async function execute(interaction) {
       await userToBan.send({ embeds: [banEmbed] });
     } catch (err) {
       console.error(err);
-      const msgFailEmbed = new EmbedBuilder().setDescription(`Failed to send message to ${userToBan}.`).setColor(process.env.CONFIRM_COLOR);
+      const msgFailEmbed = new EmbedBuilder().setDescription(`Failed to send message to ${userToBan}.`).setColor(env.CONFIRM_COLOR);
       modChannel.send({ embeds: [msgFailEmbed] });
     }
 
-    const bannedEmbed = new EmbedBuilder().setDescription(`${userToBan} was banned.`).setColor(process.env.CONFIRM_COLOR);
+    const bannedEmbed = new EmbedBuilder().setDescription(`${userToBan} was banned.`).setColor(env.CONFIRM_COLOR);
     interaction.reply({ embeds: [bannedEmbed] });
   } catch (err) {
     sendErrorEmbed(interaction, err);

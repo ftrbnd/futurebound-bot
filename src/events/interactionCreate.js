@@ -5,16 +5,17 @@ import { getLeaderboard, sendRetryRequest, createLeaderboardDescription } from '
 import { getSurvivorRound, removeDuplicateVote, updateVotes } from '../lib/mongo/services/SurvivorRound.js';
 import { getGiveaway, updateGiveawayEntries } from '../lib/mongo/services/Giveaway.js';
 import { deleteAllChecks, getDailyHeardleCheck } from '../lib/mongo/services/DailyHeardleCheck.js';
+import { env } from '../utils/env.js';
 
 export const name = 'interactionCreate';
 export async function execute(interaction) {
   const leaderboardButtonIds = ['today', 'winPercentages', 'accuracies', 'currentStreaks', 'maxStreaks'];
 
-  if (interaction.isStringSelectMenu() && interaction.channel.name == process.env.SURVIVOR_CHANNEL_NAME) {
+  if (interaction.isStringSelectMenu() && interaction.channel.id == env.SURVIVOR_CHANNEL_ID) {
     await handleSurvivorVote(interaction); // handle menu interactions from /survivor
   } else if (interaction.isButton() && leaderboardButtonIds.includes(interaction.customId)) {
     await handleLeaderboardButton(interaction);
-  } else if (interaction.isButton() && interaction.channel.id == process.env.GIVEAWAY_CHANNEL_ID) {
+  } else if (interaction.isButton() && interaction.channel.id == env.GIVEAWAY_CHANNEL_ID) {
     await handleGiveawayEntry(interaction);
   } else if (interaction.isButton() && interaction.customId.startsWith('retry_daily_heardle')) {
     await handleRetryDailyHeardle(interaction);
@@ -29,7 +30,7 @@ export async function execute(interaction) {
     await command.execute(interaction);
   } catch (error) {
     console.error(error);
-    const errorEmbed = new EmbedBuilder().setDescription('There was an error while executing this command!').setColor(process.env.ERROR_COLOR);
+    const errorEmbed = new EmbedBuilder().setDescription('There was an error while executing this command!').setColor(env.ERROR_COLOR);
     await interaction.reply({ embeds: [errorEmbed], ephemeral: true });
   }
 }
@@ -47,7 +48,7 @@ async function handleSurvivorVote(interaction) {
   if (!survivorRound) {
     // this shouldn't be possible because users will only interact with the menu once a survivor round exists
     console.log('No survivor round data available.');
-    const errEmbed = new EmbedBuilder().setDescription('An error occurred.').setColor(process.env.ERROR_COLOR);
+    const errEmbed = new EmbedBuilder().setDescription('An error occurred.').setColor(env.ERROR_COLOR);
     return interaction.reply({ embeds: [errEmbed], ephemeral: true });
   } else {
     if (interaction.message.id == survivorRound.lastMessageId) {
@@ -64,7 +65,7 @@ async function handleSurvivorVote(interaction) {
       if (selectedSongVotes.includes(interaction.user.id)) {
         // happens if app client restarts or switch devices
         console.log(`Invalid vote: ${interaction.user.tag} voted for the same song`);
-        const errorEmbed = new EmbedBuilder().setDescription(`You already selected **${selectedSong}**!`).setColor(process.env.ERROR_COLOR);
+        const errorEmbed = new EmbedBuilder().setDescription(`You already selected **${selectedSong}**!`).setColor(env.ERROR_COLOR);
         return interaction.reply({ embeds: [errorEmbed], ephemeral: true });
       } else if (allVotes.includes(interaction.user.id)) {
         // if the user has already voted for a song
@@ -78,11 +79,11 @@ async function handleSurvivorVote(interaction) {
       await updateVotes(survivorRound, selectedSong, selectedSongVotes);
     } else {
       console.log(`Invalid vote: ${interaction.user.tag} voted in an old round`);
-      const errorEmbed = new EmbedBuilder().setDescription('Please vote in the most recent poll!').setColor(process.env.ERROR_COLOR);
+      const errorEmbed = new EmbedBuilder().setDescription('Please vote in the most recent poll!').setColor(env.ERROR_COLOR);
       return interaction.reply({ embeds: [errorEmbed], ephemeral: true });
     }
 
-    const userConfirmEmbed = new EmbedBuilder().setColor(process.env.CONFIRM_COLOR);
+    const userConfirmEmbed = new EmbedBuilder().setColor(env.CONFIRM_COLOR);
 
     if (userChangedSong) {
       console.log(`${interaction.user.tag} updated their vote from ${originalVote} to ${selectedSong}`);
@@ -106,12 +107,12 @@ async function handleGiveawayEntry(interaction) {
   const giveaway = await getGiveaway({ id: interaction.customId });
 
   if (giveaway.endDate.getTime() < new Date().getTime()) {
-    const lateEmbed = new EmbedBuilder().setDescription('The giveaway has already ended!').setColor(process.env.ERROR_COLOR);
+    const lateEmbed = new EmbedBuilder().setDescription('The giveaway has already ended!').setColor(env.ERROR_COLOR);
     return interaction.reply({ embeds: [lateEmbed], ephemeral: true });
   }
 
   if (giveaway.entries.includes(interaction.user.id)) {
-    const enteredEmbed = new EmbedBuilder().setDescription('You have already entered the giveaway!').setColor(process.env.ERROR_COLOR);
+    const enteredEmbed = new EmbedBuilder().setDescription('You have already entered the giveaway!').setColor(env.ERROR_COLOR);
     return interaction.reply({ embeds: [enteredEmbed], ephemeral: true });
   }
 
@@ -124,7 +125,7 @@ async function handleGiveawayEntry(interaction) {
     .setTitle(`Giveaway: ${giveaway.prize}`)
     .setDescription(giveaway.description)
     .addFields([{ name: 'End Date', value: `<t:${timestamp}>` }])
-    .setColor(process.env.GIVEAWAY_COLOR)
+    .setColor(env.GIVEAWAY_COLOR)
     .setFooter({
       text: `${giveaway.entries.length} ${giveaway.entries.length == 1 ? 'entry' : 'entries'}`
     });
@@ -132,7 +133,7 @@ async function handleGiveawayEntry(interaction) {
 
   await interaction.message.edit({ embeds: [newEmbed] });
 
-  const confirmEmbed = new EmbedBuilder().setDescription(description).setColor(process.env.CONFIRM_COLOR);
+  const confirmEmbed = new EmbedBuilder().setDescription(description).setColor(env.CONFIRM_COLOR);
 
   await interaction.reply({ embeds: [confirmEmbed], ephemeral: true });
 }
@@ -159,7 +160,7 @@ async function handleRetryDailyHeardle(interaction) {
 
     const statusExists = await getDailyHeardleCheck({ id: statusId });
     if (!statusExists) {
-      const errorEmbed = new EmbedBuilder().setDescription('Already sent retry request').setColor(process.env.ERROR_COLOR);
+      const errorEmbed = new EmbedBuilder().setDescription('Already sent retry request').setColor(env.ERROR_COLOR);
 
       return await interaction.editReply({ embeds: [errorEmbed] });
     }
@@ -167,7 +168,7 @@ async function handleRetryDailyHeardle(interaction) {
     const { message } = await sendRetryRequest();
     await deleteAllChecks();
 
-    const embed = new EmbedBuilder().setDescription(message).setColor(process.env.CONFIRM_COLOR);
+    const embed = new EmbedBuilder().setDescription(message).setColor(env.CONFIRM_COLOR);
 
     await interaction.editReply({ embeds: [embed] });
   } catch (error) {

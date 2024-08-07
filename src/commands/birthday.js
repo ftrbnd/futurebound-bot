@@ -2,6 +2,7 @@ import { EmbedBuilder, SlashCommandBuilder } from 'discord.js';
 import { getTimeZones, timeZonesNames } from '@vvo/tzdb';
 import { sendErrorEmbed } from '../utils/sendErrorEmbed.js';
 import { createUser, getUser, updateUserBirthday } from '../lib/mongo/services/User.js';
+import { env } from '../utils/env.js';
 
 export const data = new SlashCommandBuilder()
   .setName('birthday')
@@ -27,7 +28,7 @@ export async function execute(interaction) {
     if (!timeZonesNames.includes(timezoneOption)) {
       const tzErrEmbed = new EmbedBuilder()
         .setDescription('Please enter a valid TZ database name. More info can be found here: https://en.wikipedia.org/wiki/List_of_tz_database_time_zones#List \nExample: **America/Los_Angeles**')
-        .setColor(process.env.ERROR_COLOR);
+        .setColor(env.ERROR_COLOR);
 
       return interaction.reply({ embeds: [tzErrEmbed], ephemeral: true });
     }
@@ -71,9 +72,9 @@ export async function execute(interaction) {
 
     const birthdayAttempt = new Date(`${monthOption} ${dayOption} ${yearOption} ${midnightPST}:00`);
 
-    const logChannel = interaction.guild.channels.cache.get(process.env.LOGS_CHANNEL_ID);
+    const logChannel = interaction.guild.channels.cache.get(env.LOGS_CHANNEL_ID);
     const birthdayEmbed = new EmbedBuilder()
-      .setColor(process.env.CONFIRM_COLOR)
+      .setColor(env.CONFIRM_COLOR)
       .addFields([{ name: 'Timezone', value: timezoneOption }])
       .setFooter({
         text: interaction.guild.name,
@@ -81,7 +82,7 @@ export async function execute(interaction) {
       });
 
     const personalEmbed = new EmbedBuilder()
-      .setColor(process.env.CONFIRM_COLOR)
+      .setColor(env.CONFIRM_COLOR)
       .addFields([{ name: 'Timezone', value: timezoneOption }])
       .setFooter({
         text: interaction.guild.name,

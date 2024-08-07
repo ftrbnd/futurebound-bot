@@ -3,6 +3,7 @@ import { SpotifyPlugin } from '@distube/spotify';
 import { SoundCloudPlugin } from '@distube/soundcloud';
 import { readdirSync } from 'fs';
 import { resolve } from 'path';
+import { env } from '../../utils/env.js';
 
 const __dirname = import.meta.dirname;
 
@@ -17,8 +18,8 @@ export async function registerDistubeClient(discordClient) {
     plugins: [
       new SpotifyPlugin({
         api: {
-          clientId: process.env.SPOTIFY_CLIENT_ID,
-          clientSecret: process.env.SPOTIFY_CLIENT_SECRET
+          clientId: env.SPOTIFY_CLIENT_ID,
+          clientSecret: env.SPOTIFY_CLIENT_SECRET
         }
       }),
       new SoundCloudPlugin()

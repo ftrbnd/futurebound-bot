@@ -3,6 +3,7 @@ import { resolve } from 'path';
 import { EmbedBuilder, SlashCommandBuilder } from 'discord.js';
 import { sendErrorEmbed } from '../utils/sendErrorEmbed.js';
 import { lineSplitFile } from '../utils/lineSplitFile.js';
+import { env } from '../utils/env.js';
 
 const __dirname = import.meta.dirname;
 
@@ -61,7 +62,7 @@ export async function execute(interaction) {
         .addFields([{ name: 'Song', value: songName }])
         .setDescription(`${randomLyric}`)
         .setThumbnail(m.author.displayAvatarURL({ dynamic: true }))
-        .setColor(process.env.CONFIRM_COLOR)
+        .setColor(env.CONFIRM_COLOR)
         .setFooter({
           text: m.guild.name,
           iconURL: m.guild.iconURL({ dynamic: true })
@@ -78,7 +79,7 @@ export async function execute(interaction) {
           .setTitle('Nobody guessed the song within 15 seconds.')
           .addFields([{ name: 'Song', value: songName }])
           .setDescription(`${randomLyric}`)
-          .setColor(process.env.ERROR_COLOR)
+          .setColor(env.ERROR_COLOR)
           .setFooter({
             text: interaction.guild.name,
             iconURL: interaction.guild.iconURL({ dynamic: true })

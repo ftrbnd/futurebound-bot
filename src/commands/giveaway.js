@@ -1,6 +1,7 @@
 import { EmbedBuilder, PermissionFlagsBits, SlashCommandBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle } from 'discord.js';
 import { sendErrorEmbed } from '../utils/sendErrorEmbed.js';
 import { createGiveaway } from '../lib/mongo/services/Giveaway.js';
+import { env } from '../utils/env.js';
 
 export const data = new SlashCommandBuilder()
   .setName('giveaway')
@@ -26,7 +27,7 @@ export const data = new SlashCommandBuilder()
   .setDefaultMemberPermissions(PermissionFlagsBits.Administrator);
 export async function execute(interaction) {
   try {
-    const giveawayChannel = interaction.guild.channels.cache.get(process.env.GIVEAWAY_CHANNEL_ID);
+    const giveawayChannel = interaction.guild.channels.cache.get(env.GIVEAWAY_CHANNEL_ID);
 
     if (interaction.options.getSubcommand() === 'start') {
       const prize = interaction.options.getString('prize');
@@ -63,11 +64,11 @@ export async function execute(interaction) {
         .setTitle(`Giveaway: ${prize}`)
         .setDescription(description)
         .addFields([{ name: 'End Date', value: `<t:${timestamp}>` }])
-        .setColor(process.env.GIVEAWAY_COLOR);
+        .setColor(env.GIVEAWAY_COLOR);
       if (imageURL) giveawayEmbed.setThumbnail(imageURL);
 
       const row = new ActionRowBuilder().addComponents(
-        new ButtonBuilder().setCustomId(giveaway.id).setStyle(ButtonStyle.Primary).setEmoji(process.env.GIVEAWAY_EMOJI_ID),
+        new ButtonBuilder().setCustomId(giveaway.id).setStyle(ButtonStyle.Primary).setEmoji(env.GIVEAWAY_EMOJI_ID),
         new ButtonBuilder().setLabel('Subscribe').setStyle(ButtonStyle.Link).setURL(`https://discord.com/channels/${interaction.guild.id}/role-subscriptions`)
       );
 
@@ -76,7 +77,7 @@ export async function execute(interaction) {
       const confirmEmbed = new EmbedBuilder()
         .setDescription(`Started giveaway for **${prize}** in ${giveawayChannel}, ends in ${amount} ${amount == 1 ? unit.substring(0, unit.length - 1) : unit}`)
         .addFields([{ name: 'End Date', value: `<t:${timestamp}>` }])
-        .setColor(process.env.CONFIRM_COLOR);
+        .setColor(env.CONFIRM_COLOR);
 
       await interaction.reply({ embeds: [confirmEmbed] });
     } else if (interaction.options.getSubcommand() === 'end') {

@@ -1,8 +1,9 @@
 import { EmbedBuilder } from 'discord.js';
+import { env } from '../utils/env.js';
 
 export const name = 'guildMemberRemove';
 export async function execute(member) {
-  const logChannel = member.guild.channels.cache.get(process.env.LOGS_CHANNEL_ID);
+  const logChannel = member.guild.channels.cache.get(env.LOGS_CHANNEL_ID);
   if (!logChannel) return;
 
   const leaveEmbed = new EmbedBuilder()
@@ -11,7 +12,7 @@ export async function execute(member) {
       iconURL: member.user.displayAvatarURL({ dynamic: true })
     })
     .addFields([{ name: 'User ID: ', value: `${member.user.id}` }])
-    .setColor(process.env.ERROR_COLOR)
+    .setColor(env.ERROR_COLOR)
     .setThumbnail(member.user.displayAvatarURL({ dynamic: true }))
     .setFooter({
       text: member.guild.name,

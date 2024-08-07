@@ -1,6 +1,7 @@
 import { EmbedBuilder, SlashCommandBuilder, PermissionFlagsBits, ChannelType } from 'discord.js';
 import { sendErrorEmbed } from '../../../utils/sendErrorEmbed.js';
 import { createPlaylist, getPlaylist, getPlaylistChoices, updatePlaylistLink } from '../../mongo/services/Playlist.js';
+import { env } from '../../../utils/env.js';
 
 export const data = new SlashCommandBuilder()
   .setName('customplaylist')
@@ -38,7 +39,7 @@ export async function execute(interaction) {
 
       const description = (playlist ? 'Updated playlist link' : 'Created custom playlist') + ` for **${newPlaylistName}**`;
 
-      const confirmEmbed = new EmbedBuilder().setDescription(description).setColor(process.env.MUSIC_COLOR);
+      const confirmEmbed = new EmbedBuilder().setDescription(description).setColor(env.MUSIC_COLOR);
 
       await interaction.reply({ embeds: [confirmEmbed] });
     } else if (interaction.options.getSubcommand() === 'play') {
@@ -54,13 +55,13 @@ export async function execute(interaction) {
 
         const playlist = await getPlaylist({ name: playlistName });
         if (!playlist) {
-          const dataEmbed = new EmbedBuilder().setDescription(`**${playlistName}** custom playlist does not exist`).setColor(process.env.ERROR_COLOR);
+          const dataEmbed = new EmbedBuilder().setDescription(`**${playlistName}** custom playlist does not exist`).setColor(env.ERROR_COLOR);
           return interaction.reply({ embeds: [dataEmbed] });
         }
 
         const voiceChannel = interaction.member.voice.channel;
         if (!voiceChannel) {
-          const errEmbed = new EmbedBuilder().setDescription(`You must join a voice channel!`).setColor(process.env.ERROR_COLOR);
+          const errEmbed = new EmbedBuilder().setDescription(`You must join a voice channel!`).setColor(env.ERROR_COLOR);
           return interaction.reply({ embeds: [errEmbed] });
         }
 
@@ -72,7 +73,7 @@ export async function execute(interaction) {
           interaction.guild.members.me.voice.setSuppressed(false); // set bot as Stage speaker
         }
 
-        const confirmEmbed = new EmbedBuilder().setDescription(`Now playing **${playlistName}** in ${voiceChannel}`).setColor(process.env.MUSIC_COLOR);
+        const confirmEmbed = new EmbedBuilder().setDescription(`Now playing **${playlistName}** in ${voiceChannel}`).setColor(env.MUSIC_COLOR);
 
         await interaction.reply({ embeds: [confirmEmbed] });
       }

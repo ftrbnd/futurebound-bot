@@ -1,13 +1,14 @@
 import { statusSquaresLeaderboard } from './guess-statuses.js';
 import { heardleAnnouncementSchema } from './announcement.js';
+import { env } from '../../utils/env.js';
 
-const SERVER = process.env.EDEN_HEARDLE_SERVER_URL;
+const SERVER = env.HEARDLE_SERVER_URL;
 const ENDPOINT = `${SERVER}/api/heardles`;
 
 export async function sendHealthCheck() {
   const res = await fetch(`${SERVER}/healthcheck`, {
     headers: {
-      Authorization: `Bearer ${process.env.DISCORD_TOKEN}`
+      Authorization: `Bearer ${env.DISCORD_TOKEN}`
     }
   });
   if (!res.ok) throw new Error('Failed to send request');
@@ -19,7 +20,7 @@ export async function sendHealthCheck() {
 export async function sendRetryRequest() {
   const res = await fetch(`${ENDPOINT}/daily/retry`, {
     headers: {
-      Authorization: `Bearer ${process.env.DISCORD_TOKEN}`
+      Authorization: `Bearer ${env.DISCORD_TOKEN}`
     }
   });
   if (!res.ok) throw new Error('Failed to send Daily Heardle retry request');
@@ -31,7 +32,7 @@ export async function sendRetryRequest() {
 export async function getCurrentDailySong() {
   const res = await fetch(`${ENDPOINT}/daily`, {
     headers: {
-      Authorization: `Bearer ${process.env.DISCORD_TOKEN}`
+      Authorization: `Bearer ${env.DISCORD_TOKEN}`
     }
   });
   if (!res.ok) throw new Error('Failed to send GET /api/heardles/daily request');
@@ -45,7 +46,7 @@ export async function getCurrentDailySong() {
 export async function getUserStats(user) {
   const res = await fetch(`${ENDPOINT}/statistics/${user.id}`, {
     headers: {
-      Authorization: `Bearer ${process.env.DISCORD_TOKEN}`
+      Authorization: `Bearer ${env.DISCORD_TOKEN}`
     }
   });
   if (!res.ok) throw new Error('Failed to send GET /api/heardles/statistics/:userId request');
@@ -58,7 +59,7 @@ export async function getUserStats(user) {
 export async function getLeaderboard() {
   const res = await fetch(`${ENDPOINT}/leaderboard`, {
     headers: {
-      Authorization: `Bearer ${process.env.DISCORD_TOKEN}`
+      Authorization: `Bearer ${env.DISCORD_TOKEN}`
     }
   });
   if (!res.ok) throw new Error('Failed to send GET /api/heardles/leaderboard request');
@@ -100,7 +101,7 @@ export async function setAnnouncement(showBanner, text, link, status) {
     method: 'PATCH',
     body: JSON.stringify({ announcement: body }),
     headers: {
-      Authorization: `Bearer ${process.env.DISCORD_TOKEN}`,
+      Authorization: `Bearer ${env.DISCORD_TOKEN}`,
       'Content-Type': 'application/json'
     }
   });

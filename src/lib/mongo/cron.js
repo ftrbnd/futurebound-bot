@@ -2,6 +2,7 @@ import { EmbedBuilder } from 'discord.js';
 import { CronJob } from 'cron';
 import { getUsers } from './services/User.js';
 import { getGiveaways } from './services/Giveaway.js';
+import { env } from '../../utils/env.js';
 
 const numberEndings = new Map([
   [13, 'th'],
@@ -20,8 +21,8 @@ const checkUsers = async (discordClient) => {
   // is there a birthday today?
   if (users) {
     // console.log(`Checking for birthdays/mutes - today's date: ${today}`)
-    const server = discordClient.guilds.cache.get(process.env.GUILD_ID);
-    const modChannel = server.channels.cache.get(process.env.MODERATORS_CHANNEL_ID);
+    const server = discordClient.guilds.cache.get(env.GUILD_ID);
+    const modChannel = server.channels.cache.get(env.MODERATORS_CHANNEL_ID);
     if (!modChannel) return;
 
     users.forEach(async (user) => {
@@ -77,7 +78,7 @@ const checkUsers = async (discordClient) => {
             console.log(error);
           }
 
-          const generalChannel = discordClient.channels.cache.get(process.env.GENERAL_CHANNEL_ID);
+          const generalChannel = discordClient.channels.cache.get(env.GENERAL_CHANNEL_ID);
           generalChannel.send({ embeds: [birthdayEmbed] });
           console.log(`It's ${user.username}'s ${age}${ageSuffix} birthday today! - ${user.birthday}`);
         }
@@ -97,7 +98,7 @@ const checkUsers = async (discordClient) => {
           const logEmbed = new EmbedBuilder()
             .setTitle(userToUnmute.displayName + ' was unmuted after a week.')
             .addFields([{ name: 'User ID: ', value: `${user.discordId}` }])
-            .setColor(process.env.CONFIRM_COLOR)
+            .setColor(env.CONFIRM_COLOR)
             .setFooter({
               text: server.name,
               iconURL: server.iconURL({ dynamic: true })
@@ -127,8 +128,8 @@ const checkGiveaways = async (discordClient) => {
     ) {
       if (giveaway.entries.length == 0) return console.log('No entries for this giveaway.');
 
-      const server = discordClient.guilds.cache.get(process.env.GUILD_ID);
-      const giveawayChannel = server.channels.cache.get(process.env.GIVEAWAY_CHANNEL_ID);
+      const server = discordClient.guilds.cache.get(env.GUILD_ID);
+      const giveawayChannel = server.channels.cache.get(env.GIVEAWAY_CHANNEL_ID);
 
       const winnerId = giveaway.entries[Math.floor(Math.random() * giveaway.entries.length)];
       console.log(`Winner's id of giveaway #${giveaway.id}: ${winnerId}`);
@@ -140,7 +141,7 @@ const checkGiveaways = async (discordClient) => {
           iconURL: member.displayAvatarURL()
         })
         .addFields([{ name: 'Prize: ', value: giveaway.prize }])
-        .setColor(process.env.GIVEAWAY_COLOR)
+        .setColor(env.GIVEAWAY_COLOR)
         .setTimestamp();
       if (giveaway.imageURL) winnerEmbed.setThumbnail(giveaway.imageURL);
 

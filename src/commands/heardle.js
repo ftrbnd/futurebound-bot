@@ -3,6 +3,7 @@ import { SlashCommandBuilder, ButtonStyle, EmbedBuilder, PermissionFlagsBits } f
 import { sendErrorEmbed } from '../utils/sendErrorEmbed.js';
 import { statusSquares } from '../lib/heardle/guess-statuses.js';
 import { getUserStats, getLeaderboard, createLeaderboardDescription, setAnnouncement, sendHealthCheck } from '../lib/heardle/api.js';
+import { env } from '../utils/env.js';
 
 export const data = new SlashCommandBuilder()
   .setName('heardle')
@@ -70,7 +71,7 @@ export async function execute(interaction) {
     } else if (interaction.options.getSubcommand() === 'set-announcement') {
       const owner = await interaction.guild.fetchOwner();
       if (interaction.member.id !== owner.id) {
-        const embed = new EmbedBuilder().setDescription('You are not the server owner.').setColor(process.env.ERROR_COLOR);
+        const embed = new EmbedBuilder().setDescription('You are not the server owner.').setColor(env.ERROR_COLOR);
         return interaction.reply({ embeds: [embed] });
       }
 
@@ -83,7 +84,7 @@ export async function execute(interaction) {
 
       const confirmEmbed = new EmbedBuilder()
         .setTitle('[EDEN Heardle] New Announcement')
-        .setColor(process.env.CONFIRM_COLOR)
+        .setColor(env.CONFIRM_COLOR)
         .addFields([
           { name: 'show_banner', value: `${announcement.showBanner}`, inline: true },
           { name: 'text', value: announcement.text, inline: true },
@@ -91,23 +92,27 @@ export async function execute(interaction) {
           { name: 'status', value: announcement.status, inline: true }
         ])
         .setURL('https://eden-heardle.io/play')
-        .setColor(process.env.CONFIRM_COLOR);
+        .setColor(env.CONFIRM_COLOR);
 
       await interaction.reply({ embeds: [confirmEmbed] });
     } else if (interaction.options.getSubcommand() === 'health-check') {
       const owner = await interaction.guild.fetchOwner();
       if (interaction.member.id !== owner.id) {
-        const embed = new EmbedBuilder().setDescription('You are not the server owner.').setColor(process.env.ERROR_COLOR);
+        const embed = new EmbedBuilder().setDescription('You are not the server owner.').setColor(env.ERROR_COLOR);
         return interaction.reply({ embeds: [embed] });
       }
 
       await interaction.deferReply({ ephemeral: true });
 
-      const { data, res } = await sendHealthCheck();
+      try {
+        const { data, res } = await sendHealthCheck();
 
-      const responseEmbed = new EmbedBuilder().setTitle(`${res.status} ${res.statusText}`).setDescription(JSON.stringify(data)).setColor(process.env.CONFIRM_COLOR);
+        const responseEmbed = new EmbedBuilder().setTitle(`${res.status} ${res.statusText}`).setDescription(JSON.stringify(data)).setColor(env.CONFIRM_COLOR);
 
-      await interaction.editReply({ embeds: [responseEmbed], ephemeral: true });
+        await interaction.editReply({ embeds: [responseEmbed], ephemeral: true });
+      } catch (error) {
+        sendErrorEmbed(interaction, error, true);
+      }
     }
   } catch (err) {
     sendErrorEmbed(interaction, err);

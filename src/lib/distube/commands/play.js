@@ -1,6 +1,7 @@
 import { EmbedBuilder, SlashCommandBuilder, ChannelType } from 'discord.js';
 import { sendErrorEmbed } from '../../../utils/sendErrorEmbed.js';
 import { getMusicPermission } from '../../mongo/services/MusicPermission.js';
+import { env } from '../../../utils/env.js';
 
 export const data = new SlashCommandBuilder()
   .setName('play')
@@ -15,7 +16,7 @@ export async function execute(interaction) {
         const permission = await getMusicPermission();
 
         if (!interaction.member._roles.includes(permission.roleId) && permission.roleId != interaction.guild.roles.everyone.id) {
-          const errEmbed = new EmbedBuilder().setDescription(`You do not have permission to use music commands right now!`).setColor(process.env.ERROR_COLOR);
+          const errEmbed = new EmbedBuilder().setDescription(`You do not have permission to use music commands right now!`).setColor(env.ERROR_COLOR);
           return interaction.editReply({ embeds: [errEmbed] });
         }
       } catch (e) {
@@ -28,7 +29,7 @@ export async function execute(interaction) {
         const voiceChannel = interaction.member.voice.channel;
 
         if (!voiceChannel) {
-          const errEmbed = new EmbedBuilder().setDescription(`You must join a voice channel!`).setColor(process.env.ERROR_COLOR);
+          const errEmbed = new EmbedBuilder().setDescription(`You must join a voice channel!`).setColor(env.ERROR_COLOR);
           return interaction.editReply({ embeds: [errEmbed] });
         }
       } catch (e) {
@@ -62,11 +63,11 @@ export async function execute(interaction) {
           description += ' (promote me to Speaker pls)';
         }
 
-        const confirmEmbed = new EmbedBuilder().setDescription(description).setColor(process.env.MUSIC_COLOR);
+        const confirmEmbed = new EmbedBuilder().setDescription(description).setColor(env.MUSIC_COLOR);
         await interaction.editReply({ embeds: [confirmEmbed] });
       } catch (e) {
         console.error(e);
-        const errEmbed = new EmbedBuilder().setDescription(`An error occurred in /play.`).setColor(process.env.ERROR_COLOR);
+        const errEmbed = new EmbedBuilder().setDescription(`An error occurred in /play.`).setColor(env.ERROR_COLOR);
         return interaction.editReply({ embeds: [errEmbed] });
       }
     }

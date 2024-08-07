@@ -1,5 +1,6 @@
 import { EmbedBuilder, SlashCommandBuilder, PermissionFlagsBits } from 'discord.js';
 import { sendErrorEmbed } from '../utils/sendErrorEmbed.js';
+import { env } from '../utils/env.js';
 
 export const data = new SlashCommandBuilder()
   .setName('lockdown')
@@ -37,7 +38,7 @@ export async function execute(interaction) {
 
       roles.forEach((role) => role.setPermissions(removedPermissions));
 
-      const confirmEmbed = new EmbedBuilder().setDescription(`**${interaction.guild.name}** is now on lockdown.`).setColor(process.env.ERROR_COLOR);
+      const confirmEmbed = new EmbedBuilder().setDescription(`**${interaction.guild.name}** is now on lockdown.`).setColor(env.ERROR_COLOR);
       interaction.reply({ embeds: [confirmEmbed] });
     } else if (interaction.options.getSubcommand() === 'open') {
       // Open all text channels
@@ -65,7 +66,7 @@ export async function execute(interaction) {
         role.setPermissions(defaultPermissions);
       });
 
-      const confirmEmbed = new EmbedBuilder().setDescription(`**${interaction.guild.name}** is now open!`).setColor(process.env.CONFIRM_COLOR);
+      const confirmEmbed = new EmbedBuilder().setDescription(`**${interaction.guild.name}** is now open!`).setColor(env.CONFIRM_COLOR);
       interaction.reply({ embeds: [confirmEmbed] });
     }
   } catch (err) {

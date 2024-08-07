@@ -1,8 +1,9 @@
 import { EmbedBuilder } from 'discord.js';
+import { env } from '../utils/env.js';
 
 export const name = 'messageDelete';
 export async function execute(message) {
-  const logChannel = message.guild.channels.cache.get(process.env.LOGS_CHANNEL_ID);
+  const logChannel = message.guild.channels.cache.get(env.LOGS_CHANNEL_ID);
   if (!logChannel) return;
   if (message.author.bot) return;
 
@@ -12,7 +13,7 @@ export async function execute(message) {
       iconURL: message.author.displayAvatarURL({ dynamic: true })
     })
     .addFields([{ name: 'Channel', value: `${message.channel}` }])
-    .setColor(process.env.ERROR_COLOR)
+    .setColor(env.ERROR_COLOR)
     .setTimestamp();
 
   if (message.attachments.size > 0) {
@@ -25,7 +26,7 @@ export async function execute(message) {
     const embedMessage = await logChannel.send({ embeds: [msgDeleteEmbed] });
 
     message.attachments.forEach(async (attachment) => {
-      const attachmentEmbed = new EmbedBuilder().setTitle(`Deleted attachment from ${message.author.tag}`).setImage(attachment.url).setColor(process.env.ERROR_COLOR);
+      const attachmentEmbed = new EmbedBuilder().setTitle(`Deleted attachment from ${message.author.tag}`).setImage(attachment.url).setColor(env.ERROR_COLOR);
 
       await embedMessage.reply({ embeds: [attachmentEmbed] });
     });

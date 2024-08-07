@@ -1,8 +1,9 @@
 import { EmbedBuilder, ChannelType } from 'discord.js';
+import { env } from '../utils/env.js';
 
 export const name = 'channelUpdate';
 export async function execute(oldChannel, newChannel) {
-  const logChannel = oldChannel.guild.channels.cache.get(process.env.LOGS_CHANNEL_ID);
+  const logChannel = oldChannel.guild.channels.cache.get(env.LOGS_CHANNEL_ID);
   if (!logChannel) return;
 
   const channelType = oldChannel.type === ChannelType.GuildText ? 'text' : 'voice'; // if oldChannel type is GUILD_TEXT, then set channelType to text
@@ -14,7 +15,7 @@ export async function execute(oldChannel, newChannel) {
         { name: 'Previous name', value: oldChannel.name },
         { name: 'New name', value: newChannel.name }
       ])
-      .setColor(process.env.CONFIRM_COLOR)
+      .setColor(env.CONFIRM_COLOR)
       .setFooter({
         text: `${oldChannel.guild.name}`,
         iconURL: oldChannel.guild.iconURL({ dynamic: true })

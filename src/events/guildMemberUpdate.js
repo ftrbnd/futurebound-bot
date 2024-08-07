@@ -1,8 +1,9 @@
 import { EmbedBuilder } from 'discord.js';
+import { env } from '../utils/env.js';
 
 export const name = 'guildMemberUpdate';
 export async function execute(oldMember, newMember) {
-  const modChannel = newMember.guild.channels.cache.get(process.env.MODERATORS_CHANNEL_ID);
+  const modChannel = newMember.guild.channels.cache.get(env.MODERATORS_CHANNEL_ID);
   if (!modChannel) return;
 
   if (oldMember.communicationDisabledUntil === null && newMember.communicationDisabledUntil !== null) {
@@ -13,7 +14,7 @@ export async function execute(oldMember, newMember) {
         { name: 'User: ', value: `${newMember.user}` },
         { name: 'ID: ', value: `${newMember.user.id}` }
       ])
-      .setColor(process.env.ERROR_COLOR)
+      .setColor(env.ERROR_COLOR)
       .setThumbnail(newMember.user.displayAvatarURL({ dynamic: true }))
       .setFooter({
         text: newMember.guild.name,
@@ -30,7 +31,7 @@ export async function execute(oldMember, newMember) {
         { name: 'User: ', value: `${newMember.user}` },
         { name: 'ID: ', value: `${newMember.user.id}` }
       ])
-      .setColor(process.env.CONFIRM_COLOR)
+      .setColor(env.CONFIRM_COLOR)
       .setThumbnail(newMember.user.displayAvatarURL({ dynamic: true }))
       .setFooter({
         text: newMember.guild.name,
@@ -42,10 +43,10 @@ export async function execute(oldMember, newMember) {
   }
 
   // check if premium role was removed -> remove custom color role
-  const logChannel = newMember.guild.channels.cache.get(process.env.LOGS_CHANNEL_ID);
+  const logChannel = newMember.guild.channels.cache.get(env.LOGS_CHANNEL_ID);
   if (!logChannel) return;
 
-  if (oldMember._roles.includes(process.env.SUBSCRIBER_ROLE_ID) && !newMember._roles.includes(process.env.SUBSCRIBER_ROLE_ID)) {
+  if (oldMember._roles.includes(env.SUBSCRIBER_ROLE_ID) && !newMember._roles.includes(env.SUBSCRIBER_ROLE_ID)) {
     const customColorRole = newMember.roles.cache.find((role) => role.name == 'Subscriber Custom Color');
     if (!customColorRole) return;
 

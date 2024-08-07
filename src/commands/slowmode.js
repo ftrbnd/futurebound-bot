@@ -1,5 +1,6 @@
 import { EmbedBuilder, PermissionFlagsBits, SlashCommandBuilder } from 'discord.js';
 import { sendErrorEmbed } from '../utils/sendErrorEmbed.js';
+import { env } from '../utils/env.js';
 
 export const data = new SlashCommandBuilder()
   .setName('slowmode')
@@ -14,7 +15,7 @@ export async function execute(interaction) {
 
     targetChannel.setRateLimitPerUser(seconds);
 
-    const slowmodeEmbed = new EmbedBuilder().setDescription(`Enabled slowmode in ${targetChannel} for ${seconds} seconds`).setColor(process.env.CONFIRM_COLOR);
+    const slowmodeEmbed = new EmbedBuilder().setDescription(`Enabled slowmode in ${targetChannel} for ${seconds} seconds`).setColor(env.CONFIRM_COLOR);
 
     interaction.reply({ embeds: [slowmodeEmbed], ephemeral: true });
   } catch (err) {

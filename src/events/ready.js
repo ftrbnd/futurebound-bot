@@ -1,4 +1,5 @@
 import { EmbedBuilder, ActivityType } from 'discord.js';
+import { env } from '../utils/env.js';
 
 const songs = [
   '02:09',
@@ -87,10 +88,10 @@ export async function execute(client) {
   }, 3 * 60 * 1000);
 
   const message = `**${client.user.tag}** is now ready`;
-  const logChannel = client.channels.cache.get(process.env.LOGS_CHANNEL_ID);
+  const logChannel = client.channels.cache.get(env.LOGS_CHANNEL_ID);
 
-  if (logChannel && process.env.NODE_ENV !== 'development') {
-    const readyEmbed = new EmbedBuilder().setDescription(message).setColor(process.env.CONFIRM_COLOR);
+  if (logChannel && env.NODE_ENV !== 'development') {
+    const readyEmbed = new EmbedBuilder().setDescription(message).setColor(env.CONFIRM_COLOR);
 
     logChannel.send({ embeds: [readyEmbed] });
   }

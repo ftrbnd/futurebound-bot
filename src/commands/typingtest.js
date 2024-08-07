@@ -1,5 +1,6 @@
 import { EmbedBuilder, SlashCommandBuilder, MessageType } from 'discord.js';
 import { sendErrorEmbed } from '../utils/sendErrorEmbed.js';
+import { env } from '../utils/env.js';
 
 export const data = new SlashCommandBuilder().setName('typingtest').setDescription('Test your WPM by typing EDEN songs!');
 export async function execute(interaction) {
@@ -101,7 +102,7 @@ export async function execute(interaction) {
         // if no message was entered
         const couldntFindEmbed = new EmbedBuilder()
           .setDescription(`You did not type within a minute, please try again!`)
-          .setColor(process.env.ERROR_COLOR)
+          .setColor(env.ERROR_COLOR)
           .setFooter({
             text: interaction.guild.name,
             iconURL: interaction.guild.iconURL({ dynamic: true })

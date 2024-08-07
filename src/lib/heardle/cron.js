@@ -2,6 +2,7 @@ import { EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle } from 'disc
 import { CronJob } from 'cron';
 import { getCurrentDailySong } from './api.js';
 import { createDailyHeardleCheck, deleteAllChecks, getDailyHeardleCheck, updateDailyHeardleCheck } from '../mongo/services/DailyHeardleCheck.js';
+import { env } from '../../utils/env.js';
 
 async function snapshotPrev() {
   const { song: prev } = await getCurrentDailySong();
@@ -24,7 +25,7 @@ async function snapshotNext(client) {
     console.log({ dailyHeardleCheck: status });
 
     if (status.prevDay === status.nextDay) {
-      const server = await client.guilds.cache.get(process.env.GUILD_ID);
+      const server = await client.guilds.cache.get(env.GUILD_ID);
       const owner = await server.fetchOwner();
 
       const embed = new EmbedBuilder()
@@ -34,7 +35,7 @@ async function snapshotNext(client) {
           { name: 'Next Day', value: `${status.nextDay}` },
           { name: 'Next Song', value: `${status.nextSong}` }
         ])
-        .setColor(process.env.ERROR_COLOR);
+        .setColor(env.ERROR_COLOR);
 
       const retryButton = new ButtonBuilder().setCustomId(`retry_daily_heardle_${status.id}`).setLabel('Retry').setStyle(ButtonStyle.Primary);
 

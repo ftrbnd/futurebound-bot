@@ -1,8 +1,9 @@
 import { EmbedBuilder } from 'discord.js';
+import { env } from '../utils/env.js';
 
 export const name = 'guildBanAdd';
 export async function execute(ban) {
-  const modChannel = ban.guild.channels.cache.get(process.env.MODERATORS_CHANNEL_ID);
+  const modChannel = ban.guild.channels.cache.get(env.MODERATORS_CHANNEL_ID);
   if (!modChannel) return;
 
   const logEmbed = new EmbedBuilder()
@@ -11,7 +12,7 @@ export async function execute(ban) {
       { name: 'User: ', value: `${ban.user}` },
       { name: 'ID: ', value: `${ban.user.id}` }
     ])
-    .setColor(process.env.ERROR_COLOR)
+    .setColor(env.ERROR_COLOR)
     .setThumbnail(ban.user.displayAvatarURL({ dynamic: true }))
     .setFooter({
       text: ban.guild.name,
