@@ -1,5 +1,5 @@
 import { Document } from 'mongoose';
-import { Giveaway } from '../schemas/Giveaway';
+import { Giveaway } from '../schemas/Giveaway.js';
 
 export async function createGiveaway(fields) {
   const giveaway = await Giveaway.create(fields);

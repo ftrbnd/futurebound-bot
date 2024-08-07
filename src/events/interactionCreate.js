@@ -1,10 +1,10 @@
 // Interactions: slash commands, buttons, select menus
 import { EmbedBuilder, InteractionType } from 'discord.js';
 import { sendErrorEmbed } from '../utils/sendErrorEmbed.js';
-import { DailyHeardleCheck } from '../lib/mongo/schemas/DailyHeardleCheck.js';
 import { getLeaderboard, sendRetryRequest, createLeaderboardDescription } from '../lib/heardle/api.js';
 import { getSurvivorRound, removeDuplicateVote, updateVotes } from '../lib/mongo/services/SurvivorRound.js';
 import { getGiveaway, updateGiveawayEntries } from '../lib/mongo/services/Giveaway.js';
+import { deleteAllChecks, getDailyHeardleCheck } from '../lib/mongo/services/DailyHeardleCheck.js';
 
 export const name = 'interactionCreate';
 export async function execute(interaction) {
@@ -157,7 +157,7 @@ async function handleRetryDailyHeardle(interaction) {
     // 'retry_daily_heardle_${status.id} => ['retry', 'daily', 'heardle', status.id]
     const statusId = interaction.customId.split('_')[3];
 
-    const statusExists = await DailyHeardleCheck.findById(statusId);
+    const statusExists = await getDailyHeardleCheck({ id: statusId });
     if (!statusExists) {
       const errorEmbed = new EmbedBuilder().setDescription('Already sent retry request').setColor(process.env.ERROR_COLOR);
 
@@ -165,11 +165,11 @@ async function handleRetryDailyHeardle(interaction) {
     }
 
     const { message } = await sendRetryRequest();
+    await deleteAllChecks();
 
-    await DailyHeardleCheck.deleteMany({});
     const embed = new EmbedBuilder().setDescription(message).setColor(process.env.CONFIRM_COLOR);
 
-    return await interaction.editReply({ embeds: [embed] });
+    await interaction.editReply({ embeds: [embed] });
   } catch (error) {
     await sendErrorEmbed(interaction, error, true);
   }

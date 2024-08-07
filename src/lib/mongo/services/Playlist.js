@@ -1,5 +1,5 @@
 import { Document } from 'mongoose';
-import { Playlist } from '../schemas/Playlist';
+import { Playlist } from '../schemas/Playlist.js';
 
 export async function getPlaylist(fields) {
   const playlist = await Playlist.findOne(fields);

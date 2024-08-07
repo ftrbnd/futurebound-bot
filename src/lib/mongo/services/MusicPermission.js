@@ -1,4 +1,4 @@
-import { MusicPermission } from '../schemas/MusicPermission';
+import { MusicPermission } from '../schemas/MusicPermission.js';
 
 // there should only be one instance of this model in the db
 export async function getMusicPermission() {

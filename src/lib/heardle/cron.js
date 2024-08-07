@@ -1,14 +1,14 @@
 import { EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle } from 'discord.js';
 import { CronJob } from 'cron';
-import { DailyHeardleCheck } from '../mongo/schemas/DailyHeardleCheck.js';
 import { getCurrentDailySong } from './api.js';
+import { createDailyHeardleCheck, deleteAllChecks, getDailyHeardleCheck, updateDailyHeardleCheck } from '../mongo/services/DailyHeardleCheck.js';
 
 async function snapshotPrev() {
-  const prev = await getCurrentDailySong();
+  const { song: prev } = await getCurrentDailySong();
 
-  await DailyHeardleCheck.deleteMany({});
+  await deleteAllChecks();
 
-  await DailyHeardleCheck.create({
+  await createDailyHeardleCheck({
     prevDay: prev.heardleDay,
     prevSong: prev.name
   });
@@ -16,17 +16,11 @@ async function snapshotPrev() {
 
 async function snapshotNext(client) {
   try {
-    const next = await getCurrentDailySong();
+    const { song: next } = await getCurrentDailySong();
 
-    await DailyHeardleCheck.findOneAndUpdate(
-      {},
-      {
-        nextDay: next.heardleDay,
-        nextSong: next.name
-      }
-    );
+    await updateDailyHeardleCheck(next.heardleDay, next.name);
 
-    const status = await DailyHeardleCheck.findOne({});
+    const status = await getDailyHeardleCheck({});
     console.log({ dailyHeardleCheck: status });
 
     if (status.prevDay === status.nextDay) {
