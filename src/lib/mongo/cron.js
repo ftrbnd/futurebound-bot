@@ -1,7 +1,7 @@
 import { EmbedBuilder } from 'discord.js';
 import { CronJob } from 'cron';
-import { Giveaway } from './schemas/Giveaway.js';
 import { getUsers } from './services/User.js';
+import { getGiveaways } from './services/Giveaway.js';
 
 const numberEndings = new Map([
   [13, 'th'],
@@ -115,45 +115,43 @@ const checkUsers = async (discordClient) => {
 
 const checkGiveaways = async (discordClient) => {
   const today = new Date();
+  const giveaways = await getGiveaways();
 
-  const giveaways = await Giveaway.find({});
-  if (giveaways) {
-    giveaways.forEach(async (giveaway) => {
-      if (
-        today.getFullYear() === giveaway.endDate.getFullYear() &&
-        today.getMonth() === giveaway.endDate.getMonth() &&
-        today.getDate() === giveaway.endDate.getDate() &&
-        today.getHours() === giveaway.endDate.getHours() &&
-        today.getMinutes() === giveaway.endDate.getMinutes()
-      ) {
-        if (giveaway.entries.length == 0) return console.log('No entries for this giveaway.');
+  giveaways.forEach(async (giveaway) => {
+    if (
+      today.getFullYear() === giveaway.endDate.getFullYear() &&
+      today.getMonth() === giveaway.endDate.getMonth() &&
+      today.getDate() === giveaway.endDate.getDate() &&
+      today.getHours() === giveaway.endDate.getHours() &&
+      today.getMinutes() === giveaway.endDate.getMinutes()
+    ) {
+      if (giveaway.entries.length == 0) return console.log('No entries for this giveaway.');
 
-        const server = discordClient.guilds.cache.get(process.env.GUILD_ID);
-        const giveawayChannel = server.channels.cache.get(process.env.GIVEAWAY_CHANNEL_ID);
+      const server = discordClient.guilds.cache.get(process.env.GUILD_ID);
+      const giveawayChannel = server.channels.cache.get(process.env.GIVEAWAY_CHANNEL_ID);
 
-        const winnerId = giveaway.entries[Math.floor(Math.random() * giveaway.entries.length)];
-        console.log(`Winner's id of giveaway #${giveaway.id}: ${winnerId}`);
+      const winnerId = giveaway.entries[Math.floor(Math.random() * giveaway.entries.length)];
+      console.log(`Winner's id of giveaway #${giveaway.id}: ${winnerId}`);
 
-        const member = await server.members.fetch(winnerId);
-        const winnerEmbed = new EmbedBuilder()
-          .setAuthor({
-            name: `${member.displayName} won the giveaway!`,
-            iconURL: member.displayAvatarURL()
-          })
-          .addFields([{ name: 'Prize: ', value: giveaway.prize }])
-          .setColor(process.env.GIVEAWAY_COLOR)
-          .setTimestamp();
-        if (giveaway.imageURL) winnerEmbed.setThumbnail(giveaway.imageURL);
+      const member = await server.members.fetch(winnerId);
+      const winnerEmbed = new EmbedBuilder()
+        .setAuthor({
+          name: `${member.displayName} won the giveaway!`,
+          iconURL: member.displayAvatarURL()
+        })
+        .addFields([{ name: 'Prize: ', value: giveaway.prize }])
+        .setColor(process.env.GIVEAWAY_COLOR)
+        .setTimestamp();
+      if (giveaway.imageURL) winnerEmbed.setThumbnail(giveaway.imageURL);
 
-        await giveawayChannel.send({ embeds: [winnerEmbed] });
-        try {
-          await member.send({ content: 'Congrats on winning! A moderator will contact you shortly', embeds: [winnerEmbed] });
-        } catch (e) {
-          console.log(e);
-        }
+      await giveawayChannel.send({ embeds: [winnerEmbed] });
+      try {
+        await member.send({ content: 'Congrats on winning! A moderator will contact you shortly', embeds: [winnerEmbed] });
+      } catch (e) {
+        console.log(e);
       }
-    });
-  }
+    }
+  });
 };
 
 export const registerDatabaseChecks = async (discordClient) => {

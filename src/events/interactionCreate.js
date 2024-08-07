@@ -1,10 +1,10 @@
 // Interactions: slash commands, buttons, select menus
 import { EmbedBuilder, InteractionType } from 'discord.js';
-import { Giveaway } from '../lib/mongo/schemas/Giveaway.js';
 import { sendErrorEmbed } from '../utils/sendErrorEmbed.js';
 import { DailyHeardleCheck } from '../lib/mongo/schemas/DailyHeardleCheck.js';
 import { getLeaderboard, sendRetryRequest, createLeaderboardDescription } from '../lib/heardle/api.js';
 import { getSurvivorRound, removeDuplicateVote, updateVotes } from '../lib/mongo/services/SurvivorRound.js';
+import { getGiveaway, updateGiveawayEntries } from '../lib/mongo/services/Giveaway.js';
 
 export const name = 'interactionCreate';
 export async function execute(interaction) {
@@ -96,8 +96,14 @@ async function handleSurvivorVote(interaction) {
   }
 }
 
+// TODO: make environment variables
+const premiumRoles = [
+  '1048014115567837188', // Entrance
+  '1048015082191335488', // Bipolar Paradise
+  '1048015470168637440' // Final Call
+];
 async function handleGiveawayEntry(interaction) {
-  const giveaway = await Giveaway.findByIdAndUpdate(interaction.customId);
+  const giveaway = await getGiveaway({ id: interaction.customId });
 
   if (giveaway.endDate.getTime() < new Date().getTime()) {
     const lateEmbed = new EmbedBuilder().setDescription('The giveaway has already ended!').setColor(process.env.ERROR_COLOR);
@@ -109,38 +115,9 @@ async function handleGiveawayEntry(interaction) {
     return interaction.reply({ embeds: [enteredEmbed], ephemeral: true });
   }
 
-  const premiumRoles = [
-    '1048015470168637440', // Final Call
-    '1048015082191335488', // Bipolar Paradise
-    '1048014115567837188' // Entrance
-  ];
   const premiumRole = interaction.guild.roles.cache.get(premiumRoles.find((roleId) => interaction.member._roles.includes(roleId)));
-
-  let subscriberMessage;
-  if (premiumRole) {
-    switch (
-      premiumRole.id // subscribers get more entries
-    ) {
-      case premiumRoles[0]:
-        giveaway.entries.push(interaction.user.id);
-        giveaway.entries.push(interaction.user.id);
-        giveaway.entries.push(interaction.user.id);
-        subscriberMessage = 'Thank you for being a Server Subscriber, you get 3 extra entries! (4 total)';
-        break;
-      case premiumRoles[1]:
-        giveaway.entries.push(interaction.user.id);
-        giveaway.entries.push(interaction.user.id);
-        subscriberMessage = 'Thank you for being a Server Subscriber, you get 2 extra entries! (3 total)';
-        break;
-      case premiumRoles[2]:
-        giveaway.entries.push(interaction.user.id);
-        subscriberMessage = 'Thank you for being a Server Subscriber, you get 1 extra entry! (2 total)';
-        break;
-    }
-  }
-  giveaway.entries.push(interaction.user.id);
-
-  await giveaway.save();
+  const additionalEntries = premiumRoles.indexOf(premiumRole.id) + 1;
+  const description = await updateGiveawayEntries(giveaway, interaction.user.id, 1 + additionalEntries);
 
   const timestamp = `${giveaway.endDate.getTime()}`.substring(0, 10);
   const newEmbed = new EmbedBuilder()
@@ -155,8 +132,9 @@ async function handleGiveawayEntry(interaction) {
 
   await interaction.message.edit({ embeds: [newEmbed] });
 
-  const confirmEmbed = new EmbedBuilder().setDescription(`Entry confirmed! ${subscriberMessage ?? ''}`).setColor(process.env.CONFIRM_COLOR);
-  interaction.reply({ embeds: [confirmEmbed], ephemeral: true });
+  const confirmEmbed = new EmbedBuilder().setDescription(description).setColor(process.env.CONFIRM_COLOR);
+
+  await interaction.reply({ embeds: [confirmEmbed], ephemeral: true });
 }
 
 async function handleLeaderboardButton(interaction) {

@@ -1,6 +1,6 @@
 import { EmbedBuilder, PermissionFlagsBits, SlashCommandBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle } from 'discord.js';
-import { Giveaway } from '../lib/mongo/schemas/Giveaway.js';
 import { sendErrorEmbed } from '../utils/sendErrorEmbed.js';
+import { createGiveaway } from '../lib/mongo/services/Giveaway.js';
 
 export const data = new SlashCommandBuilder()
   .setName('giveaway')
@@ -50,14 +50,12 @@ export async function execute(interaction) {
       }
       const timestamp = `${endDate.getTime()}`.substring(0, 10);
 
-      const giveaway = new Giveaway({
+      const giveaway = await createGiveaway({
         prize,
         description,
         endDate,
         imageURL
       });
-
-      await giveaway.save();
 
       console.log(`Saved ${prize} giveaway to database!`);
 
