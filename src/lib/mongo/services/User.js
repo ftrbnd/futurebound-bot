@@ -1,3 +1,4 @@
+import { Document } from 'mongoose';
 import { User } from '../schemas/User.js';
 
 export async function createUser(fields) {
@@ -17,7 +18,7 @@ export async function getUsers() {
 
 /**
  *
- * @param {User} user
+ * @param {Document<User>} user
  * @param {Date} muteEnd
  * @param {string} username
  */
@@ -30,7 +31,7 @@ export async function updateUserMute(user, muteEnd, username) {
 
 /**
  *
- * @param {User} user
+ * @param {Document<User>} user
  * @param {string} username
  * @param {Date} birthday
  * @param {string} timezone
@@ -45,7 +46,7 @@ export async function updateUserBirthday(user, username, birthday, timezone) {
 
 /**
  *
- * @param {User} user
+ * @param {Document<User>} user
  * @param {string} username
  * @param {number} warnings
  */

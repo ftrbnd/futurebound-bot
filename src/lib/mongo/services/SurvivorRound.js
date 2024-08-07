@@ -1,3 +1,4 @@
+import { Document } from 'mongoose';
 import { SurvivorRound } from '../schemas/SurvivorRound.js';
 
 export async function createSurvivorRound(fields) {
@@ -12,7 +13,7 @@ export async function getSurvivorRound(fields) {
 
 /**
  *
- * @param {SurvivorRound} round
+ * @param {Document<SurvivorRound>} round
  * @param {string} userId
  */
 export async function removeDuplicateVote(round, userId) {
@@ -34,7 +35,7 @@ export async function removeDuplicateVote(round, userId) {
 
 /**
  *
- * @param {SurvivorRound} round
+ * @param {Document<SurvivorRound>} round
  * @param {string} song
  * @param {string[]} votes
  */
@@ -46,7 +47,7 @@ export async function updateVotes(round, song, votes) {
 
 /**
  *
- * @param {SurvivorRound} round
+ * @param {Document<SurvivorRound>} round
  * @param {string} lastMessageId
  * @param {number} roundNumber
  */
