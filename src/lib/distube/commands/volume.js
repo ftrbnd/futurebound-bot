@@ -1,6 +1,6 @@
 import { EmbedBuilder, SlashCommandBuilder } from 'discord.js';
-import { getAllowedRoleId } from '../../../utils/getAllowedRoleId.js';
 import { sendErrorEmbed } from '../../../utils/sendErrorEmbed.js';
+import { getMusicPermission } from '../../mongo/services/MusicPermission.js';
 
 export const data = new SlashCommandBuilder()
   .setName('volume')
@@ -8,8 +8,8 @@ export const data = new SlashCommandBuilder()
   .addNumberOption((option) => option.setName('percent').setDescription('The volume percentage').setMinValue(0).setMaxValue(200).setRequired(true));
 export async function execute(interaction) {
   try {
-    const allowedRoleId = await getAllowedRoleId(interaction);
-    if (!interaction.member._roles.includes(allowedRoleId) && allowedRoleId != interaction.guild.roles.everyone.id) {
+    const permission = await getMusicPermission();
+    if (!interaction.member._roles.includes(permission.roleId) && permission.roleId != interaction.guild.roles.everyone.id) {
       const errEmbed = new EmbedBuilder().setDescription(`You do not have permission to use music commands right now!`).setColor(process.env.ERROR_COLOR);
       return interaction.reply({ embeds: [errEmbed] });
     }

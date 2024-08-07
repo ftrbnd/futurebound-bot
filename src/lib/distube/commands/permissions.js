@@ -1,6 +1,6 @@
 import { EmbedBuilder, SlashCommandBuilder, PermissionFlagsBits } from 'discord.js';
-import { MusicPermission } from '../../../lib/mongo/schemas/MusicPermission.js';
 import { sendErrorEmbed } from '../../../utils/sendErrorEmbed.js';
+import { createMusicPermission, getMusicPermission, updatePermissionRole } from '../../mongo/services/MusicPermission.js';
 
 export const data = new SlashCommandBuilder()
   .setName('permissions')
@@ -17,20 +17,16 @@ export async function execute(interaction) {
   try {
     const chosenRole = interaction.guild.roles.cache.get(interaction.options.getString('role'));
 
-    const permissions = await MusicPermission.findOne({ role: chosenRole.id });
-    if (!permissions) {
-      await MusicPermission.create({
-        roleName: chosenRole.name,
-        roleId: chosenRole.id
-      });
+    const permission = await getMusicPermission();
+    if (permission) {
+      await updatePermissionRole(chosenRole.name, chosenRole.id);
     } else {
-      permissions.roleName = chosenRole.name;
-      permissions.roleId = chosenRole.id;
-      await permissions.save();
+      await createMusicPermission(chosenRole.name, chosenRole.id);
     }
 
     const confirmEmbed = new EmbedBuilder().setDescription(`Set music permissions to ${chosenRole}`).setColor(process.env.MUSIC_COLOR);
-    interaction.reply({ embeds: [confirmEmbed] });
+
+    await interaction.reply({ embeds: [confirmEmbed] });
   } catch (err) {
     sendErrorEmbed(interaction, err);
   }
