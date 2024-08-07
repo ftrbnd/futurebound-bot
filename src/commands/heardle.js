@@ -79,7 +79,7 @@ export async function execute(interaction) {
       const link = interaction.options.getString('link');
       const status = interaction.options.getString('status');
 
-      const announcement = await setAnnouncement(showBanner, text, link, status);
+      const { announcement } = await setAnnouncement(showBanner, text, link, status);
 
       const confirmEmbed = new EmbedBuilder()
         .setTitle('[EDEN Heardle] New Announcement')

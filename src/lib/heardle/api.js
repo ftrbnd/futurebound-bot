@@ -107,5 +107,5 @@ export async function setAnnouncement(showBanner, text, link, status) {
   if (!res.ok) throw new Error('Failed to send POST /api/heardles/announcement request');
 
   const { announcement } = await res.json();
-  return announcement;
+  return { announcement };
 }
