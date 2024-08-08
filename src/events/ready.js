@@ -1,88 +1,17 @@
 import { EmbedBuilder, ActivityType } from 'discord.js';
 import { env } from '../utils/env.js';
-
-const songs = [
-  '02:09',
-  'End Credits',
-  'Gravity',
-  'Nocturne',
-  'Interlude',
-  'Wake Up',
-  'catch me if you can',
-  'Billie Jean',
-  'sex',
-  'drugs',
-  'and',
-  'rock + roll',
-  'Fumes',
-  'XO',
-  'Circles',
-  'wrong',
-  'take care',
-  'start//end',
-  'wings',
-  'icarus',
-  'lost//found',
-  'crash',
-  'gold',
-  'forever//over',
-  'float',
-  'wonder',
-  'love; not wrong (brave)',
-  'falling in reverse',
-  'about time',
-  'stutter',
-  'all you need is love',
-  'nowhere else',
-  '909',
-  'good morning',
-  'in',
-  'hertz',
-  'static',
-  'projector',
-  'love, death, distraction',
-  'how to sleep',
-  'calm down',
-  'just saying',
-  'fomo',
-  'so far so good',
-  'isohel',
-  'tides',
-  'rushing',
-  '$treams',
-  '2020',
-  'out',
-  'untitled',
-  'Peaked',
-  'Cold Feet',
-  'Stingray',
-  'cant help',
-  '🔒 (demo)',
-  'A Call',
-  'Balling',
-  'Sci-Fi',
-  'Modern Warfare',
-  'Waiting Room',
-  'Closer 2',
-  'PS1',
-  'Call Me Back',
-  'Duvidha',
-  'Elsewhere',
-  'Reaching 2',
-  'cant',
-  'The Love U Need'
-];
+import { ALL_SONGS, Colors } from '../utils/constants.js';
 
 export const name = 'ready';
 export const once = true;
 export async function execute(client) {
   let index = 0;
-  let song = songs[index];
+  let song = ALL_SONGS[index];
 
   client.user.setPresence({ activities: [{ name: song, type: ActivityType.Listening }] });
 
   setInterval(() => {
-    song = songs[index >= songs.length - 1 ? 0 : ++index];
+    song = ALL_SONGS[index >= ALL_SONGS.length - 1 ? 0 : ++index];
 
     client.user.setPresence({ activities: [{ name: song, type: ActivityType.Listening }] });
   }, 3 * 60 * 1000);
@@ -91,7 +20,7 @@ export async function execute(client) {
   const logChannel = client.channels.cache.get(env.LOGS_CHANNEL_ID);
 
   if (logChannel && env.NODE_ENV !== 'development') {
-    const readyEmbed = new EmbedBuilder().setDescription(message).setColor(env.CONFIRM_COLOR);
+    const readyEmbed = new EmbedBuilder().setDescription(message).setColor(Colors.CONFIRM);
 
     logChannel.send({ embeds: [readyEmbed] });
   }

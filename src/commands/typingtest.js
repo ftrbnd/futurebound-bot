@@ -1,81 +1,19 @@
 import { EmbedBuilder, SlashCommandBuilder, MessageType } from 'discord.js';
 import { sendErrorEmbed } from '../utils/sendErrorEmbed.js';
-import { env } from '../utils/env.js';
+import { Colors, ALL_SONGS } from '../utils/constants.js';
 
 export const data = new SlashCommandBuilder().setName('typingtest').setDescription('Test your WPM by typing EDEN songs!');
 export async function execute(interaction) {
   try {
-    const words = [
-      '02:09',
-      'End Credits',
-      'Gravity',
-      'Nocturne',
-      'Interlude',
-      'Wake Up',
-      'catch me if you can',
-      'Billie Jean',
-      'Hey Ya',
-      'i think you think too much of me',
-      'sex',
-      'drugs',
-      'and',
-      'rock + roll',
-      'Fumes',
-      'XO',
-      'Circles',
-      'vertigo',
-      'wrong',
-      'take care',
-      'start//end',
-      'wings',
-      'icarus',
-      'lost//found',
-      'crash',
-      'gold',
-      'forever//over',
-      'float',
-      'wonder',
-      'love; not wrong (brave)',
-      'falling in reverse',
-      'about time',
-      'stutter',
-      'all you need is love',
-      'nowhere else',
-      '909',
-      'no future',
-      'good morning',
-      'in',
-      'hertz',
-      'static',
-      'projector',
-      'love, death, distraction',
-      'how to sleep',
-      'calm down',
-      'just saying',
-      'fomo',
-      'so far so good',
-      'isohel',
-      '????',
-      'tides',
-      'rushing',
-      '$treams',
-      '2020',
-      'out',
-      'untitled',
-      'Peaked',
-      'Cold Feet',
-      'Stingray'
-    ];
-
     // adding words to the random quote
-    let textToType = words[Math.floor(Math.random() * words.length)];
-    for (var i = 0; i < 9; i++) textToType += ' ' + words[Math.floor(Math.random() * words.length)];
+    let textToType = ALL_SONGS[Math.floor(Math.random() * ALL_SONGS.length)];
+    for (var i = 0; i < 9; i++) textToType += ' ' + ALL_SONGS[Math.floor(Math.random() * ALL_SONGS.length)];
 
     // embed that will show the quote
     const typingTestEmbed = new EmbedBuilder()
       .setTitle('Typing Test')
       .setThumbnail('https://support.signal.org/hc/article_attachments/360016877511/typing-animation-3x.gif') // typing animation
-      .setColor('fdfaff')
+      .setColor(Colors.TYPING)
       .setDescription(textToType)
       .setFooter({
         text: interaction.user.username,
@@ -102,7 +40,7 @@ export async function execute(interaction) {
         // if no message was entered
         const couldntFindEmbed = new EmbedBuilder()
           .setDescription(`You did not type within a minute, please try again!`)
-          .setColor(env.ERROR_COLOR)
+          .setColor(Colors.ERROR)
           .setFooter({
             text: interaction.guild.name,
             iconURL: interaction.guild.iconURL({ dynamic: true })

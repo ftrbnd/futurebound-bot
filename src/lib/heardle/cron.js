@@ -3,6 +3,7 @@ import { CronJob } from 'cron';
 import { getCurrentDailySong } from './api.js';
 import { createDailyHeardleCheck, deleteAllChecks, getDailyHeardleCheck, updateDailyHeardleCheck } from '../mongo/services/DailyHeardleCheck.js';
 import { env } from '../../utils/env.js';
+import { Colors } from '../../utils/constants.js';
 
 async function snapshotPrev() {
   const { song: prev } = await getCurrentDailySong();
@@ -35,7 +36,7 @@ async function snapshotNext(client) {
           { name: 'Next Day', value: `${status.nextDay}` },
           { name: 'Next Song', value: `${status.nextSong}` }
         ])
-        .setColor(env.ERROR_COLOR);
+        .setColor(Colors.ERROR);
 
       const retryButton = new ButtonBuilder().setCustomId(`retry_daily_heardle_${status.id}`).setLabel('Retry').setStyle(ButtonStyle.Primary);
 

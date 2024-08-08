@@ -1,5 +1,6 @@
 import { EmbedBuilder } from 'discord.js';
 import { env } from '../utils/env.js';
+import { Colors } from '../utils/constants.js';
 
 export const name = 'messageDelete';
 export async function execute(message) {
@@ -13,7 +14,7 @@ export async function execute(message) {
       iconURL: message.author.displayAvatarURL({ dynamic: true })
     })
     .addFields([{ name: 'Channel', value: `${message.channel}` }])
-    .setColor(env.ERROR_COLOR)
+    .setColor(Colors.ERROR)
     .setTimestamp();
 
   if (message.attachments.size > 0) {
@@ -26,13 +27,13 @@ export async function execute(message) {
     const embedMessage = await logChannel.send({ embeds: [msgDeleteEmbed] });
 
     message.attachments.forEach(async (attachment) => {
-      const attachmentEmbed = new EmbedBuilder().setTitle(`Deleted attachment from ${message.author.tag}`).setImage(attachment.url).setColor(env.ERROR_COLOR);
+      const attachmentEmbed = new EmbedBuilder().setTitle(`Deleted attachment from ${message.author.tag}`).setImage(attachment.url).setColor(Colors.ERROR);
 
       await embedMessage.reply({ embeds: [attachmentEmbed] });
     });
   } else if (message.content != '' && message.attachments.size == 0) {
     // message has text only and no attachments
     msgDeleteEmbed.setDescription('**Text:** ' + message.content);
-    logChannel.send({ embeds: [msgDeleteEmbed] });
+    await logChannel.send({ embeds: [msgDeleteEmbed] });
   }
 }

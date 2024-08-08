@@ -1,6 +1,6 @@
 import { EmbedBuilder, PermissionFlagsBits, SlashCommandBuilder } from 'discord.js';
 import { sendErrorEmbed } from '../utils/sendErrorEmbed.js';
-import { env } from '../utils/env.js';
+import { Colors } from '../utils/constants.js';
 
 export const data = new SlashCommandBuilder()
   .setName('dm')
@@ -21,7 +21,7 @@ export async function execute(interaction) {
       return console.error(err);
     }
 
-    const sentEmbed = new EmbedBuilder().setDescription(`Sent **"${messageToSend}"** to ${targetUser}`).setColor(env.CONFIRM_COLOR);
+    const sentEmbed = new EmbedBuilder().setDescription(`Sent **"${messageToSend}"** to ${targetUser}`).setColor(Colors.CONFIRM);
 
     return interaction.reply({ embeds: [sentEmbed] });
   } catch (err) {

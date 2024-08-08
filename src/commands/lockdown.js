@@ -1,6 +1,7 @@
 import { EmbedBuilder, SlashCommandBuilder, PermissionFlagsBits } from 'discord.js';
 import { sendErrorEmbed } from '../utils/sendErrorEmbed.js';
 import { env } from '../utils/env.js';
+import { Colors } from '../utils/constants.js';
 
 export const data = new SlashCommandBuilder()
   .setName('lockdown')
@@ -10,14 +11,7 @@ export const data = new SlashCommandBuilder()
   .setDefaultMemberPermissions(PermissionFlagsBits.ManageRoles);
 export async function execute(interaction) {
   try {
-    const roles = [
-      interaction.guild.roles.cache.get('704966097434312766'), // server boosters
-      interaction.guild.roles.cache.get('702225844113899591'), // no future
-      interaction.guild.roles.cache.get('702225672147566642'), // vertigo
-      interaction.guild.roles.cache.get('702226305164509185'), // ityttmom
-      interaction.guild.roles.cache.get('702226350324318299'), // End Credits
-      interaction.guild.roles.cache.get('655655072885374987')
-    ]; // @everyone
+    const roles = [...env.ALBUM_ROLE_IDS, env.BOOSTER_ROLE_ID].map((roleId) => interaction.guild.roles.cache.get(roleId));
 
     if (interaction.options.getSubcommand() === 'close') {
       // Close all text channels
@@ -38,8 +32,9 @@ export async function execute(interaction) {
 
       roles.forEach((role) => role.setPermissions(removedPermissions));
 
-      const confirmEmbed = new EmbedBuilder().setDescription(`**${interaction.guild.name}** is now on lockdown.`).setColor(env.ERROR_COLOR);
-      interaction.reply({ embeds: [confirmEmbed] });
+      const confirmEmbed = new EmbedBuilder().setDescription(`**${interaction.guild.name}** is now on lockdown.`).setColor(Colors.ERROR);
+
+      await interaction.reply({ embeds: [confirmEmbed] });
     } else if (interaction.options.getSubcommand() === 'open') {
       // Open all text channels
       const defaultPermissions = [
@@ -66,7 +61,7 @@ export async function execute(interaction) {
         role.setPermissions(defaultPermissions);
       });
 
-      const confirmEmbed = new EmbedBuilder().setDescription(`**${interaction.guild.name}** is now open!`).setColor(env.CONFIRM_COLOR);
+      const confirmEmbed = new EmbedBuilder().setDescription(`**${interaction.guild.name}** is now open!`).setColor(Colors.CONFIRM);
       interaction.reply({ embeds: [confirmEmbed] });
     }
   } catch (err) {

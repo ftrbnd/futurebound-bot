@@ -123,6 +123,9 @@ Create a `.env` file at the root and fill out the values:
   SPOTIFY_CLIENT_ID=
   SPOTIFY_CLIENT_SECRET=
 
+  # comma separated list of Imgur album ids (ex: '2k34h,l2343k,123kdf')
+  IMGUR_ALBUMS=
+
   # ... and a lot of Discord ids for channels, roles, etc.
 
   ANNOUNCEMENTS_CHANNEL_ID=
@@ -149,14 +152,18 @@ Create a `.env` file at the root and fill out the values:
   BOOSTER_ROLE_ID=
   SURVIVOR_ROLE_ID=
   MUTED_ROLE_ID=
+  SUBSCRIBER_ROLE_IDS= # TIER_1 -> TIER_3
+  ALBUM_ROLE_IDS= # oldest => newest
 
   INTRODUCTIONS_REACTION_EMOJI_ID=
   GIVEAWAY_EMOJI_ID=
+  NUMBER_EMOJIS= # emojis for numbers after 10; 11 => ...
 
   CONFIRM_COLOR=32FF25
   ERROR_COLOR=DF0000
   MUSIC_COLOR=f94c57
   GIVEAWAY_COLOR=7CF3FF
+  GUESSTHESONG_COLOR=fa57c1
 ```
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>

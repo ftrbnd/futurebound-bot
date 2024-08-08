@@ -4,6 +4,7 @@ import { sendErrorEmbed } from '../utils/sendErrorEmbed.js';
 import { statusSquares } from '../lib/heardle/guess-statuses.js';
 import { getUserStats, getLeaderboard, createLeaderboardDescription, setAnnouncement, sendHealthCheck } from '../lib/heardle/api.js';
 import { env } from '../utils/env.js';
+import { Colors, HEARDLE_URL } from '../utils/constants.js';
 
 export const data = new SlashCommandBuilder()
   .setName('heardle')
@@ -42,8 +43,8 @@ export async function execute(interaction) {
       const statsEmbed = new EmbedBuilder()
         .setAuthor({ name: user.displayName, iconURL: user.displayAvatarURL() })
         .setTitle('EDEN Heardle Stats')
-        .setURL('https://eden-heardle.io')
-        .setColor(0xf9d72f)
+        .setURL(HEARDLE_URL)
+        .setColor(Colors.HEARDLE)
         .addFields(
           { name: 'Today', value: completedDaily ? statusSquares(guesses) : 'N/A' },
           { name: 'Win Percentage', value: `${Math.round(((statistics?.gamesWon ?? 0) / (statistics?.gamesPlayed || 1)) * 100)}%` },
@@ -57,7 +58,7 @@ export async function execute(interaction) {
       const { leaderboard } = await getLeaderboard();
       const { title, description } = createLeaderboardDescription(leaderboard, 'today');
 
-      const leaderboardEmbed = new EmbedBuilder().setDescription(description).setTitle(title).setURL('https://www.eden-heardle.io').setColor(0xf9d72f);
+      const leaderboardEmbed = new EmbedBuilder().setDescription(description).setTitle(title).setURL(HEARDLE_URL).setColor(Colors.HEARDLE);
 
       const today = new ButtonBuilder().setCustomId('today').setLabel('Today').setStyle(ButtonStyle.Primary);
       const winPercentages = new ButtonBuilder().setCustomId('winPercentages').setLabel('Win Percentages').setStyle(ButtonStyle.Primary);
@@ -71,7 +72,7 @@ export async function execute(interaction) {
     } else if (interaction.options.getSubcommand() === 'set-announcement') {
       const owner = await interaction.guild.fetchOwner();
       if (interaction.member.id !== owner.id) {
-        const embed = new EmbedBuilder().setDescription('You are not the server owner.').setColor(env.ERROR_COLOR);
+        const embed = new EmbedBuilder().setDescription('You are not the server owner.').setColor(Colors.ERROR);
         return interaction.reply({ embeds: [embed] });
       }
 
@@ -84,21 +85,20 @@ export async function execute(interaction) {
 
       const confirmEmbed = new EmbedBuilder()
         .setTitle('[EDEN Heardle] New Announcement')
-        .setColor(env.CONFIRM_COLOR)
+        .setColor(Colors.CONFIRM)
         .addFields([
           { name: 'show_banner', value: `${announcement.showBanner}`, inline: true },
           { name: 'text', value: announcement.text, inline: true },
           { name: 'link', value: `${announcement.link}`, inline: true },
           { name: 'status', value: announcement.status, inline: true }
         ])
-        .setURL('https://eden-heardle.io/play')
-        .setColor(env.CONFIRM_COLOR);
+        .setURL(`${HEARDLE_URL}/play`);
 
       await interaction.reply({ embeds: [confirmEmbed] });
     } else if (interaction.options.getSubcommand() === 'health-check') {
       const owner = await interaction.guild.fetchOwner();
       if (interaction.member.id !== owner.id) {
-        const embed = new EmbedBuilder().setDescription('You are not the server owner.').setColor(env.ERROR_COLOR);
+        const embed = new EmbedBuilder().setDescription('You are not the server owner.').setColor(Colors.ERROR);
         return interaction.reply({ embeds: [embed] });
       }
 
@@ -107,7 +107,7 @@ export async function execute(interaction) {
       try {
         const { data, res } = await sendHealthCheck();
 
-        const responseEmbed = new EmbedBuilder().setTitle(`${res.status} ${res.statusText}`).setDescription(JSON.stringify(data)).setColor(env.CONFIRM_COLOR);
+        const responseEmbed = new EmbedBuilder().setTitle(`${res.status} ${res.statusText}`).setDescription(JSON.stringify(data)).setColor(Colors.CONFIRM);
 
         await interaction.editReply({ embeds: [responseEmbed], ephemeral: true });
       } catch (error) {

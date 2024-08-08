@@ -1,6 +1,6 @@
 import { EmbedBuilder, PermissionFlagsBits, SlashCommandBuilder, ChannelType } from 'discord.js';
 import { sendErrorEmbed } from '../utils/sendErrorEmbed.js';
-import { env } from '../utils/env.js';
+import { Colors } from '../utils/constants.js';
 
 export const data = new SlashCommandBuilder()
   .setName('say')
@@ -31,11 +31,11 @@ export async function execute(interaction) {
       const messageToSend = interaction.options.getString('message');
       await targetChannel.send(messageToSend);
 
-      const sentEmbed = new EmbedBuilder().setDescription(`Said **"${messageToSend}"** in ${targetChannel}`).setColor(env.CONFIRM_COLOR);
+      const sentEmbed = new EmbedBuilder().setDescription(`Said **"${messageToSend}"** in ${targetChannel}`).setColor(Colors.CONFIRM);
 
       await interaction.reply({ embeds: [sentEmbed] });
     } else if (interaction.options.getSubcommand() === 'announcement') {
-      const sendEmbed = new EmbedBuilder().setDescription(`Enter the message that you want to announce into this channel within 3 minutes!`).setColor(env.CONFIRM_COLOR);
+      const sendEmbed = new EmbedBuilder().setDescription(`Enter the message that you want to announce into this channel within 3 minutes!`).setColor(Colors.CONFIRM);
 
       await interaction.reply({ embeds: [sendEmbed] });
 
@@ -53,16 +53,18 @@ export async function execute(interaction) {
       collector.on('end', async (collected) => {
         if (collected.size === 0) {
           // if no message was entered
-          const couldntFindEmbed = new EmbedBuilder()
+          const errEmbed = new EmbedBuilder()
             .setDescription(`You did not send a message within 3 minutes, please try again.`)
-            .setColor(env.ERROR_COLOR)
+            .setColor(Colors.ERROR)
             .setFooter({
               text: interaction.guild.name,
               iconURL: interaction.guild.iconURL({ dynamic: true })
             });
-          await interaction.followUp({ embeds: [couldntFindEmbed], ephemeral: true });
+
+          await interaction.followUp({ embeds: [errEmbed], ephemeral: true });
         } else {
-          const announcedEmbed = new EmbedBuilder().setDescription(`The announcement was sent!`).setColor(env.CONFIRM_COLOR);
+          const announcedEmbed = new EmbedBuilder().setDescription(`The announcement was sent!`).setColor(Colors.CONFIRM);
+
           await interaction.followUp({ embeds: [announcedEmbed] });
         }
       });

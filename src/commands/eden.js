@@ -1,48 +1,26 @@
 import imgur from 'imgur';
 import { SlashCommandBuilder } from 'discord.js';
 import { sendErrorEmbed } from '../utils/sendErrorEmbed.js';
+import { env } from '../utils/env.js';
 
 const { getAlbumInfo } = imgur;
 
 export const data = new SlashCommandBuilder().setName('eden').setDescription('Get a random picture of EDEN');
 export async function execute(interaction) {
   try {
-    const edenAlbumOne = '3Zh414x';
-    const edenAlbumTwo = 'DZ913Hd';
-    const edenAlbumThree = 'PUfyYtt';
-    const edenImages = [];
+    const albums = env.IMGUR_ALBUMS;
+    const images = [];
 
-    getAlbumInfo(edenAlbumOne)
-      .then((json) => {
-        json.images.forEach((image) => {
-          edenImages.push(image.link);
-        });
-      })
-      .catch((err) => {
-        console.error(err.message);
-      });
+    for (const album of albums) {
+      const json = await getAlbumInfo(album);
+      for (const image of json.images) {
+        images.push(image.link);
+      }
+    }
 
-    getAlbumInfo(edenAlbumTwo)
-      .then((json) => {
-        json.images.forEach((image) => {
-          edenImages.push(image.link);
-        });
-      })
-      .catch((err) => {
-        console.error(err.message);
-      });
+    const randomImageUrl = images[Math.floor(Math.random() * images.length)];
 
-    getAlbumInfo(edenAlbumThree)
-      .then((json) => {
-        json.images.forEach((image) => {
-          edenImages.push(image.link);
-        });
-
-        interaction.reply({ files: [`${edenImages[Math.floor(Math.random() * edenImages.length)]}`] });
-      })
-      .catch((err) => {
-        console.error(err.message);
-      });
+    await interaction.reply({ files: [randomImageUrl] });
   } catch (err) {
     sendErrorEmbed(interaction, err);
   }

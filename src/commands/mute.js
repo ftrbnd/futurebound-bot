@@ -2,6 +2,7 @@ import { EmbedBuilder, PermissionFlagsBits, SlashCommandBuilder } from 'discord.
 import { sendErrorEmbed } from '../utils/sendErrorEmbed.js';
 import { createUser, getUser, updateUserMute } from '../lib/mongo/services/User.js';
 import { env } from '../utils/env.js';
+import { Colors } from '../utils/constants.js';
 
 export const data = new SlashCommandBuilder()
   .setName('mute')
@@ -48,7 +49,7 @@ export async function execute(interaction) {
         { name: 'Reason: ', value: reasonForMute },
         { name: 'Mute Ends: ', value: oneWeek.toDateString() }
       ])
-      .setColor('000001')
+      .setColor(Colors.BLACK)
       .setThumbnail(userToMute.displayAvatarURL({ dynamic: true }))
       .setFooter({
         text: interaction.guild.name,
@@ -63,7 +64,7 @@ export async function execute(interaction) {
         { name: 'Reason: ', value: reasonForMute },
         { name: 'Mute Ends: ', value: oneWeek.toDateString() }
       ])
-      .setColor('000001')
+      .setColor(Colors.BLACK)
       .setFooter({
         text: interaction.guild.name,
         iconURL: interaction.guild.iconURL({ dynamic: true })
@@ -76,7 +77,7 @@ export async function execute(interaction) {
       return console.error(err);
     }
 
-    const mutedEmbed = new EmbedBuilder().setDescription(`${userToMute} was muted.`).setColor(env.CONFIRM_COLOR);
+    const mutedEmbed = new EmbedBuilder().setDescription(`${userToMute} was muted.`).setColor(Colors.CONFIRM);
     interaction.reply({ embeds: [mutedEmbed] });
   } catch (err) {
     sendErrorEmbed(interaction, err);

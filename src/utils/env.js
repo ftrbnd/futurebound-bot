@@ -16,10 +16,11 @@ const envSchema = z.object({
   HEARDLE_CHANNEL_ID: z.string(),
   HEARDLE_ROLE_ID: z.string(),
   HEARDLE_SERVER_URL: z.string().url(),
-  HEARDLE_COLOR: z.string(),
 
   SPOTIFY_CLIENT_ID: z.string(),
   SPOTIFY_CLIENT_SECRET: z.string(),
+
+  IMGUR_ALBUMS: z.string().transform((val) => val.split(',')),
 
   ANNOUNCEMENTS_CHANNEL_ID: z.string(),
   BOTS_CHANNEL_ID: z.string(),
@@ -45,14 +46,12 @@ const envSchema = z.object({
   BOOSTER_ROLE_ID: z.string(),
   SURVIVOR_ROLE_ID: z.string(),
   MUTED_ROLE_ID: z.string(),
+  SUBSCRIBER_ROLE_IDS: z.string().transform((val) => val.split(',')),
+  ALBUM_ROLE_IDS: z.string().transform((val) => val.split(',')),
 
   INTRODUCTIONS_REACTION_EMOJI_ID: z.string(),
   GIVEAWAY_EMOJI_ID: z.string(),
-
-  CONFIRM_COLOR: z.string(),
-  ERROR_COLOR: z.string(),
-  MUSIC_COLOR: z.string(),
-  GIVEAWAY_COLOR: z.string()
+  NUMBER_EMOJIS: z.string().transform((val) => val.split(','))
 });
 
 export const env = envSchema.parse(process.env);

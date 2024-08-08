@@ -1,6 +1,7 @@
 import { EmbedBuilder, PermissionFlagsBits, SlashCommandBuilder } from 'discord.js';
 import { sendErrorEmbed } from '../utils/sendErrorEmbed.js';
 import { env } from '../utils/env.js';
+import { Colors } from '../utils/constants.js';
 
 export const data = new SlashCommandBuilder()
   .setName('timeout')
@@ -34,8 +35,9 @@ export async function execute(interaction) {
     try {
       userToTimeout.timeout(duration, reasonForTimeout);
     } catch (err) {
-      const errEmbed = new EmbedBuilder().setDescription('Error in timing out user.').setColor(env.ERROR_COLOR);
-      interaction.reply({ embeds: [errEmbed] });
+      const errEmbed = new EmbedBuilder().setDescription('Error in timing out user.').setColor(Colors.ERROR);
+
+      await interaction.reply({ embeds: [errEmbed] });
       return console.log(err);
     }
 
@@ -55,19 +57,19 @@ export async function execute(interaction) {
         { name: 'By: ', value: `${interaction.user}` },
         { name: 'Reason: ', value: reasonForTimeout }
       ])
-      .setColor(env.ERROR_COLOR)
+      .setColor(Colors.ERROR)
       .setThumbnail(userToTimeout.displayAvatarURL({ dynamic: true }))
       .setFooter({
         text: interaction.guild.name,
         iconURL: interaction.guild.iconURL({ dynamic: true })
       })
       .setTimestamp();
-    modChannel.send({ embeds: [logEmbed] });
+    await modChannel.send({ embeds: [logEmbed] });
 
     const timeoutEmbed = new EmbedBuilder()
       .setTitle(`You were timed out from **${interaction.guild.name}** for ${millisecondsToDuration.get(duration)}.`)
       .setDescription(reasonForTimeout)
-      .setColor(env.ERROR_COLOR)
+      .setColor(Colors.ERROR)
       .setFooter({
         text: interaction.guild.name,
         iconURL: interaction.guild.iconURL({ dynamic: true })
@@ -77,13 +79,14 @@ export async function execute(interaction) {
     try {
       await userToTimeout.send({ embeds: [timeoutEmbed] });
     } catch (err) {
-      const errEmbed = new EmbedBuilder().setDescription('Error in sending message to user.').setColor(env.ERROR_COLOR);
-      interaction.reply({ embeds: [errEmbed] });
+      const errEmbed = new EmbedBuilder().setDescription('Error in sending message to user.').setColor(Colors.ERROR);
+      await interaction.reply({ embeds: [errEmbed] });
       console.log(err);
     }
 
-    const timedOutEmbed = new EmbedBuilder().setDescription(`${userToTimeout} was timed out for ${millisecondsToDuration.get(duration)}.`).setColor(env.CONFIRM_COLOR);
-    interaction.reply({ embeds: [timedOutEmbed] });
+    const timedOutEmbed = new EmbedBuilder().setDescription(`${userToTimeout} was timed out for ${millisecondsToDuration.get(duration)}.`).setColor(Colors.CONFIRM);
+
+    await interaction.reply({ embeds: [timedOutEmbed] });
   } catch (err) {
     sendErrorEmbed(interaction, err);
   }

@@ -1,10 +1,11 @@
 import { EmbedBuilder, ChannelType, MessageType, ThreadAutoArchiveDuration } from 'discord.js';
 import { env } from '../utils/env.js';
+import { Colors, EDEN_LOGO, HEARDLE_URL } from '../utils/constants.js';
 
 export const name = 'messageCreate';
 export async function execute(message) {
   if (message.webhookId === env.HEARDLE_WEBHOOK_ID) {
-    handleHeardleWebhook(message);
+    await handleHeardleWebhook(message);
   }
 
   if (message.author.bot) return; // ignore bot messages
@@ -21,7 +22,7 @@ export async function execute(message) {
     }
 
     if (message.channel.id === env.BOT_BAIT_CHANNEL_ID) {
-      handleBotBaitMessage(message);
+      await handleBotBaitMessage(message);
     }
 
     switch (message.type) {
@@ -64,7 +65,7 @@ function handleDirectMessage(message) {
       iconURL: `${message.author.displayAvatarURL({ dynamic: true })}` // message + their avatar
     })
     .setDescription(message.content)
-    .setColor('7289da')
+    .setColor(Colors.DM_COLOR)
     .setFooter({
       text: `User ID: ${message.author.id}`
     })
@@ -84,7 +85,7 @@ function handleServerBoosts(message, level) {
       name: `${message.member.displayName} just boosted the server!`,
       iconURL: `${message.member.user.displayAvatarURL({ dynamic: true })}` // message + their avatar
     })
-    .setColor('f47fff') // pink boost color
+    .setColor(Colors.BOOST_COLOR)
     .setThumbnail('https://emoji.gg/assets/emoji/1819_boostingtop.gif') // nitro boost gif
     .addFields([
       { name: 'Server Level', value: `${message.guild.premiumTier}`, inline: true },
@@ -147,12 +148,7 @@ function handleServerSubscriptions(message) {
   const generalChannel = message.guild.channels.cache.get(env.GENERAL_CHANNEL_ID);
   if (!generalChannel) return;
 
-  const premiumRoles = [
-    '1048015470168637440', // Final Call
-    '1048015082191335488', // Bipolar Paradise
-    '1048014115567837188' // Entrance
-  ];
-  const premiumRole = message.guild.roles.cache.get(premiumRoles.find((roleId) => message.member._roles.includes(roleId)));
+  const premiumRole = message.guild.roles.cache.get(env.SUBSCRIBER_ROLE_IDS.find((roleId) => message.member._roles.includes(roleId)));
 
   const action = message.roleSubscriptionData.isRenewal ? 'renewed' : 'joined';
   const monthPlural = message.roleSubscriptionData.totalMonthsSubscribed > 1 ? 'months' : 'month';
@@ -164,7 +160,7 @@ function handleServerSubscriptions(message) {
     })
     .setDescription(`${message.roleSubscriptionData.tierName} role: ${premiumRole}`)
     .setColor(premiumRole.hexColor)
-    .setThumbnail('https://i.imgur.com/kzhphkQ.png') // eden logo
+    .setThumbnail(EDEN_LOGO)
     .setFooter({
       text: `${message.guild.name}`,
       iconURL: `${message.guild.iconURL({ dynamic: true })}`
@@ -200,9 +196,9 @@ async function handleHeardleWebhook(message) {
 
       const heardleEmbed = new EmbedBuilder()
         .setTitle(`EDEN Heardle #${dayNumber} - New daily song!`)
-        .setURL('https://eden-heardle.io')
+        .setURL(HEARDLE_URL)
         .setDescription(`Yesterday's song was **${previousSong}**`)
-        .setThumbnail('https://i.imgur.com/rQmm1FM.png')
+        .setThumbnail(EDEN_LOGO)
         .setColor(env.HEARDLE_COLOR)
         .setFooter({
           text: 'Share your results in the thread!',
@@ -214,7 +210,7 @@ async function handleHeardleWebhook(message) {
       await dailyMessage.startThread({
         name: `EDEN Heardle #${dayNumber}`,
         autoArchiveDuration: ThreadAutoArchiveDuration.OneDay,
-        reason: 'New daily heardle song'
+        reason: 'New daily Heardle song'
       });
     } catch (err) {
       console.log('Error with announcing daily Heardle: ', err);
@@ -247,7 +243,7 @@ async function handleBotBaitMessage(message) {
     const logEmbed = new EmbedBuilder()
       .setTitle(`[Bot Bait] ${member.displayName} was banned.`)
       .addFields([{ name: 'User ID: ', value: `${member.id}` }])
-      .setColor(env.ERROR_COLOR)
+      .setColor(Colors.ERROR)
       .setThumbnail(member.user.displayAvatarURL({ dynamic: true }))
       .setFooter({
         text: message.guild.name,
@@ -261,7 +257,7 @@ async function handleBotBaitMessage(message) {
     const banEmbed = new EmbedBuilder()
       .setTitle(`You were banned from **${message.guild.name}**.`)
       .setDescription(`Sent message in bot-bait channel, please message ${owner.user} if this was a mistake`)
-      .setColor(env.ERROR_COLOR)
+      .setColor(Colors.ERROR)
       .setFooter({
         text: message.guild.name,
         iconURL: message.guild.iconURL({ dynamic: true })
@@ -271,7 +267,8 @@ async function handleBotBaitMessage(message) {
     await member.send({ embeds: [banEmbed] });
   } catch (err) {
     console.error(err);
-    const msgFailEmbed = new EmbedBuilder().setDescription(err.message).setColor(env.CONFIRM_COLOR);
-    modChannel.send({ embeds: [msgFailEmbed] });
+    const msgFailEmbed = new EmbedBuilder().setDescription(err.message).setColor(Colors.CONFIRM);
+
+    await modChannel.send({ embeds: [msgFailEmbed] });
   }
 }

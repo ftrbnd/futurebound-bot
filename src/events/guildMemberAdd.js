@@ -1,5 +1,6 @@
 import { EmbedBuilder } from 'discord.js';
 import { env } from '../utils/env.js';
+import { Colors } from '../utils/constants.js';
 
 export const name = 'guildMemberAdd';
 export async function execute(member) {
@@ -13,7 +14,7 @@ export async function execute(member) {
       name: member.displayName + ' just joined the server!',
       iconURL: member.user.displayAvatarURL({ dynamic: true })
     })
-    .setColor(env.CONFIRM_COLOR)
+    .setColor(Colors.CONFIRM)
     .setThumbnail(member.user.displayAvatarURL({ dynamic: true }))
     .setDescription(`Go to ${rolesChannel} to pick your favorite EP/album, and a color will be added to your name.`)
     .setFooter({
@@ -22,5 +23,5 @@ export async function execute(member) {
     })
     .setTimestamp();
 
-  welcomeChannel.send({ content: `${member}`, embeds: [welcomeEmbed] });
+  await welcomeChannel.send({ content: `${member}`, embeds: [welcomeEmbed] });
 }

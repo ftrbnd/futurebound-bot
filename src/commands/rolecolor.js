@@ -2,6 +2,7 @@ import { EmbedBuilder, SlashCommandBuilder } from 'discord.js';
 import validateColor from 'validate-color';
 import { sendErrorEmbed } from '../utils/sendErrorEmbed.js';
 import { env } from '../utils/env.js';
+import { Colors } from '../utils/constants.js';
 
 const { validateHTMLColorHex } = validateColor;
 
@@ -15,16 +16,16 @@ export async function execute(interaction) {
       const permsEmbed = new EmbedBuilder()
         .setTitle('You are not a Server Subscriber!')
         .setDescription(`https://discord.com/channels/${interaction.guild.id}/role-subscriptions`)
-        .setColor(env.ERROR_COLOR);
-      return interaction.reply({ embeds: [permsEmbed], ephemeral: true });
+        .setColor(Colors.ERROR);
+      return await interaction.reply({ embeds: [permsEmbed], ephemeral: true });
     }
 
     let color = interaction.options.getString('hex');
     if (!color.startsWith('#')) color = `#${color}`;
 
     if (!validateHTMLColorHex(color)) {
-      const permsEmbed = new EmbedBuilder().setDescription('Please enter a valid hex color code.').setColor(env.ERROR_COLOR);
-      return interaction.reply({ embeds: [permsEmbed], ephemeral: true });
+      const permsEmbed = new EmbedBuilder().setDescription('Please enter a valid hex color code.').setColor(Colors.ERROR);
+      return await interaction.reply({ embeds: [permsEmbed], ephemeral: true });
     }
 
     let verb;
@@ -44,7 +45,8 @@ export async function execute(interaction) {
     }
 
     const confirmEmbed = new EmbedBuilder().setDescription(`${verb} your custom color to ${color}`).setColor(color);
-    interaction.reply({ embeds: [confirmEmbed] });
+
+    await interaction.reply({ embeds: [confirmEmbed] });
   } catch (err) {
     sendErrorEmbed(interaction, err);
   }

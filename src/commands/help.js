@@ -2,6 +2,7 @@ import { readdirSync } from 'fs';
 import { EmbedBuilder, SlashCommandBuilder } from 'discord.js';
 import { sendErrorEmbed } from '../utils/sendErrorEmbed.js';
 import { env } from '../utils/env.js';
+import { Colors } from '../utils/constants.js';
 
 export const data = new SlashCommandBuilder().setName('help').setDescription('Get a list of the commands for this bot');
 export async function execute(interaction) {
@@ -12,7 +13,7 @@ export async function execute(interaction) {
         text: interaction.guild.name,
         iconURL: interaction.guild.iconURL({ dynamic: true })
       })
-      .setColor('f03200');
+      .setColor(Colors.INFO);
 
     let everyoneCommandsList = '',
       helperCommandsList = '',

@@ -4,6 +4,7 @@ import { EmbedBuilder, SlashCommandBuilder } from 'discord.js';
 import { sendErrorEmbed } from '../utils/sendErrorEmbed.js';
 import { lineSplitFile } from '../utils/lineSplitFile.js';
 import { env } from '../utils/env.js';
+import { Colors, EDEN_LOGO } from '../utils/constants.js';
 
 const __dirname = import.meta.dirname;
 
@@ -45,7 +46,7 @@ export async function execute(interaction) {
 
         if (songName.toLowerCase() === 'Fumes'.toLowerCase()) songName = 'Fumes (feat. gnash)';
 
-        let lyricsEmbed = new EmbedBuilder().setTitle(songName).setDescription(lyricsString).setColor(env.ERROR_COLOR);
+        let lyricsEmbed = new EmbedBuilder().setTitle(songName).setDescription(lyricsString).setColor(Colors.ERROR);
 
         const albumsFolder = resolve(__dirname, '../text-files/albums');
         const albumFiles = readdirSync(albumsFolder).filter((file) => file.endsWith('.txt'));
@@ -61,17 +62,17 @@ export async function execute(interaction) {
           } else {
             // if the song is not from any album
             lyricsEmbed.setColor('Grey');
-            lyricsEmbed.setThumbnail('https://i.imgur.com/rQmm1FM.png');
+            lyricsEmbed.setThumbnail(EDEN_LOGO);
           }
         }
 
-        return interaction.reply({ embeds: [lyricsEmbed] });
+        return await interaction.reply({ embeds: [lyricsEmbed] });
       }
     }
 
     if (!songFiles.includes(song)) {
-      const errEmbed = new EmbedBuilder().setDescription(`**${song}** is not a valid song, please try again!`).setColor(env.ERROR_COLOR);
-      return interaction.reply({ embeds: [errEmbed], ephemeral: true });
+      const errEmbed = new EmbedBuilder().setDescription(`**${song}** is not a valid song, please try again!`).setColor(Colors.ERROR);
+      return await interaction.reply({ embeds: [errEmbed], ephemeral: true });
     }
   } catch (err) {
     sendErrorEmbed(interaction, err);

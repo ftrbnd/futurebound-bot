@@ -1,5 +1,6 @@
 import { EmbedBuilder, ChannelType } from 'discord.js';
 import { env } from '../utils/env.js';
+import { Colors } from '../utils/constants.js';
 
 export const name = 'channelUpdate';
 export async function execute(oldChannel, newChannel) {
@@ -15,13 +16,13 @@ export async function execute(oldChannel, newChannel) {
         { name: 'Previous name', value: oldChannel.name },
         { name: 'New name', value: newChannel.name }
       ])
-      .setColor(env.CONFIRM_COLOR)
+      .setColor(Colors.CONFIRM)
       .setFooter({
         text: `${oldChannel.guild.name}`,
         iconURL: oldChannel.guild.iconURL({ dynamic: true })
       })
       .setTimestamp();
 
-    logChannel.send({ embeds: [changedEmbed] });
+    await logChannel.send({ embeds: [changedEmbed] });
   }
 }

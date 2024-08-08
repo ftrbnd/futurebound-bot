@@ -1,6 +1,7 @@
 import { EmbedBuilder, PermissionFlagsBits, SlashCommandBuilder } from 'discord.js';
 import { sendErrorEmbed } from '../utils/sendErrorEmbed.js';
 import { env } from '../utils/env.js';
+import { Colors } from '../utils/constants.js';
 
 export const data = new SlashCommandBuilder()
   .setName('unmute')
@@ -27,18 +28,18 @@ export async function execute(interaction) {
         { name: 'User ID: ', value: `${userToUnmute.id}` },
         { name: 'By: ', value: `${interaction.user}` }
       ])
-      .setColor(env.CONFIRM_COLOR)
+      .setColor(Colors.CONFIRM)
       .setThumbnail(userToUnmute.displayAvatarURL({ dynamic: true }))
       .setFooter({
         text: interaction.guild.name,
         iconURL: interaction.guild.iconURL({ dynamic: true })
       })
       .setTimestamp();
-    modChannel.send({ embeds: [logEmbed] });
+    await modChannel.send({ embeds: [logEmbed] });
 
     const unmuteEmbed = new EmbedBuilder()
       .setTitle(`You were unmuted in **${interaction.guild.name}**.`)
-      .setColor(env.CONFIRM_COLOR)
+      .setColor(Colors.CONFIRM)
       .setFooter({
         text: interaction.guild.name,
         iconURL: interaction.guild.iconURL({ dynamic: true })
@@ -51,8 +52,9 @@ export async function execute(interaction) {
       return console.error(err);
     }
 
-    const unmutedEmbed = new EmbedBuilder().setDescription(`${userToUnmute} was unmuted.`).setColor(env.CONFIRM_COLOR);
-    interaction.reply({ embeds: [unmutedEmbed] });
+    const unmutedEmbed = new EmbedBuilder().setDescription(`${userToUnmute} was unmuted.`).setColor(Colors.CONFIRM);
+
+    await interaction.reply({ embeds: [unmutedEmbed] });
   } catch (err) {
     sendErrorEmbed(interaction, err);
   }

@@ -1,5 +1,6 @@
 import { EmbedBuilder } from 'discord.js';
 import { env } from '../utils/env.js';
+import { Colors } from '../utils/constants.js';
 
 export const name = 'guildMemberUpdate';
 export async function execute(oldMember, newMember) {
@@ -14,7 +15,7 @@ export async function execute(oldMember, newMember) {
         { name: 'User: ', value: `${newMember.user}` },
         { name: 'ID: ', value: `${newMember.user.id}` }
       ])
-      .setColor(env.ERROR_COLOR)
+      .setColor(Colors.ERROR)
       .setThumbnail(newMember.user.displayAvatarURL({ dynamic: true }))
       .setFooter({
         text: newMember.guild.name,
@@ -22,7 +23,7 @@ export async function execute(oldMember, newMember) {
       })
       .setTimestamp();
 
-    return modChannel.send({ embeds: [timeoutEmbed] });
+    return await modChannel.send({ embeds: [timeoutEmbed] });
   } else if (oldMember.communicationDisabledUntil !== null && newMember.communicationDisabledUntil === null) {
     // a timeout is removed
     const timeoutEmbed = new EmbedBuilder()
@@ -31,7 +32,7 @@ export async function execute(oldMember, newMember) {
         { name: 'User: ', value: `${newMember.user}` },
         { name: 'ID: ', value: `${newMember.user.id}` }
       ])
-      .setColor(env.CONFIRM_COLOR)
+      .setColor(Colors.CONFIRM)
       .setThumbnail(newMember.user.displayAvatarURL({ dynamic: true }))
       .setFooter({
         text: newMember.guild.name,
@@ -39,7 +40,7 @@ export async function execute(oldMember, newMember) {
       })
       .setTimestamp();
 
-    return modChannel.send({ embeds: [timeoutEmbed] });
+    return await modChannel.send({ embeds: [timeoutEmbed] });
   }
 
   // check if premium role was removed -> remove custom color role

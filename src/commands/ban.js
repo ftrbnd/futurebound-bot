@@ -1,6 +1,7 @@
 import { EmbedBuilder, PermissionFlagsBits, SlashCommandBuilder } from 'discord.js';
 import { sendErrorEmbed } from '../utils/sendErrorEmbed.js';
 import { env } from '../utils/env.js';
+import { Colors } from '../utils/constants.js';
 
 export const data = new SlashCommandBuilder()
   .setName('ban')
@@ -29,7 +30,7 @@ export async function execute(interaction) {
         { name: 'By: ', value: `${interaction.user}` },
         { name: 'Reason: ', value: reasonForBan }
       ])
-      .setColor(env.ERROR_COLOR)
+      .setColor(Colors.ERROR)
       .setThumbnail(userToBan.displayAvatarURL({ dynamic: true }))
       .setFooter({
         text: interaction.guild.name,
@@ -41,7 +42,7 @@ export async function execute(interaction) {
     const banEmbed = new EmbedBuilder()
       .setTitle(`You were banned from **${interaction.guild.name}**.`)
       .setDescription(reasonForBan)
-      .setColor(env.ERROR_COLOR)
+      .setColor(Colors.ERROR)
       .setFooter({
         text: interaction.guild.name,
         iconURL: interaction.guild.iconURL({ dynamic: true })
@@ -52,11 +53,11 @@ export async function execute(interaction) {
       await userToBan.send({ embeds: [banEmbed] });
     } catch (err) {
       console.error(err);
-      const msgFailEmbed = new EmbedBuilder().setDescription(`Failed to send message to ${userToBan}.`).setColor(env.CONFIRM_COLOR);
+      const msgFailEmbed = new EmbedBuilder().setDescription(`Failed to send message to ${userToBan}.`).setColor(Colors.CONFIRM);
       modChannel.send({ embeds: [msgFailEmbed] });
     }
 
-    const bannedEmbed = new EmbedBuilder().setDescription(`${userToBan} was banned.`).setColor(env.CONFIRM_COLOR);
+    const bannedEmbed = new EmbedBuilder().setDescription(`${userToBan} was banned.`).setColor(Colors.CONFIRM);
     interaction.reply({ embeds: [bannedEmbed] });
   } catch (err) {
     sendErrorEmbed(interaction, err);

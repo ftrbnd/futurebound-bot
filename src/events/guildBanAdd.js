@@ -1,5 +1,6 @@
 import { EmbedBuilder } from 'discord.js';
 import { env } from '../utils/env.js';
+import { Colors } from '../utils/constants.js';
 
 export const name = 'guildBanAdd';
 export async function execute(ban) {
@@ -12,7 +13,7 @@ export async function execute(ban) {
       { name: 'User: ', value: `${ban.user}` },
       { name: 'ID: ', value: `${ban.user.id}` }
     ])
-    .setColor(env.ERROR_COLOR)
+    .setColor(Colors.ERROR)
     .setThumbnail(ban.user.displayAvatarURL({ dynamic: true }))
     .setFooter({
       text: ban.guild.name,
@@ -20,5 +21,5 @@ export async function execute(ban) {
     })
     .setTimestamp();
 
-  modChannel.send({ embeds: [logEmbed] });
+  await modChannel.send({ embeds: [logEmbed] });
 }

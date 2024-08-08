@@ -3,7 +3,7 @@ import { resolve } from 'path';
 import { EmbedBuilder, SlashCommandBuilder } from 'discord.js';
 import { sendErrorEmbed } from '../utils/sendErrorEmbed.js';
 import { lineSplitFile } from '../utils/lineSplitFile.js';
-import { env } from '../utils/env.js';
+import { Colors, EDEN_LOGO } from '../utils/constants.js';
 
 const __dirname = import.meta.dirname;
 
@@ -44,8 +44,8 @@ export async function execute(interaction) {
 
     const guessTheSongEmbed = new EmbedBuilder()
       .setTitle(`Guess The Song`)
-      .setThumbnail('https://i.imgur.com/rQmm1FM.png') // EDEN's logo
-      .setColor('fa57c1')
+      .setThumbnail(EDEN_LOGO)
+      .setColor(Colors.GUESSTHESONG)
       .setDescription(`${randomLyric}`)
       .setFooter({
         text: interaction.guild.name,
@@ -62,7 +62,7 @@ export async function execute(interaction) {
         .addFields([{ name: 'Song', value: songName }])
         .setDescription(`${randomLyric}`)
         .setThumbnail(m.author.displayAvatarURL({ dynamic: true }))
-        .setColor(env.CONFIRM_COLOR)
+        .setColor(Colors.CONFIRM)
         .setFooter({
           text: m.guild.name,
           iconURL: m.guild.iconURL({ dynamic: true })
@@ -79,7 +79,7 @@ export async function execute(interaction) {
           .setTitle('Nobody guessed the song within 15 seconds.')
           .addFields([{ name: 'Song', value: songName }])
           .setDescription(`${randomLyric}`)
-          .setColor(env.ERROR_COLOR)
+          .setColor(Colors.ERROR)
           .setFooter({
             text: interaction.guild.name,
             iconURL: interaction.guild.iconURL({ dynamic: true })

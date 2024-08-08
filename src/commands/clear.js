@@ -1,6 +1,6 @@
 import { EmbedBuilder, PermissionFlagsBits, SlashCommandBuilder } from 'discord.js';
 import { sendErrorEmbed } from '../utils/sendErrorEmbed.js';
-import { env } from '../utils/env.js';
+import { Colors } from '../utils/constants.js';
 
 export const data = new SlashCommandBuilder()
   .setName('clear')
@@ -16,7 +16,7 @@ export async function execute(interaction) {
     const singularOrPlural = amountToDelete == 1 ? 'message' : 'messages';
     const amountDescription = `Successfully deleted ${amountToDelete} ${singularOrPlural}!`;
 
-    const clearEmbed = new EmbedBuilder().setDescription(amountDescription).setColor(env.CONFIRM_COLOR);
+    const clearEmbed = new EmbedBuilder().setDescription(amountDescription).setColor(Colors.CONFIRM);
     interaction.reply({ embeds: [clearEmbed], ephemeral: true });
   } catch (err) {
     sendErrorEmbed(interaction, err);

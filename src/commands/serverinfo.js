@@ -1,5 +1,6 @@
 import { EmbedBuilder, SlashCommandBuilder } from 'discord.js';
 import { sendErrorEmbed } from '../utils/sendErrorEmbed.js';
+import { Colors } from '../utils/constants.js';
 
 export const data = new SlashCommandBuilder().setName('serverinfo').setDescription(`Get basic info about this server`);
 export async function execute(interaction) {
@@ -10,7 +11,7 @@ export async function execute(interaction) {
       .setTitle(`***${interaction.guild}*** Server Information`)
       .setDescription(interaction.guild.description)
       .setThumbnail(interaction.guild.iconURL({ dynamic: true }))
-      .setColor('f03200')
+      .setColor(Colors.INFO)
       .addFields([
         { name: 'Owner', value: `${owner}` },
         { name: 'Date Created', value: interaction.guild.createdAt.toDateString() },
@@ -19,7 +20,7 @@ export async function execute(interaction) {
         { name: 'Server Boosts', value: `${interaction.guild.premiumSubscriptionCount}` }
       ]);
 
-    interaction.reply({ embeds: [serverInfo] });
+    await interaction.reply({ embeds: [serverInfo] });
   } catch (err) {
     sendErrorEmbed(interaction, err);
   }

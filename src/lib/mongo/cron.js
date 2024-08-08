@@ -3,6 +3,7 @@ import { CronJob } from 'cron';
 import { getUsers } from './services/User.js';
 import { getGiveaways } from './services/Giveaway.js';
 import { env } from '../../utils/env.js';
+import { Colors } from '../../utils/constants.js';
 
 const numberEndings = new Map([
   [13, 'th'],
@@ -64,7 +65,7 @@ const checkUsers = async (discordClient) => {
           const birthdayEmbed = new EmbedBuilder()
             .setTitle(`It's ${birthdayPerson.displayName}'s birthday today!`)
             .setDescription(' 🥳🎈🎉')
-            .setColor('ffffc5')
+            .setColor(Colors.BIRTHDAY)
             .setThumbnail(birthdayPerson.user.displayAvatarURL({ dynamic: true }))
             .setFooter({
               text: `Use /birthday in #bots to set your own birthday`,
@@ -98,7 +99,7 @@ const checkUsers = async (discordClient) => {
           const logEmbed = new EmbedBuilder()
             .setTitle(userToUnmute.displayName + ' was unmuted after a week.')
             .addFields([{ name: 'User ID: ', value: `${user.discordId}` }])
-            .setColor(env.CONFIRM_COLOR)
+            .setColor(Colors.CONFIRM)
             .setFooter({
               text: server.name,
               iconURL: server.iconURL({ dynamic: true })
@@ -141,7 +142,7 @@ const checkGiveaways = async (discordClient) => {
           iconURL: member.displayAvatarURL()
         })
         .addFields([{ name: 'Prize: ', value: giveaway.prize }])
-        .setColor(env.GIVEAWAY_COLOR)
+        .setColor(Colors.GIVEAWAY)
         .setTimestamp();
       if (giveaway.imageURL) winnerEmbed.setThumbnail(giveaway.imageURL);
 

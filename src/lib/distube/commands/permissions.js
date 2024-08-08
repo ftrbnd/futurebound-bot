@@ -1,7 +1,7 @@
 import { EmbedBuilder, SlashCommandBuilder, PermissionFlagsBits } from 'discord.js';
 import { sendErrorEmbed } from '../../../utils/sendErrorEmbed.js';
 import { createMusicPermission, getMusicPermission, updatePermissionRole } from '../../mongo/services/MusicPermission.js';
-import { env } from '../../../utils/env.js';
+import { Colors } from '../../../utils/constants.js';
 
 export const data = new SlashCommandBuilder()
   .setName('permissions')
@@ -25,7 +25,7 @@ export async function execute(interaction) {
       await createMusicPermission(chosenRole.name, chosenRole.id);
     }
 
-    const confirmEmbed = new EmbedBuilder().setDescription(`Set music permissions to ${chosenRole}`).setColor(env.MUSIC_COLOR);
+    const confirmEmbed = new EmbedBuilder().setDescription(`Set music permissions to ${chosenRole}`).setColor(Colors.MUSIC);
 
     await interaction.reply({ embeds: [confirmEmbed] });
   } catch (err) {

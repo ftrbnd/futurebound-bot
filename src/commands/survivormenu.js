@@ -5,6 +5,7 @@ import { sendErrorEmbed } from '../utils/sendErrorEmbed.js';
 import { lineSplitFile } from '../utils/lineSplitFile.js';
 import { createSurvivorRound, getSurvivorRound, updateRoundAfterSend } from '../lib/mongo/services/SurvivorRound.js';
 import { env } from '../utils/env.js';
+import { Colors } from '../utils/constants.js';
 
 const __dirname = import.meta.dirname;
 
@@ -56,7 +57,7 @@ export async function execute(interaction) {
       // Moderator role
       const survivorChannel = interaction.guild.channels.cache.find((channel) => channel.id === env.SURVIVOR_CHANNEL_ID);
       if (!survivorChannel) {
-        const errEmbed = new EmbedBuilder().setDescription(`There is no survivor channel - please create one!`).setColor(env.ERROR_COLOR);
+        const errEmbed = new EmbedBuilder().setDescription(`There is no survivor channel - please create one!`).setColor(Colors.ERROR);
         return interaction.reply({ embeds: [errEmbed] });
       }
 
@@ -70,7 +71,7 @@ export async function execute(interaction) {
         // get current votes
         const survivorRound = await getSurvivorRound({ album: albumName });
         if (!survivorRound) {
-          const errEmbed = new EmbedBuilder().setDescription(`No data exists for **${albumName}**`).setColor(env.ERROR_COLOR);
+          const errEmbed = new EmbedBuilder().setDescription(`No data exists for **${albumName}**`).setColor(Colors.ERROR);
           await interaction.reply({ embeds: [errEmbed] });
           return console.log(`No data exists for ${albumName}`);
         } else {
@@ -100,7 +101,7 @@ export async function execute(interaction) {
         }
       } else if (interaction.options.getSubcommand() === 'round') {
         if (interaction.channel == survivorChannel) {
-          const errEmbed = new EmbedBuilder().setDescription(`Please use this command in ${interaction.guild.channels.cache.get(env.COMMANDS_CHANNEL_ID)}`).setColor(env.ERROR_COLOR);
+          const errEmbed = new EmbedBuilder().setDescription(`Please use this command in ${interaction.guild.channels.cache.get(env.COMMANDS_CHANNEL_ID)}`).setColor(Colors.ERROR);
           return interaction.reply({ embeds: [errEmbed], ephemeral: true });
         }
 
@@ -161,27 +162,7 @@ export async function execute(interaction) {
             standings.reverse(); // reverse the order
             standings.pop(); // remove the null element
 
-            const numberEmojis = [
-              '1️⃣',
-              '2️⃣',
-              '3️⃣',
-              '4️⃣',
-              '5️⃣',
-              '6️⃣',
-              '7️⃣',
-              '8️⃣',
-              '9️⃣',
-              '🔟',
-              '929631863549595658',
-              '929631863440556043',
-              '929631863520243784',
-              '929634144667983892',
-              '929634144777031690',
-              '929634144588288020',
-              '929634144537944064',
-              '929634144491819018',
-              '929634144487612416'
-            ];
+            const numberEmojis = ['1️⃣', '2️⃣', '3️⃣', '4️⃣', '5️⃣', '6️⃣', '7️⃣', '8️⃣', '9️⃣', '🔟', ...env.NUMBER_EMOJIS];
 
             standings[0] = `👑 **${standings[0]}**`;
             for (let i = 1; i < standings.length; i++) {
@@ -256,7 +237,7 @@ export async function execute(interaction) {
         return interaction.reply({ embeds: [confirmEmbed] });
       }
     } else {
-      const permsEmbed = new EmbedBuilder().setDescription('You do not have permission to use this command.').setColor(env.ERROR_COLOR);
+      const permsEmbed = new EmbedBuilder().setDescription('You do not have permission to use this command.').setColor(Colors.ERROR);
       return interaction.reply({ embeds: [permsEmbed], ephemeral: true });
     }
   } catch (err) {

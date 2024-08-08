@@ -2,6 +2,7 @@ import { EmbedBuilder, PermissionFlagsBits, SlashCommandBuilder } from 'discord.
 import { sendErrorEmbed } from '../utils/sendErrorEmbed.js';
 import { createUser, getUser, updateUserWarning } from '../lib/mongo/services/User.js';
 import { env } from '../utils/env.js';
+import { Colors } from '../utils/constants.js';
 
 export const data = new SlashCommandBuilder()
   .setName('warn')
@@ -37,7 +38,7 @@ export async function execute(interaction) {
         { name: 'Reason: ', value: reasonForWarn },
         { name: 'Warnings: ', value: `${warnCount}` }
       ])
-      .setColor('ffd100')
+      .setColor(Colors.YELLOW)
       .setThumbnail(userToWarn.displayAvatarURL({ dynamic: true }))
       .setFooter({
         text: interaction.guild.name,
@@ -50,7 +51,7 @@ export async function execute(interaction) {
       .setTitle(`You were warned in **${interaction.guild.name}**.`)
       .setDescription(reasonForWarn)
       .addFields([{ name: 'Warnings: ', value: `${warnCount}` }])
-      .setColor('ffd100')
+      .setColor(Colors.YELLOW)
       .setFooter({
         text: interaction.guild.name,
         iconURL: interaction.guild.iconURL({ dynamic: true })
@@ -63,8 +64,9 @@ export async function execute(interaction) {
       return console.error(err);
     }
 
-    const warnedEmbed = new EmbedBuilder().setDescription(`${userToWarn} was warned.`).setColor('ffd100');
-    interaction.reply({ embeds: [warnedEmbed] });
+    const warnedEmbed = new EmbedBuilder().setDescription(`${userToWarn} was warned.`).setColor(Colors.YELLOW);
+
+    await interaction.reply({ embeds: [warnedEmbed] });
   } catch (err) {
     sendErrorEmbed(interaction, err);
   }

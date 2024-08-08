@@ -2,6 +2,7 @@ import { EmbedBuilder, PermissionFlagsBits, SlashCommandBuilder, ActionRowBuilde
 import { sendErrorEmbed } from '../utils/sendErrorEmbed.js';
 import { createGiveaway } from '../lib/mongo/services/Giveaway.js';
 import { env } from '../utils/env.js';
+import { Colors } from '../utils/constants.js';
 
 export const data = new SlashCommandBuilder()
   .setName('giveaway')
@@ -64,7 +65,7 @@ export async function execute(interaction) {
         .setTitle(`Giveaway: ${prize}`)
         .setDescription(description)
         .addFields([{ name: 'End Date', value: `<t:${timestamp}>` }])
-        .setColor(env.GIVEAWAY_COLOR);
+        .setColor(Colors.GIVEAWAY);
       if (imageURL) giveawayEmbed.setThumbnail(imageURL);
 
       const row = new ActionRowBuilder().addComponents(
@@ -77,7 +78,7 @@ export async function execute(interaction) {
       const confirmEmbed = new EmbedBuilder()
         .setDescription(`Started giveaway for **${prize}** in ${giveawayChannel}, ends in ${amount} ${amount == 1 ? unit.substring(0, unit.length - 1) : unit}`)
         .addFields([{ name: 'End Date', value: `<t:${timestamp}>` }])
-        .setColor(env.CONFIRM_COLOR);
+        .setColor(Colors.CONFIRM);
 
       await interaction.reply({ embeds: [confirmEmbed] });
     } else if (interaction.options.getSubcommand() === 'end') {

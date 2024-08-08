@@ -1,5 +1,6 @@
 import { EmbedBuilder } from 'discord.js';
 import { env } from '../utils/env.js';
+import { Colors } from '../utils/constants.js';
 
 export const name = 'guildMemberRemove';
 export async function execute(member) {
@@ -12,7 +13,7 @@ export async function execute(member) {
       iconURL: member.user.displayAvatarURL({ dynamic: true })
     })
     .addFields([{ name: 'User ID: ', value: `${member.user.id}` }])
-    .setColor(env.ERROR_COLOR)
+    .setColor(Colors.ERROR)
     .setThumbnail(member.user.displayAvatarURL({ dynamic: true }))
     .setFooter({
       text: member.guild.name,
@@ -20,5 +21,5 @@ export async function execute(member) {
     })
     .setTimestamp();
 
-  logChannel.send({ embeds: [leaveEmbed] });
+  await logChannel.send({ embeds: [leaveEmbed] });
 }

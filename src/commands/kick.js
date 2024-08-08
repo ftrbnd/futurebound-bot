@@ -1,6 +1,7 @@
 import { EmbedBuilder, PermissionFlagsBits, SlashCommandBuilder } from 'discord.js';
 import { sendErrorEmbed } from '../utils/sendErrorEmbed.js';
 import { env } from '../utils/env.js';
+import { Colors } from '../utils/constants.js';
 
 export const data = new SlashCommandBuilder()
   .setName('kick')
@@ -29,7 +30,7 @@ export async function execute(interaction) {
         { name: 'By: ', value: `${interaction.user}` },
         { name: 'Reason: ', value: reasonForKick }
       ])
-      .setColor(env.ERROR_COLOR)
+      .setColor(Colors.ERROR)
       .setThumbnail(userToKick.displayAvatarURL({ dynamic: true }))
       .setFooter({
         text: interaction.guild.name,
@@ -41,7 +42,7 @@ export async function execute(interaction) {
     const kickEmbed = new EmbedBuilder()
       .setTitle(`You were kicked from **${interaction.guild.name}**.`)
       .setDescription(reasonForKick)
-      .setColor(env.ERROR_COLOR)
+      .setColor(Colors.ERROR)
       .setFooter({
         text: interaction.guild.name,
         iconURL: interaction.guild.iconURL({ dynamic: true })
@@ -54,7 +55,7 @@ export async function execute(interaction) {
       return console.error(err);
     }
 
-    const kickedEmbed = new EmbedBuilder().setDescription(`${userToKick} was kicked.`).setColor(env.CONFIRM_COLOR);
+    const kickedEmbed = new EmbedBuilder().setDescription(`${userToKick} was kicked.`).setColor(Colors.CONFIRM);
     interaction.reply({ embeds: [kickedEmbed] });
   } catch (err) {
     sendErrorEmbed(interaction, err);
