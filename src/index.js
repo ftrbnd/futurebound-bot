@@ -1,12 +1,9 @@
-require('dotenv').config();
+import { env } from './utils/env.js';
+import { client } from './bot.js';
+import { connectToDb } from './lib/mongo/index.js';
+import { registerHeardleJobs } from './lib/heardle/cron.js';
 
-const { client } = require('./bot');
-const { registerDatabaseChecks } = require('./lib/mongoDB');
-const { registerPrevHeardleCheck, registerNextHeardleCheck } = require('./lib/cron');
+client.login(env.DISCORD_TOKEN);
 
-client.login(process.env.DISCORD_TOKEN);
-
-registerDatabaseChecks(client);
-
-registerPrevHeardleCheck();
-registerNextHeardleCheck(client);
+connectToDb(client);
+registerHeardleJobs(client);

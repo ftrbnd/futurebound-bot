@@ -1,53 +1,27 @@
-const imgur = require('imgur');
-const { SlashCommandBuilder } = require('discord.js');
-const sendErrorEmbed = require('../utils/sendErrorEmbed');
+import imgur from 'imgur';
+import { SlashCommandBuilder } from 'discord.js';
+import { sendErrorEmbed } from '../utils/sendErrorEmbed.js';
+import { env } from '../utils/env.js';
 
-module.exports = {
-  data: new SlashCommandBuilder().setName('eden').setDescription('Get a random picture of EDEN'),
+const { getAlbumInfo } = imgur;
 
-  async execute(interaction) {
-    try {
-      const edenAlbumOne = '3Zh414x';
-      const edenAlbumTwo = 'DZ913Hd';
-      const edenAlbumThree = 'PUfyYtt';
-      const edenImages = [];
+export const data = new SlashCommandBuilder().setName('eden').setDescription('Get a random picture of EDEN');
+export async function execute(interaction) {
+  try {
+    const albums = env.IMGUR_ALBUMS;
+    const images = [];
 
-      imgur
-        .getAlbumInfo(edenAlbumOne)
-        .then((json) => {
-          json.images.forEach((image) => {
-            edenImages.push(image.link);
-          });
-        })
-        .catch((err) => {
-          console.error(err.message);
-        });
-
-      imgur
-        .getAlbumInfo(edenAlbumTwo)
-        .then((json) => {
-          json.images.forEach((image) => {
-            edenImages.push(image.link);
-          });
-        })
-        .catch((err) => {
-          console.error(err.message);
-        });
-
-      imgur
-        .getAlbumInfo(edenAlbumThree)
-        .then((json) => {
-          json.images.forEach((image) => {
-            edenImages.push(image.link);
-          });
-
-          interaction.reply({ files: [`${edenImages[Math.floor(Math.random() * edenImages.length)]}`] });
-        })
-        .catch((err) => {
-          console.error(err.message);
-        });
-    } catch (err) {
-      sendErrorEmbed(interaction, err);
+    for (const album of albums) {
+      const json = await getAlbumInfo(album);
+      for (const image of json.images) {
+        images.push(image.link);
+      }
     }
+
+    const randomImageUrl = images[Math.floor(Math.random() * images.length)];
+
+    await interaction.reply({ files: [randomImageUrl] });
+  } catch (err) {
+    sendErrorEmbed(interaction, err);
   }
-};
+}
