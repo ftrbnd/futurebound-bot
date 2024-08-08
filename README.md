@@ -118,7 +118,6 @@ Create a `.env` file at the root and fill out the values:
   HEARDLE_CHANNEL_ID =
   HEARDLE_SERVER_URL=
   HEARDLE_ROLE_ID=
-  HEARDLE_COLOR=
 
   SPOTIFY_CLIENT_ID=
   SPOTIFY_CLIENT_SECRET=
@@ -158,12 +157,6 @@ Create a `.env` file at the root and fill out the values:
   INTRODUCTIONS_REACTION_EMOJI_ID=
   GIVEAWAY_EMOJI_ID=
   NUMBER_EMOJIS= # emojis for numbers after 10; 11 => ...
-
-  CONFIRM_COLOR=32FF25
-  ERROR_COLOR=DF0000
-  MUSIC_COLOR=f94c57
-  GIVEAWAY_COLOR=7CF3FF
-  GUESSTHESONG_COLOR=fa57c1
 ```
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
