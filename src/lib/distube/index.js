@@ -9,9 +9,6 @@ const __dirname = import.meta.dirname;
 
 export async function registerDistubeClient(discordClient) {
   const distube = new DisTube(discordClient, {
-    leaveOnStop: false,
-    leaveOnEmpty: true,
-    emptyCooldown: 1,
     emitNewSongOnly: true,
     emitAddSongWhenCreatingQueue: false,
     emitAddListWhenCreatingQueue: true,

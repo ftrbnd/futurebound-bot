@@ -206,7 +206,7 @@ async function handleHeardleWebhook(message) {
       .setURL(HEARDLE_URL)
       .setDescription(`Yesterday's song was **${previousSong}**`)
       .setThumbnail(EDEN_LOGO)
-      .setColor(env.HEARDLE_COLOR)
+      .setColor(Colors.HEARDLE)
       .setFooter({
         text: 'Share your results in the thread!',
         iconURL: server.iconURL({ dynamic: true })
