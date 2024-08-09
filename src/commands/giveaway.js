@@ -1,5 +1,5 @@
 import { EmbedBuilder, PermissionFlagsBits, SlashCommandBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle } from 'discord.js';
-import { sendErrorEmbed } from '../utils/sendErrorEmbed.js';
+import { replyToInteraction } from '../utils/error-handler.js';
 import { createGiveaway } from '../lib/mongo/services/Giveaway.js';
 import { env } from '../utils/env.js';
 import { Colors } from '../utils/constants.js';
@@ -82,9 +82,9 @@ export async function execute(interaction) {
 
       await interaction.reply({ embeds: [confirmEmbed] });
     } else if (interaction.options.getSubcommand() === 'end') {
-      interaction.reply({ content: `TODO: implement this` });
+      await interaction.reply({ content: `TODO: implement this` });
     }
   } catch (err) {
-    sendErrorEmbed(interaction, err);
+    await replyToInteraction(interaction, err);
   }
 }

@@ -1,6 +1,6 @@
 import { readdirSync } from 'fs';
 import { EmbedBuilder, SlashCommandBuilder } from 'discord.js';
-import { sendErrorEmbed } from '../utils/sendErrorEmbed.js';
+import { replyToInteraction } from '../utils/error-handler.js';
 import { env } from '../utils/env.js';
 import { Colors } from '../utils/constants.js';
 
@@ -63,8 +63,8 @@ export async function execute(interaction) {
       ]);
     }
 
-    interaction.reply({ embeds: [helpEmbed] });
+    await interaction.reply({ embeds: [helpEmbed] });
   } catch (err) {
-    sendErrorEmbed(interaction, err);
+    await replyToInteraction(interaction, err);
   }
 }

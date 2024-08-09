@@ -1,5 +1,5 @@
 import { EmbedBuilder, PermissionFlagsBits, SlashCommandBuilder, ChannelType, GuildScheduledEventPrivacyLevel, GuildScheduledEventEntityType } from 'discord.js';
-import { sendErrorEmbed } from '../utils/sendErrorEmbed.js';
+import { replyToInteraction } from '../utils/error-handler.js';
 import { env } from '../utils/env.js';
 import { Colors } from '../utils/constants.js';
 
@@ -114,7 +114,8 @@ export async function execute(interaction) {
       }
 
       const confirmEmbed = new EmbedBuilder().setDescription(`**${listeningPartyName}** channels have been created!`).setColor(Colors.CONFIRM);
-      return interaction.reply({ embeds: [confirmEmbed] });
+
+      await interaction.reply({ embeds: [confirmEmbed] });
     } else if (interaction.options.getSubcommand() === 'preview') {
       const categoryChannel = await interaction.guild.channels.cache.find((channel) => channel.name === 'Listening Party');
       categoryChannel.edit({
@@ -162,38 +163,34 @@ export async function execute(interaction) {
       stageChannel.setTopic(`Listening to ${stageChannel.name}!`);
 
       const confirmEmbed = new EmbedBuilder().setDescription(`**${stageChannel.name}** channels are now public but locked.`).setColor(Colors.CONFIRM);
-      interaction.reply({ embeds: [confirmEmbed] });
+
+      await interaction.reply({ embeds: [confirmEmbed] });
     } else if (interaction.options.getSubcommand() === 'announce') {
       const description = interaction.options.getString('event-description');
 
       // check if the Stage channel has been created yet
       const stageChannel = await interaction.guild.channels.cache.find((channel) => channel.type === ChannelType.GuildStageVoice);
       if (!stageChannel) {
-        const errEmbed = new EmbedBuilder().setDescription('Please use **/listeningparty create** before using this command').setColor(Colors.ERROR);
-        return interaction.reply({ embeds: [errEmbed] });
+        throw new Error('Please use **/listeningparty create** before using this command');
       }
 
       const tomorrow = new Date();
       tomorrow.setDate(tomorrow.getDate() + 1);
 
-      try {
-        var scheduledEvent = await interaction.guild.scheduledEvents.create({
-          name: `${stageChannel.name} Listening Party`,
-          scheduledStartTime: tomorrow,
-          privacyLevel: GuildScheduledEventPrivacyLevel.GuildOnly,
-          entityType: GuildScheduledEventEntityType.StageInstance,
-          description: description,
-          channel: stageChannel
-        });
-      } catch (err) {
-        return console.error(err);
-      }
+      const scheduledEvent = await interaction.guild.scheduledEvents.create({
+        name: `${stageChannel.name} Listening Party`,
+        scheduledStartTime: tomorrow,
+        privacyLevel: GuildScheduledEventPrivacyLevel.GuildOnly,
+        entityType: GuildScheduledEventEntityType.StageInstance,
+        description: description,
+        channel: stageChannel
+      });
 
       const confirmEmbed = new EmbedBuilder().setDescription(`The **${stageChannel.name}** Event has been created!`).setColor(Colors.CONFIRM);
       const announcementEmbed = new EmbedBuilder().setDescription(`Now, please enter the message that will be posted in **#announcements** without mentioning @everyone`).setColor(Colors.YELLOW);
 
       // once created, ask for the announcement text
-      interaction.reply({ embeds: [confirmEmbed, announcementEmbed] });
+      await interaction.reply({ embeds: [confirmEmbed, announcementEmbed] });
 
       // maybe: with the announcement text, add an option for the pic url,
       //      and set the event's banner to that img
@@ -201,16 +198,16 @@ export async function execute(interaction) {
       const filter = (m) => m.author === interaction.user;
       const collector = interaction.channel.createMessageCollector({ filter, time: 180000 }); // one minute to collect
 
-      collector.on('collect', (m) => {
+      collector.on('collect', async (m) => {
         const announcementText = `${m.content} @everyone ${scheduledEvent.url}`;
         const announcementChannel = interaction.guild.channels.cache.get(env.ANNOUNCEMENTS_CHANNEL_ID);
 
-        announcementChannel.send({ content: announcementText });
+        await announcementChannel.send({ content: announcementText });
 
         collector.stop();
       });
 
-      collector.on('end', (collected) => {
+      collector.on('end', async (collected) => {
         if (collected.size === 0) {
           // if no message was entered
           const couldntFindEmbed = new EmbedBuilder()
@@ -220,11 +217,13 @@ export async function execute(interaction) {
               text: interaction.guild.name,
               iconURL: interaction.guild.iconURL({ dynamic: true })
             });
-          interaction.followUp({ embeds: [couldntFindEmbed], ephemeral: true });
+
+          await interaction.followUp({ embeds: [couldntFindEmbed], ephemeral: true });
         } else {
           const announcedEmbed = new EmbedBuilder().setDescription(`The announcement was sent!`).setColor(Colors.CONFIRM);
           const editDateEmbed = new EmbedBuilder().setDescription(`Now manually edit the Event's start time.`).setColor(Colors.YELLOW);
-          interaction.followUp({ embeds: [announcedEmbed, editDateEmbed] });
+
+          await interaction.followUp({ embeds: [announcedEmbed, editDateEmbed] });
         }
       });
     } else if (interaction.options.getSubcommand() === 'start') {
@@ -251,10 +250,6 @@ export async function execute(interaction) {
           // play the playlist
           member: interaction.member,
           textChannel: interaction.channel
-        }).catch((err) => {
-          console.error(err);
-          const errEmbed = new EmbedBuilder().setDescription(`An error occurred in /play.`).setColor(Colors.ERROR);
-          return interaction.reply({ embeds: [errEmbed] });
         });
 
         if (!stageChannel.stageInstance) {
@@ -269,10 +264,9 @@ export async function execute(interaction) {
           text: 'Use /play to add more songs'
         });
 
-        interaction.reply({ embeds: [joinEmbed] });
+        await interaction.reply({ embeds: [joinEmbed] });
       } else {
-        const errEmbed = new EmbedBuilder().setDescription(`You must join the Stage channel!`).setColor(Colors.ERROR);
-        return interaction.reply({ embeds: [errEmbed] });
+        throw new Error(`You must join the Stage channel!`);
       }
     } else if (interaction.options.getSubcommand() === 'open') {
       const categoryChannel = await interaction.guild.channels.cache.find((channel) => channel.name === 'Listening Party');
@@ -319,7 +313,8 @@ export async function execute(interaction) {
       stageChannel.setTopic(`Listening to ${stageChannel.name}!`);
 
       const confirmEmbed = new EmbedBuilder().setDescription(`**${stageChannel.name}** channels have been opened to everyone!`).setColor(Colors.CONFIRM);
-      interaction.reply({ embeds: [confirmEmbed] });
+
+      await interaction.reply({ embeds: [confirmEmbed] });
     } else if (interaction.options.getSubcommand() === 'close') {
       const categoryChannel = await interaction.guild.channels.cache.find((channel) => channel.name === 'Listening Party');
       categoryChannel.edit({
@@ -368,7 +363,8 @@ export async function execute(interaction) {
       });
 
       const confirmEmbed = new EmbedBuilder().setDescription(`**${stageChannel.name}** channels have been closed.`).setColor(Colors.CONFIRM);
-      interaction.reply({ embeds: [confirmEmbed] });
+
+      await interaction.reply({ embeds: [confirmEmbed] });
     } else if (interaction.options.getSubcommand() === 'archive') {
       const categoryChannel = await interaction.guild.channels.cache.find((channel) => channel.name === 'Listening Party');
       const listeningPartyChat = await categoryChannel.children.cache.find((channel) => channel.name === 'listening-party-chat');
@@ -383,9 +379,10 @@ export async function execute(interaction) {
       await categoryChannel.delete();
 
       const confirmEmbed = new EmbedBuilder().setDescription(`**${listeningPartyChat.name}** has been archived.`).setColor(Colors.CONFIRM);
-      interaction.reply({ embeds: [confirmEmbed] });
+
+      await interaction.reply({ embeds: [confirmEmbed] });
     }
   } catch (err) {
-    sendErrorEmbed(interaction, err);
+    await replyToInteraction(interaction, err);
   }
 }

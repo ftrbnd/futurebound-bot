@@ -36,5 +36,5 @@ export async function execute(interaction) {
     .setDescription(responses[Math.floor(Math.random() * responses.length)])
     .setColor(Colors.RANDOM);
 
-  interaction.reply({ embeds: [eightBall] });
+  await interaction.reply({ embeds: [eightBall] });
 }

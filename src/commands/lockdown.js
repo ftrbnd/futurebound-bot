@@ -1,5 +1,5 @@
 import { EmbedBuilder, SlashCommandBuilder, PermissionFlagsBits } from 'discord.js';
-import { sendErrorEmbed } from '../utils/sendErrorEmbed.js';
+import { replyToInteraction } from '../utils/error-handler.js';
 import { env } from '../utils/env.js';
 import { Colors } from '../utils/constants.js';
 
@@ -62,9 +62,10 @@ export async function execute(interaction) {
       });
 
       const confirmEmbed = new EmbedBuilder().setDescription(`**${interaction.guild.name}** is now open!`).setColor(Colors.CONFIRM);
-      interaction.reply({ embeds: [confirmEmbed] });
+
+      await interaction.reply({ embeds: [confirmEmbed] });
     }
   } catch (err) {
-    sendErrorEmbed(interaction, err);
+    await replyToInteraction(interaction, err);
   }
 }

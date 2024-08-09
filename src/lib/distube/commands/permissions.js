@@ -1,5 +1,5 @@
 import { EmbedBuilder, SlashCommandBuilder, PermissionFlagsBits } from 'discord.js';
-import { sendErrorEmbed } from '../../../utils/sendErrorEmbed.js';
+import { replyToInteraction } from '../../../utils/error-handler.js';
 import { createMusicPermission, getMusicPermission, updatePermissionRole } from '../../mongo/services/MusicPermission.js';
 import { Colors } from '../../../utils/constants.js';
 
@@ -29,6 +29,6 @@ export async function execute(interaction) {
 
     await interaction.reply({ embeds: [confirmEmbed] });
   } catch (err) {
-    sendErrorEmbed(interaction, err);
+    await replyToInteraction(interaction, err);
   }
 }

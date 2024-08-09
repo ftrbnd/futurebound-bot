@@ -1,6 +1,6 @@
 import { EmbedBuilder, SlashCommandBuilder } from 'discord.js';
 import { getTimeZones, timeZonesNames } from '@vvo/tzdb';
-import { sendErrorEmbed } from '../utils/sendErrorEmbed.js';
+import { replyToInteraction } from '../utils/error-handler.js';
 import { createUser, getUser, updateUserBirthday } from '../lib/mongo/services/User.js';
 import { env } from '../utils/env.js';
 import { Colors } from '../utils/constants.js';
@@ -27,11 +27,7 @@ export async function execute(interaction) {
     const timezoneOption = interaction.options.getString('timezone');
 
     if (!timeZonesNames.includes(timezoneOption)) {
-      const tzErrEmbed = new EmbedBuilder()
-        .setDescription('Please enter a valid TZ database name. More info can be found here: https://en.wikipedia.org/wiki/List_of_tz_database_time_zones#List \nExample: **America/Los_Angeles**')
-        .setColor(Colors.ERROR);
-
-      return interaction.reply({ embeds: [tzErrEmbed], ephemeral: true });
+      throw new Error('Please enter a valid TZ database name. More info can be found here: https://en.wikipedia.org/wiki/List_of_tz_database_time_zones#List \nExample: **America/Los_Angeles**');
     }
 
     // adjust their timezone to PST (Note: Heroku doesn't run on PST, but we're sticking to the variable names)
@@ -108,12 +104,12 @@ export async function execute(interaction) {
         name: `${interaction.user.username} set their birthday to ${theirBirthday.toLocaleDateString()}`,
         iconURL: interaction.user.displayAvatarURL({ dynamic: true })
       });
-      logChannel.send({ embeds: [birthdayEmbed] });
+      await logChannel.send({ embeds: [birthdayEmbed] });
 
       personalEmbed.setAuthor({
         name: `You have set your birthday to ${theirBirthday.toLocaleDateString()}`
       });
-      return interaction.reply({ embeds: [personalEmbed], ephemeral: true });
+      await interaction.reply({ embeds: [personalEmbed], ephemeral: true });
     } else {
       // if they already were in the database, simply update and save
       await updateUserBirthday(user, interaction.user.username, birthdayAttempt, timezoneOption);
@@ -124,14 +120,14 @@ export async function execute(interaction) {
         name: `${interaction.user.username} updated their birthday to ${theirBirthday.toLocaleDateString()}`,
         iconURL: interaction.user.displayAvatarURL({ dynamic: true })
       });
-      logChannel.send({ embeds: [birthdayEmbed] });
+      await logChannel.send({ embeds: [birthdayEmbed] });
 
       personalEmbed.setAuthor({
         name: `You have updated your birthday to ${theirBirthday.toLocaleDateString()}`
       });
-      return interaction.reply({ embeds: [personalEmbed], ephemeral: true });
+      await interaction.reply({ embeds: [personalEmbed], ephemeral: true });
     }
   } catch (err) {
-    sendErrorEmbed(interaction, err);
+    await replyToInteraction(interaction, err);
   }
 }

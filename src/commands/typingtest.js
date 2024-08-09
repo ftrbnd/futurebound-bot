@@ -1,5 +1,5 @@
 import { EmbedBuilder, SlashCommandBuilder, MessageType } from 'discord.js';
-import { sendErrorEmbed } from '../utils/sendErrorEmbed.js';
+import { replyToInteraction } from '../utils/error-handler.js';
 import { Colors, ALL_SONGS } from '../utils/constants.js';
 
 export const data = new SlashCommandBuilder().setName('typingtest').setDescription('Test your WPM by typing EDEN songs!');
@@ -35,7 +35,7 @@ export async function execute(interaction) {
       collector.stop();
     });
 
-    collector.on('end', (collected) => {
+    collector.on('end', async (collected) => {
       if (collected.size === 0) {
         // if no message was entered
         const couldntFindEmbed = new EmbedBuilder()
@@ -83,10 +83,10 @@ export async function execute(interaction) {
             iconURL: interaction.user.displayAvatarURL({ dynamic: true })
           });
 
-        messageToReply.reply({ embeds: [wpmEmbed] });
+        await messageToReply.reply({ embeds: [wpmEmbed] });
       }
     });
   } catch (err) {
-    sendErrorEmbed(interaction, err);
+    await replyToInteraction(interaction, err);
   }
 }

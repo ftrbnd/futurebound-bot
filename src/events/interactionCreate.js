@@ -1,6 +1,6 @@
 // Interactions: slash commands, buttons, select menus
 import { EmbedBuilder, InteractionType } from 'discord.js';
-import { sendErrorEmbed } from '../utils/sendErrorEmbed.js';
+import { replyToInteraction } from '../utils/error-handler.js';
 import { getLeaderboard, sendRetryRequest, createLeaderboardDescription } from '../lib/heardle/api.js';
 import { getSurvivorRound, removeDuplicateVote, updateVotes } from '../lib/mongo/services/SurvivorRound.js';
 import { getGiveaway, updateGiveawayEntries } from '../lib/mongo/services/Giveaway.js';
@@ -12,27 +12,25 @@ export const name = 'interactionCreate';
 export async function execute(interaction) {
   const leaderboardButtonIds = ['today', 'winPercentages', 'accuracies', 'currentStreaks', 'maxStreaks'];
 
-  if (interaction.isStringSelectMenu() && interaction.channel.id == env.SURVIVOR_CHANNEL_ID) {
-    await handleSurvivorVote(interaction); // handle menu interactions from /survivor
-  } else if (interaction.isButton() && leaderboardButtonIds.includes(interaction.customId)) {
-    await handleLeaderboardButton(interaction);
-  } else if (interaction.isButton() && interaction.channel.id == env.GIVEAWAY_CHANNEL_ID) {
-    await handleGiveawayEntry(interaction);
-  } else if (interaction.isButton() && interaction.customId.startsWith('retry_daily_heardle')) {
-    await handleRetryDailyHeardle(interaction);
-  }
-
-  if (!interaction.type === InteractionType.ApplicationCommand) return;
-
-  const command = interaction.client.commands.get(interaction.commandName);
-  if (!command) return;
-
   try {
+    if (interaction.isStringSelectMenu() && interaction.channel.id == env.SURVIVOR_CHANNEL_ID) {
+      await handleSurvivorVote(interaction); // handle menu interactions from /survivor
+    } else if (interaction.isButton() && leaderboardButtonIds.includes(interaction.customId)) {
+      await handleLeaderboardButton(interaction);
+    } else if (interaction.isButton() && interaction.channel.id == env.GIVEAWAY_CHANNEL_ID) {
+      await handleGiveawayEntry(interaction);
+    } else if (interaction.isButton() && interaction.customId.startsWith('retry_daily_heardle')) {
+      await handleRetryDailyHeardle(interaction);
+    }
+
+    if (!interaction.type === InteractionType.ApplicationCommand) return;
+
+    const command = interaction.client.commands.get(interaction.commandName);
+    if (!command) return;
+
     await command.execute(interaction);
   } catch (error) {
-    console.error(error);
-    const errorEmbed = new EmbedBuilder().setDescription('There was an error while executing this command!').setColor(Colors.ERROR);
-    await interaction.reply({ embeds: [errorEmbed], ephemeral: true });
+    await replyToInteraction(interaction, error);
   }
 }
 
@@ -48,9 +46,7 @@ async function handleSurvivorVote(interaction) {
   const survivorRound = await getSurvivorRound({ album: albumName });
   if (!survivorRound) {
     // this shouldn't be possible because users will only interact with the menu once a survivor round exists
-    console.log('No survivor round data available.');
-    const errEmbed = new EmbedBuilder().setDescription('An error occurred.').setColor(Colors.ERROR);
-    return interaction.reply({ embeds: [errEmbed], ephemeral: true });
+    throw new Error('No survivor round data available.');
   } else {
     if (interaction.message.id == survivorRound.lastMessageId) {
       // users have to vote in the most recent poll in the survivor channel
@@ -65,9 +61,7 @@ async function handleSurvivorVote(interaction) {
 
       if (selectedSongVotes.includes(interaction.user.id)) {
         // happens if app client restarts or switch devices
-        console.log(`Invalid vote: ${interaction.user.tag} voted for the same song`);
-        const errorEmbed = new EmbedBuilder().setDescription(`You already selected **${selectedSong}**!`).setColor(Colors.ERROR);
-        return interaction.reply({ embeds: [errorEmbed], ephemeral: true });
+        throw new Error(`You already selected **${selectedSong}**!`);
       } else if (allVotes.includes(interaction.user.id)) {
         // if the user has already voted for a song
         // remove their original vote
@@ -79,9 +73,7 @@ async function handleSurvivorVote(interaction) {
       selectedSongVotes.push(interaction.user.id); // add their vote once it's confirmed that their original vote has been removed
       await updateVotes(survivorRound, selectedSong, selectedSongVotes);
     } else {
-      console.log(`Invalid vote: ${interaction.user.tag} voted in an old round`);
-      const errorEmbed = new EmbedBuilder().setDescription('Please vote in the most recent poll!').setColor(Colors.ERROR);
-      return interaction.reply({ embeds: [errorEmbed], ephemeral: true });
+      throw new Error('Please vote in the most recent poll!');
     }
 
     const userConfirmEmbed = new EmbedBuilder().setColor(Colors.CONFIRM);
@@ -94,7 +86,7 @@ async function handleSurvivorVote(interaction) {
       userConfirmEmbed.setDescription(`You selected **${selectedSong}**`);
     }
 
-    return interaction.reply({ embeds: [userConfirmEmbed], ephemeral: true });
+    await interaction.reply({ embeds: [userConfirmEmbed], ephemeral: true });
   }
 }
 
@@ -102,13 +94,11 @@ async function handleGiveawayEntry(interaction) {
   const giveaway = await getGiveaway({ id: interaction.customId });
 
   if (giveaway.endDate.getTime() < new Date().getTime()) {
-    const lateEmbed = new EmbedBuilder().setDescription('The giveaway has already ended!').setColor(Colors.ERROR);
-    return interaction.reply({ embeds: [lateEmbed], ephemeral: true });
+    throw new Error('The giveaway has already ended!');
   }
 
   if (giveaway.entries.includes(interaction.user.id)) {
-    const enteredEmbed = new EmbedBuilder().setDescription('You have already entered the giveaway!').setColor(Colors.ERROR);
-    return interaction.reply({ embeds: [enteredEmbed], ephemeral: true });
+    throw new Error('You have already entered the giveaway!');
   }
 
   const premiumRole = interaction.guild.roles.cache.get(env.SUBSCRIBER_ROLE_IDS.find((roleId) => interaction.member._roles.includes(roleId)));
@@ -155,9 +145,7 @@ async function handleRetryDailyHeardle(interaction) {
 
     const statusExists = await getDailyHeardleCheck({ id: statusId });
     if (!statusExists) {
-      const errorEmbed = new EmbedBuilder().setDescription('Already sent retry request').setColor(Colors.ERROR);
-
-      return await interaction.editReply({ embeds: [errorEmbed] });
+      throw new Error('Already sent retry request');
     }
 
     const { message } = await sendRetryRequest();
@@ -167,6 +155,6 @@ async function handleRetryDailyHeardle(interaction) {
 
     await interaction.editReply({ embeds: [embed] });
   } catch (error) {
-    await sendErrorEmbed(interaction, error, true);
+    await replyToInteraction(interaction, error, true);
   }
 }

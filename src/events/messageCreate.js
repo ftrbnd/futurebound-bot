@@ -1,59 +1,62 @@
 import { EmbedBuilder, ChannelType, MessageType, ThreadAutoArchiveDuration } from 'discord.js';
 import { env } from '../utils/env.js';
 import { Colors, EDEN_LOGO, HEARDLE_URL } from '../utils/constants.js';
+import { sendMessageInLogChannel } from '../utils/error-handler.js';
 
 export const name = 'messageCreate';
 export async function execute(message) {
-  if (message.webhookId === env.HEARDLE_WEBHOOK_ID) {
-    await handleHeardleWebhook(message);
-  }
+  const logChannel = message.client.guilds.cache.get(env.GUILD_ID).channels.cache.get(env.LOGS_CHANNEL_ID);
 
-  if (message.author.bot) return; // ignore bot messages
-
-  if (message.channel.type === ChannelType.DM) {
-    handleDirectMessage(message);
-  } else {
-    const introductionsChannel = message.guild.channels.cache.get(env.INTRODUCTIONS_CHANNEL_ID);
-    if (!introductionsChannel) return;
-
-    if (message.channel.id === env.INTRODUCTIONS_CHANNEL_ID) {
-      const introReactionEmoji = message.guild.emojis.cache.get(env.INTRODUCTIONS_REACTION_EMOJI_ID);
-      message.react(introReactionEmoji);
+  try {
+    if (message.webhookId === env.HEARDLE_WEBHOOK_ID) {
+      await handleHeardleWebhook(message);
     }
 
-    if (message.channel.id === env.BOT_BAIT_CHANNEL_ID) {
-      await handleBotBaitMessage(message);
-    }
+    if (message.author.bot) return; // ignore bot messages
 
-    switch (message.type) {
-      case MessageType.GuildBoostTier3:
-        handleServerBoosts(message, 3);
-        break;
-      case MessageType.GuildBoostTier2:
-        handleServerBoosts(message, 2);
-        break;
-      case MessageType.GuildBoostTier1:
-        handleServerBoosts(message, 1);
-        break;
-      case MessageType.GuildBoost:
-        handleServerBoosts(message, 0);
-        break;
-      case MessageType.RoleSubscriptionPurchase:
-        handleServerSubscriptions(message);
-        break;
-    }
+    if (message.channel.type === ChannelType.DM) {
+      await handleDirectMessage(message);
+    } else {
+      const introductionsChannel = message.guild.channels.cache.get(env.INTRODUCTIONS_CHANNEL_ID);
+      if (!introductionsChannel) return;
 
-    if ((message.channel.id == env.BOTS_CHANNEL_ID || message.member.roles.cache.has(env.MODERATORS_ROLE_ID)) && message.mentions.has(message.client.user) && !message.author.bot) {
-      try {
+      if (message.channel.id === env.INTRODUCTIONS_CHANNEL_ID) {
+        const introReactionEmoji = message.guild.emojis.cache.get(env.INTRODUCTIONS_REACTION_EMOJI_ID);
+        message.react(introReactionEmoji);
+      }
+
+      if (message.channel.id === env.BOT_BAIT_CHANNEL_ID) {
+        await handleBotBaitMessage(message);
+      }
+
+      switch (message.type) {
+        case MessageType.GuildBoostTier3:
+          await handleServerBoosts(message, 3);
+          break;
+        case MessageType.GuildBoostTier2:
+          await handleServerBoosts(message, 2);
+          break;
+        case MessageType.GuildBoostTier1:
+          await handleServerBoosts(message, 1);
+          break;
+        case MessageType.GuildBoost:
+          await handleServerBoosts(message, 0);
+          break;
+        case MessageType.RoleSubscriptionPurchase:
+          await handleServerSubscriptions(message);
+          break;
+      }
+
+      if ((message.channel.id == env.BOTS_CHANNEL_ID || message.member.roles.cache.has(env.MODERATORS_ROLE_ID)) && message.mentions.has(message.client.user) && !message.author.bot) {
         await handleMentions(message);
-      } catch (e) {
-        console.error(e);
       }
     }
+  } catch (error) {
+    await sendMessageInLogChannel(null, error, logChannel);
   }
 }
 
-function handleDirectMessage(message) {
+async function handleDirectMessage(message) {
   const logChannel = message.client.guilds.cache.get(env.GUILD_ID).channels.cache.get(env.LOGS_CHANNEL_ID);
   if (!logChannel) return;
 
@@ -71,10 +74,10 @@ function handleDirectMessage(message) {
     })
     .setTimestamp();
 
-  return logChannel.send({ embeds: [dmEmbed] });
+  await logChannel.send({ embeds: [dmEmbed] });
 }
 
-function handleServerBoosts(message, level) {
+async function handleServerBoosts(message, level) {
   const generalChannel = message.guild.channels.cache.get(env.GENERAL_CHANNEL_ID);
   if (!generalChannel) return;
 
@@ -105,7 +108,7 @@ function handleServerBoosts(message, level) {
 
   console.log(`${message.member.displayName} just boosted the server!`);
   boostEmbed.setDescription(`Server booster role: ${boosterRole} ${levelAnnouncements.get(level)}`);
-  generalChannel.send({ content: `${message.author}`, embeds: [boostEmbed] });
+  await generalChannel.send({ content: `${message.author}`, embeds: [boostEmbed] });
 }
 
 async function handleMentions(message) {
@@ -121,30 +124,34 @@ async function handleMentions(message) {
     case messageContent.includes('goodmorning'):
       const messages1 = ['GOOD MORNING', 'good morning x', 'goooood morning', 'mornin', 'gomo'];
       const randomMessage1 = messages1[Math.floor(Math.random() * messages1.length)];
-      return message.reply({ content: randomMessage1 });
+      await message.reply({ content: randomMessage1 });
+      break;
     case messageContent.includes('good night'):
     case messageContent.includes('goodnight'):
     case messageContent.includes('nini'):
     case messageContent.includes('gn'):
       const messages2 = ['nini', 'night night', 'gn x', 'good night x', 'dont let the bed bugs bite x'];
       const randomMessage2 = messages2[Math.floor(Math.random() * messages2.length)];
-      return message.reply({ content: randomMessage2 });
+      await message.reply({ content: randomMessage2 });
+      break;
     case messageContent.includes('hi'):
     case messageContent.includes('hey'):
     case messageContent.includes('hello'):
       const messages3 = ['hello x', 'hey', 'hi x'];
       const randomMessage3 = messages3[Math.floor(Math.random() * messages3.length)];
-      return message.reply({ content: randomMessage3 });
+      await message.reply({ content: randomMessage3 });
+      break;
     case messageContent.includes('ily'):
     case messageContent.includes('i love you'):
     case messageContent.includes('i love u'):
       const messages4 = ['i love you too x', 'ily2 x', 'i love u more'];
       const randomMessage4 = messages4[Math.floor(Math.random() * messages4.length)];
-      return message.reply({ content: randomMessage4 });
+      await message.reply({ content: randomMessage4 });
+      break;
   }
 }
 
-function handleServerSubscriptions(message) {
+async function handleServerSubscriptions(message) {
   const generalChannel = message.guild.channels.cache.get(env.GENERAL_CHANNEL_ID);
   if (!generalChannel) return;
 
@@ -167,7 +174,7 @@ function handleServerSubscriptions(message) {
     })
     .setTimestamp();
 
-  generalChannel.send({ content: `${message.author}`, embeds: [subscriptionEmbed] });
+  await generalChannel.send({ content: `${message.author}`, embeds: [subscriptionEmbed] });
 }
 
 async function handleHeardleWebhook(message) {
@@ -183,46 +190,39 @@ async function handleHeardleWebhook(message) {
 
     const notificationRole = await message.guild.roles.cache.get(env.HEARDLE_ROLE_ID);
 
-    try {
-      // close and lock previous thread
-      const lastThread = heardleChannel.threads.cache.last();
-      if (lastThread && !lastThread.locked) {
-        try {
-          await lastThread.setLocked(true);
-        } catch (err) {
-          console.log('Failed to lock thread: ', err);
-        }
+    // close and lock previous thread
+    const lastThread = heardleChannel.threads.cache.last();
+    if (lastThread && !lastThread.locked) {
+      try {
+        await lastThread.setLocked(true);
+      } catch (err) {
+        const logChannel = message.guild.channels.cache.get(env.LOGS_CHANNEL_ID);
+        await sendMessageInLogChannel(null, err, logChannel);
       }
+    }
 
-      const heardleEmbed = new EmbedBuilder()
-        .setTitle(`EDEN Heardle #${dayNumber} - New daily song!`)
-        .setURL(HEARDLE_URL)
-        .setDescription(`Yesterday's song was **${previousSong}**`)
-        .setThumbnail(EDEN_LOGO)
-        .setColor(Colors.HEARDLE)
-        .setFooter({
-          text: 'Share your results in the thread!',
-          iconURL: server.iconURL({ dynamic: true })
-        });
-
-      const dailyMessage = await heardleChannel.send({ content: `${notificationRole}`, embeds: [heardleEmbed] });
-
-      await dailyMessage.startThread({
-        name: `EDEN Heardle #${dayNumber}`,
-        autoArchiveDuration: ThreadAutoArchiveDuration.OneDay,
-        reason: 'New daily Heardle song'
+    const heardleEmbed = new EmbedBuilder()
+      .setTitle(`EDEN Heardle #${dayNumber} - New daily song!`)
+      .setURL(HEARDLE_URL)
+      .setDescription(`Yesterday's song was **${previousSong}**`)
+      .setThumbnail(EDEN_LOGO)
+      .setColor(Colors.HEARDLE)
+      .setFooter({
+        text: 'Share your results in the thread!',
+        iconURL: server.iconURL({ dynamic: true })
       });
-    } catch (err) {
-      console.log('Error with announcing daily Heardle: ', err);
-    }
-  } else if (webhookEmbed.data.title.toLowerCase().includes('heardle') && webhookEmbed.data.description.toLowerCase().includes('error')) {
-    try {
-      const owner = message.guild.members.cache.get(message.guild.ownerId);
 
-      await owner.send({ embeds: [webhookEmbed], content: 'Error with EDEN Heardle:' });
-    } catch (err) {
-      console.log('Error handling EDEN Heardle error:', err);
-    }
+    const dailyMessage = await heardleChannel.send({ content: `${notificationRole}`, embeds: [heardleEmbed] });
+
+    await dailyMessage.startThread({
+      name: `EDEN Heardle #${dayNumber}`,
+      autoArchiveDuration: ThreadAutoArchiveDuration.OneDay,
+      reason: 'New daily Heardle song'
+    });
+  } else if (webhookEmbed.data.title.toLowerCase().includes('heardle') && webhookEmbed.data.description.toLowerCase().includes('error')) {
+    const owner = message.guild.members.cache.get(message.guild.ownerId);
+
+    await owner.send({ embeds: [webhookEmbed], content: 'Error with EDEN Heardle:' });
   }
 }
 
@@ -237,38 +237,31 @@ async function handleBotBaitMessage(message) {
   const modChannel = message.guild.channels.cache.get(env.MODERATORS_CHANNEL_ID);
   const member = message.member;
 
-  try {
-    await member.ban({ deleteMessageSeconds: 60 * 60 * 24, reason: 'Sent message in bot-bait channel' });
+  await member.ban({ deleteMessageSeconds: 60 * 60 * 24, reason: 'Sent message in bot-bait channel' });
 
-    const logEmbed = new EmbedBuilder()
-      .setTitle(`[Bot Bait] ${member.displayName} was banned.`)
-      .addFields([{ name: 'User ID: ', value: `${member.id}` }])
-      .setColor(Colors.ERROR)
-      .setThumbnail(member.user.displayAvatarURL({ dynamic: true }))
-      .setFooter({
-        text: message.guild.name,
-        iconURL: message.guild.iconURL({ dynamic: true })
-      })
-      .setTimestamp();
-    await modChannel.send({ embeds: [logEmbed] });
+  const logEmbed = new EmbedBuilder()
+    .setTitle(`[Bot Bait] ${member.displayName} was banned.`)
+    .addFields([{ name: 'User ID: ', value: `${member.id}` }])
+    .setColor(Colors.ERROR)
+    .setThumbnail(member.user.displayAvatarURL({ dynamic: true }))
+    .setFooter({
+      text: message.guild.name,
+      iconURL: message.guild.iconURL({ dynamic: true })
+    })
+    .setTimestamp();
+  await modChannel.send({ embeds: [logEmbed] });
 
-    const owner = await message.guild.fetchOwner();
+  const owner = await message.guild.fetchOwner();
 
-    const banEmbed = new EmbedBuilder()
-      .setTitle(`You were banned from **${message.guild.name}**.`)
-      .setDescription(`Sent message in bot-bait channel, please message ${owner.user} if this was a mistake`)
-      .setColor(Colors.ERROR)
-      .setFooter({
-        text: message.guild.name,
-        iconURL: message.guild.iconURL({ dynamic: true })
-      })
-      .setTimestamp();
+  const banEmbed = new EmbedBuilder()
+    .setTitle(`You were banned from **${message.guild.name}**.`)
+    .setDescription(`Sent message in bot-bait channel, please message ${owner.user} if this was a mistake`)
+    .setColor(Colors.ERROR)
+    .setFooter({
+      text: message.guild.name,
+      iconURL: message.guild.iconURL({ dynamic: true })
+    })
+    .setTimestamp();
 
-    await member.send({ embeds: [banEmbed] });
-  } catch (err) {
-    console.error(err);
-    const msgFailEmbed = new EmbedBuilder().setDescription(err.message).setColor(Colors.CONFIRM);
-
-    await modChannel.send({ embeds: [msgFailEmbed] });
-  }
+  await member.send({ embeds: [banEmbed] });
 }

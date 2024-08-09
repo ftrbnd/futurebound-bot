@@ -1,5 +1,5 @@
 import { EmbedBuilder, PermissionFlagsBits, SlashCommandBuilder, ChannelType } from 'discord.js';
-import { sendErrorEmbed } from '../utils/sendErrorEmbed.js';
+import { replyToInteraction } from '../utils/error-handler.js';
 import { Colors } from '../utils/constants.js';
 
 export const data = new SlashCommandBuilder()
@@ -13,12 +13,12 @@ export async function execute(interaction) {
     const channel = interaction.options.getChannel('channel');
     const emoji = interaction.options.getString('emoji');
 
-    channel.lastMessage.react(emoji);
+    await channel.lastMessage.react(emoji);
 
     const confirmEmbed = new EmbedBuilder().setDescription(`Reacted to ${channel.lastMessage} with ${emoji}`).setColor(Colors.CONFIRM);
 
-    interaction.reply({ embeds: [confirmEmbed], ephemeral: true });
+    await interaction.reply({ embeds: [confirmEmbed], ephemeral: true });
   } catch (err) {
-    sendErrorEmbed(interaction, err);
+    await replyToInteraction(interaction, err);
   }
 }

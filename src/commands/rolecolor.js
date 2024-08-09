@@ -1,8 +1,7 @@
 import { EmbedBuilder, SlashCommandBuilder } from 'discord.js';
 import validateColor from 'validate-color';
-import { sendErrorEmbed } from '../utils/sendErrorEmbed.js';
+import { replyToInteraction } from '../utils/error-handler.js';
 import { env } from '../utils/env.js';
-import { Colors } from '../utils/constants.js';
 
 const { validateHTMLColorHex } = validateColor;
 
@@ -13,26 +12,21 @@ export const data = new SlashCommandBuilder()
 export async function execute(interaction) {
   try {
     if (!interaction.member.roles.cache.has(env.SUBSCRIBER_ROLE_ID)) {
-      const permsEmbed = new EmbedBuilder()
-        .setTitle('You are not a Server Subscriber!')
-        .setDescription(`https://discord.com/channels/${interaction.guild.id}/role-subscriptions`)
-        .setColor(Colors.ERROR);
-      return await interaction.reply({ embeds: [permsEmbed], ephemeral: true });
+      throw new Error('You are not a Server Subscriber!');
     }
 
     let color = interaction.options.getString('hex');
     if (!color.startsWith('#')) color = `#${color}`;
 
     if (!validateHTMLColorHex(color)) {
-      const permsEmbed = new EmbedBuilder().setDescription('Please enter a valid hex color code.').setColor(Colors.ERROR);
-      return await interaction.reply({ embeds: [permsEmbed], ephemeral: true });
+      throw new Error('Please enter a valid hex color code.');
     }
 
-    let verb;
-    if (interaction.member.roles.cache.find((role) => role.name == 'Subscriber Custom Color')) {
+    const alreadyHasCustomColor = interaction.member.roles.cache.find((role) => role.name == 'Subscriber Custom Color');
+    if (alreadyHasCustomColor) {
       const colorRole = interaction.member.roles.cache.find((role) => role.name == 'Subscriber Custom Color');
+
       colorRole.setColor(color);
-      verb = 'Updated';
     } else {
       const colorRole = await interaction.guild.roles.create({
         name: 'Subscriber Custom Color',
@@ -41,13 +35,13 @@ export async function execute(interaction) {
       });
 
       interaction.member.roles.add(colorRole);
-      verb = 'Set';
     }
 
+    const verb = alreadyHasCustomColor ? 'Updated' : 'Set';
     const confirmEmbed = new EmbedBuilder().setDescription(`${verb} your custom color to ${color}`).setColor(color);
 
     await interaction.reply({ embeds: [confirmEmbed] });
   } catch (err) {
-    sendErrorEmbed(interaction, err);
+    await replyToInteraction(interaction, err);
   }
 }
