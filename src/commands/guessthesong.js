@@ -2,7 +2,7 @@ import { readdirSync } from 'fs';
 import { resolve } from 'path';
 import { EmbedBuilder, SlashCommandBuilder } from 'discord.js';
 import { sendErrorEmbed } from '../utils/sendErrorEmbed.js';
-import { lineSplitFile } from '../utils/lineSplitFile.js';
+import { lineSplitFile } from '../utils/line-split-file.js';
 import { Colors, EDEN_LOGO } from '../utils/constants.js';
 
 const __dirname = import.meta.dirname;

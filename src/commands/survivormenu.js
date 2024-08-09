@@ -2,7 +2,7 @@ import { resolve } from 'path';
 
 import { EmbedBuilder, PermissionFlagsBits, SlashCommandBuilder, ActionRowBuilder, StringSelectMenuBuilder } from 'discord.js';
 import { sendErrorEmbed } from '../utils/sendErrorEmbed.js';
-import { lineSplitFile } from '../utils/lineSplitFile.js';
+import { lineSplitFile } from '../utils/line-split-file.js';
 import { createSurvivorRound, getSurvivorRound, updateRoundAfterSend } from '../lib/mongo/services/SurvivorRound.js';
 import { env } from '../utils/env.js';
 import { Colors } from '../utils/constants.js';

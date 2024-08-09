@@ -1,7 +1,7 @@
 import { resolve } from 'path';
 import { EmbedBuilder, PermissionFlagsBits, SlashCommandBuilder } from 'discord.js';
 import { sendErrorEmbed } from '../utils/sendErrorEmbed.js';
-import { lineSplitFile } from '../utils/lineSplitFile.js';
+import { lineSplitFile } from '../utils/line-split-file.js';
 import { createAlbum, getAlbum, removeTrack, resetTracks } from '../lib/mongo/services/Album.js';
 import { env } from '../utils/env.js';
 import { Colors } from '../utils/constants.js';
