@@ -1,5 +1,5 @@
 import { EmbedBuilder, PermissionFlagsBits, SlashCommandBuilder } from 'discord.js';
-import { sendErrorEmbed } from '../utils/sendErrorEmbed.js';
+import { replyToInteraction, sendMessageInLogChannel } from '../utils/error-handler.js';
 import { env } from '../utils/env.js';
 import { Colors } from '../utils/constants.js';
 
@@ -17,11 +17,7 @@ export async function execute(interaction) {
     const modChannel = interaction.guild.channels.cache.get(env.MODERATORS_CHANNEL_ID);
     if (!modChannel) return;
 
-    try {
-      interaction.guild.members.kick(userToKick, (options = { reason: reasonForKick }));
-    } catch (err) {
-      return console.log(err);
-    }
+    await interaction.guild.members.kick(userToKick, (options = { reason: reasonForKick }));
 
     const logEmbed = new EmbedBuilder()
       .setTitle(userToKick.tag + ' was kicked.')
@@ -37,7 +33,7 @@ export async function execute(interaction) {
         iconURL: interaction.guild.iconURL({ dynamic: true })
       })
       .setTimestamp();
-    modChannel.send({ embeds: [logEmbed] });
+    await modChannel.send({ embeds: [logEmbed] });
 
     const kickEmbed = new EmbedBuilder()
       .setTitle(`You were kicked from **${interaction.guild.name}**.`)
@@ -52,12 +48,13 @@ export async function execute(interaction) {
     try {
       await userToKick.send({ embeds: [kickEmbed] });
     } catch (err) {
-      return console.error(err);
+      await sendMessageInLogChannel(interaction, err);
     }
 
     const kickedEmbed = new EmbedBuilder().setDescription(`${userToKick} was kicked.`).setColor(Colors.CONFIRM);
-    interaction.reply({ embeds: [kickedEmbed] });
+
+    await interaction.reply({ embeds: [kickedEmbed] });
   } catch (err) {
-    sendErrorEmbed(interaction, err);
+    await replyToInteraction(interaction, err);
   }
 }

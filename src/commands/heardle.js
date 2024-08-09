@@ -1,6 +1,6 @@
 import { ActionRowBuilder, ButtonBuilder } from '@discordjs/builders';
 import { SlashCommandBuilder, ButtonStyle, EmbedBuilder, PermissionFlagsBits } from 'discord.js';
-import { sendErrorEmbed } from '../utils/sendErrorEmbed.js';
+import { replyToInteraction } from '../utils/error-handler.js';
 import { statusSquares } from '../lib/heardle/guess-statuses.js';
 import { getUserStats, getLeaderboard, createLeaderboardDescription, setAnnouncement, sendHealthCheck } from '../lib/heardle/api.js';
 import { env } from '../utils/env.js';
@@ -38,7 +38,7 @@ export async function execute(interaction) {
       const user = interaction.options.getUser('user') ?? interaction.user;
       const { guesses, statistics } = await getUserStats(user);
 
-      const completedDaily = guesses.length > 0 && (guesses.length === 6 || guesses.at(-1).correctStatus === 'CORRECT');
+      const completedDaily = guesses.length > 0 && (guesses.length === 6 || guesses.some((guess) => guess.correctStatus === 'CORRECT'));
 
       const statsEmbed = new EmbedBuilder()
         .setAuthor({ name: user.displayName, iconURL: user.displayAvatarURL() })
@@ -72,8 +72,7 @@ export async function execute(interaction) {
     } else if (interaction.options.getSubcommand() === 'set-announcement') {
       const owner = await interaction.guild.fetchOwner();
       if (interaction.member.id !== owner.id) {
-        const embed = new EmbedBuilder().setDescription('You are not the server owner.').setColor(Colors.ERROR);
-        return interaction.reply({ embeds: [embed] });
+        throw new Error('You are not the server owner.');
       }
 
       const showBanner = interaction.options.getBoolean('show_banner');
@@ -98,8 +97,7 @@ export async function execute(interaction) {
     } else if (interaction.options.getSubcommand() === 'health-check') {
       const owner = await interaction.guild.fetchOwner();
       if (interaction.member.id !== owner.id) {
-        const embed = new EmbedBuilder().setDescription('You are not the server owner.').setColor(Colors.ERROR);
-        return interaction.reply({ embeds: [embed] });
+        throw new Error('You are not the server owner.');
       }
 
       await interaction.deferReply({ ephemeral: true });
@@ -111,10 +109,10 @@ export async function execute(interaction) {
 
         await interaction.editReply({ embeds: [responseEmbed], ephemeral: true });
       } catch (error) {
-        sendErrorEmbed(interaction, error, true);
+        replyToInteraction(interaction, error, true);
       }
     }
   } catch (err) {
-    sendErrorEmbed(interaction, err);
+    replyToInteraction(interaction, err);
   }
 }

@@ -1,5 +1,5 @@
 import { EmbedBuilder, PermissionFlagsBits, SlashCommandBuilder } from 'discord.js';
-import { sendErrorEmbed } from '../utils/sendErrorEmbed.js';
+import { replyToInteraction } from '../utils/error-handler.js';
 import { Colors } from '../utils/constants.js';
 
 export const data = new SlashCommandBuilder()
@@ -13,12 +13,12 @@ export async function execute(interaction) {
     const targetChannel = interaction.options.getChannel('channel');
     const seconds = interaction.options.getInteger('seconds');
 
-    targetChannel.setRateLimitPerUser(seconds);
+    await targetChannel.setRateLimitPerUser(seconds);
 
     const embed = new EmbedBuilder().setDescription(`Enabled slowmode in ${targetChannel} for ${seconds} seconds`).setColor(Colors.CONFIRM);
 
     await interaction.reply({ embeds: [embed], ephemeral: true });
   } catch (err) {
-    sendErrorEmbed(interaction, err);
+    await replyToInteraction(interaction, err);
   }
 }

@@ -1,6 +1,6 @@
 import imgur from 'imgur';
 import { SlashCommandBuilder } from 'discord.js';
-import { sendErrorEmbed } from '../utils/sendErrorEmbed.js';
+import { replyToInteraction } from '../utils/error-handler.js';
 import { env } from '../utils/env.js';
 
 const { getAlbumInfo } = imgur;
@@ -22,6 +22,6 @@ export async function execute(interaction) {
 
     await interaction.reply({ files: [randomImageUrl] });
   } catch (err) {
-    sendErrorEmbed(interaction, err);
+    await replyToInteraction(interaction, err);
   }
 }

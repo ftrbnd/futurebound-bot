@@ -1,5 +1,5 @@
 import { EmbedBuilder, PermissionFlagsBits, SlashCommandBuilder } from 'discord.js';
-import { sendErrorEmbed } from '../utils/sendErrorEmbed.js';
+import { replyToInteraction, sendMessageInLogChannel } from '../utils/error-handler.js';
 import { createUser, getUser, updateUserWarning } from '../lib/mongo/services/User.js';
 import { env } from '../utils/env.js';
 import { Colors } from '../utils/constants.js';
@@ -61,13 +61,13 @@ export async function execute(interaction) {
     try {
       await userToWarn.send({ embeds: [warnEmbed] });
     } catch (err) {
-      return console.error(err);
+      sendMessageInLogChannel(interaction, err);
     }
 
     const warnedEmbed = new EmbedBuilder().setDescription(`${userToWarn} was warned.`).setColor(Colors.YELLOW);
 
     await interaction.reply({ embeds: [warnedEmbed] });
   } catch (err) {
-    sendErrorEmbed(interaction, err);
+    await replyToInteraction(interaction, err);
   }
 }

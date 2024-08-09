@@ -1,5 +1,5 @@
 import { EmbedBuilder, SlashCommandBuilder, PermissionFlagsBits, ChannelType } from 'discord.js';
-import { sendErrorEmbed } from '../../../utils/sendErrorEmbed.js';
+import { replyToInteraction } from '../../../utils/error-handler.js';
 import { createPlaylist, getPlaylist, getPlaylistChoices, updatePlaylistLink } from '../../mongo/services/Playlist.js';
 import { Colors } from '../../../utils/constants.js';
 
@@ -55,14 +55,12 @@ export async function execute(interaction) {
 
         const playlist = await getPlaylist({ name: playlistName });
         if (!playlist) {
-          const dataEmbed = new EmbedBuilder().setDescription(`**${playlistName}** custom playlist does not exist`).setColor(Colors.ERROR);
-          return interaction.reply({ embeds: [dataEmbed] });
+          throw new Error(`**${playlistName}** custom playlist does not exist`);
         }
 
         const voiceChannel = interaction.member.voice.channel;
         if (!voiceChannel) {
-          const errEmbed = new EmbedBuilder().setDescription(`You must join a voice channel!`).setColor(Colors.ERROR);
-          return interaction.reply({ embeds: [errEmbed] });
+          throw new Error(`You must join a voice channel!`);
         }
 
         await interaction.client.DisTube.play(voiceChannel, playlist.link, {
@@ -79,6 +77,6 @@ export async function execute(interaction) {
       }
     }
   } catch (err) {
-    sendErrorEmbed(interaction, err);
+    await replyToInteraction(interaction, err);
   }
 }

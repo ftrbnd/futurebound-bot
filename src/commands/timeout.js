@@ -1,5 +1,5 @@
 import { EmbedBuilder, PermissionFlagsBits, SlashCommandBuilder } from 'discord.js';
-import { sendErrorEmbed } from '../utils/sendErrorEmbed.js';
+import { replyToInteraction, sendMessageInLogChannel } from '../utils/error-handler.js';
 import { env } from '../utils/env.js';
 import { Colors } from '../utils/constants.js';
 
@@ -32,14 +32,7 @@ export async function execute(interaction) {
     const modChannel = interaction.guild.channels.cache.get(env.MODERATORS_CHANNEL_ID);
     if (!modChannel) return;
 
-    try {
-      userToTimeout.timeout(duration, reasonForTimeout);
-    } catch (err) {
-      const errEmbed = new EmbedBuilder().setDescription('Error in timing out user.').setColor(Colors.ERROR);
-
-      await interaction.reply({ embeds: [errEmbed] });
-      return console.log(err);
-    }
+    await userToTimeout.timeout(duration, reasonForTimeout);
 
     const millisecondsToDuration = new Map([
       [60000, '1 minute'],
@@ -79,15 +72,13 @@ export async function execute(interaction) {
     try {
       await userToTimeout.send({ embeds: [timeoutEmbed] });
     } catch (err) {
-      const errEmbed = new EmbedBuilder().setDescription('Error in sending message to user.').setColor(Colors.ERROR);
-      await interaction.reply({ embeds: [errEmbed] });
-      console.log(err);
+      await sendMessageInLogChannel(interaction, err);
     }
 
     const timedOutEmbed = new EmbedBuilder().setDescription(`${userToTimeout} was timed out for ${millisecondsToDuration.get(duration)}.`).setColor(Colors.CONFIRM);
 
     await interaction.reply({ embeds: [timedOutEmbed] });
   } catch (err) {
-    sendErrorEmbed(interaction, err);
+    await replyToInteraction(interaction, err);
   }
 }

@@ -1,5 +1,5 @@
 import { EmbedBuilder, PermissionFlagsBits, SlashCommandBuilder } from 'discord.js';
-import { sendErrorEmbed } from '../utils/sendErrorEmbed.js';
+import { replyToInteraction, sendMessageInLogChannel } from '../utils/error-handler.js';
 import { env } from '../utils/env.js';
 import { Colors } from '../utils/constants.js';
 
@@ -17,11 +17,7 @@ export async function execute(interaction) {
     const modChannel = interaction.guild.channels.cache.get(env.MODERATORS_CHANNEL_ID);
     if (!modChannel) return;
 
-    try {
-      await interaction.guild.members.ban(userToBan, (options = { reason: reasonForBan }));
-    } catch (err) {
-      return console.error(err);
-    }
+    await interaction.guild.members.ban(userToBan, { reason: reasonForBan });
 
     const logEmbed = new EmbedBuilder()
       .setTitle(userToBan.tag + ' was banned.')
@@ -37,7 +33,7 @@ export async function execute(interaction) {
         iconURL: interaction.guild.iconURL({ dynamic: true })
       })
       .setTimestamp();
-    modChannel.send({ embeds: [logEmbed] });
+    await modChannel.send({ embeds: [logEmbed] });
 
     const banEmbed = new EmbedBuilder()
       .setTitle(`You were banned from **${interaction.guild.name}**.`)
@@ -52,14 +48,13 @@ export async function execute(interaction) {
     try {
       await userToBan.send({ embeds: [banEmbed] });
     } catch (err) {
-      console.error(err);
-      const msgFailEmbed = new EmbedBuilder().setDescription(`Failed to send message to ${userToBan}.`).setColor(Colors.CONFIRM);
-      modChannel.send({ embeds: [msgFailEmbed] });
+      await sendMessageInLogChannel(interaction, err);
     }
 
     const bannedEmbed = new EmbedBuilder().setDescription(`${userToBan} was banned.`).setColor(Colors.CONFIRM);
-    interaction.reply({ embeds: [bannedEmbed] });
+
+    await interaction.reply({ embeds: [bannedEmbed] });
   } catch (err) {
-    sendErrorEmbed(interaction, err);
+    await replyToInteraction(interaction, err);
   }
 }

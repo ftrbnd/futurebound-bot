@@ -1,7 +1,7 @@
 import { readdirSync } from 'fs';
 import { resolve } from 'path';
 import { EmbedBuilder, SlashCommandBuilder } from 'discord.js';
-import { sendErrorEmbed } from '../utils/sendErrorEmbed.js';
+import { replyToInteraction } from '../utils/error-handler.js';
 import { lineSplitFile } from '../utils/line-split-file.js';
 import { env } from '../utils/env.js';
 import { Colors, EDEN_LOGO } from '../utils/constants.js';
@@ -18,6 +18,10 @@ export async function execute(interaction) {
 
     const lyricsFolder = resolve(__dirname, '../text-files/lyrics');
     const songFiles = readdirSync(lyricsFolder).filter((file) => file.endsWith('.txt'));
+
+    if (!songFiles.includes(song)) {
+      throw new Error(`**${song}** is not a valid song, please try again!`);
+    }
 
     for (let i = 0; i < songFiles.length; i++) {
       let songName = songFiles[i].slice(0, -4); // remove '.txt'
@@ -66,15 +70,10 @@ export async function execute(interaction) {
           }
         }
 
-        return await interaction.reply({ embeds: [lyricsEmbed] });
+        await interaction.reply({ embeds: [lyricsEmbed] });
       }
     }
-
-    if (!songFiles.includes(song)) {
-      const errEmbed = new EmbedBuilder().setDescription(`**${song}** is not a valid song, please try again!`).setColor(Colors.ERROR);
-      return await interaction.reply({ embeds: [errEmbed], ephemeral: true });
-    }
   } catch (err) {
-    sendErrorEmbed(interaction, err);
+    await replyToInteraction(interaction, err);
   }
 }

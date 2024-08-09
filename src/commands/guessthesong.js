@@ -1,7 +1,7 @@
 import { readdirSync } from 'fs';
 import { resolve } from 'path';
 import { EmbedBuilder, SlashCommandBuilder } from 'discord.js';
-import { sendErrorEmbed } from '../utils/sendErrorEmbed.js';
+import { replyToInteraction } from '../utils/error-handler.js';
 import { lineSplitFile } from '../utils/line-split-file.js';
 import { Colors, EDEN_LOGO } from '../utils/constants.js';
 
@@ -51,12 +51,12 @@ export async function execute(interaction) {
         text: interaction.guild.name,
         iconURL: interaction.guild.iconURL({ dynamic: true })
       });
-    interaction.reply({ embeds: [guessTheSongEmbed] });
+    await interaction.reply({ embeds: [guessTheSongEmbed] });
 
     const filter = (m) => m.content.toLowerCase().includes(songName.toLowerCase());
     const collector = interaction.channel.createMessageCollector({ filter, time: 15000 }); // collector stops checking after 15 seconds
 
-    collector.on('collect', (m) => {
+    collector.on('collect', async (m) => {
       const winnerEmbed = new EmbedBuilder()
         .setTitle(m.author.username + ' guessed the song!')
         .addFields([{ name: 'Song', value: songName }])
@@ -68,11 +68,11 @@ export async function execute(interaction) {
           iconURL: m.guild.iconURL({ dynamic: true })
         });
 
-      m.reply({ embeds: [winnerEmbed] });
+      await m.reply({ embeds: [winnerEmbed] });
       collector.stop();
     });
 
-    collector.on('end', (collected) => {
+    collector.on('end', async (collected) => {
       if (collected.size == 0) {
         // if no correct song was guessed (collected by the MessageCollector)
         const timesUpEmbed = new EmbedBuilder()
@@ -85,10 +85,10 @@ export async function execute(interaction) {
             iconURL: interaction.guild.iconURL({ dynamic: true })
           });
 
-        interaction.followUp({ embeds: [timesUpEmbed] });
+        await interaction.followUp({ embeds: [timesUpEmbed] });
       }
     });
   } catch (err) {
-    sendErrorEmbed(interaction, err);
+    await replyToInteraction(interaction, err);
   }
 }

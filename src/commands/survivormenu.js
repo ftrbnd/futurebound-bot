@@ -1,7 +1,7 @@
 import { resolve } from 'path';
 
 import { EmbedBuilder, PermissionFlagsBits, SlashCommandBuilder, ActionRowBuilder, StringSelectMenuBuilder } from 'discord.js';
-import { sendErrorEmbed } from '../utils/sendErrorEmbed.js';
+import { replyToInteraction } from '../utils/error-handler.js';
 import { lineSplitFile } from '../utils/line-split-file.js';
 import { createSurvivorRound, getSurvivorRound, updateRoundAfterSend } from '../lib/mongo/services/SurvivorRound.js';
 import { env } from '../utils/env.js';
@@ -57,8 +57,7 @@ export async function execute(interaction) {
       // Moderator role
       const survivorChannel = interaction.guild.channels.cache.find((channel) => channel.id === env.SURVIVOR_CHANNEL_ID);
       if (!survivorChannel) {
-        const errEmbed = new EmbedBuilder().setDescription(`There is no survivor channel - please create one!`).setColor(Colors.ERROR);
-        return interaction.reply({ embeds: [errEmbed] });
+        throw new Error(`There is no survivor channel - please create one!`);
       }
 
       const albumName = interaction.options.getString('album');
@@ -68,14 +67,10 @@ export async function execute(interaction) {
       const albumCover = albumTracks.pop();
 
       if (interaction.options.getSubcommand() === 'standings') {
-        // get current votes
         const survivorRound = await getSurvivorRound({ album: albumName });
         if (!survivorRound) {
-          const errEmbed = new EmbedBuilder().setDescription(`No data exists for **${albumName}**`).setColor(Colors.ERROR);
-          await interaction.reply({ embeds: [errEmbed] });
-          return console.log(`No data exists for ${albumName}`);
+          throw new Error(`No data exists for **${albumName}**`);
         } else {
-          // if data exists, get votes
           let totalVotes = 0;
 
           const songVotes = [];
@@ -97,12 +92,11 @@ export async function execute(interaction) {
               text: `${totalVotes} total votes`
             });
 
-          return interaction.reply({ embeds: [standingsEmbed] });
+          await interaction.reply({ embeds: [standingsEmbed] });
         }
       } else if (interaction.options.getSubcommand() === 'round') {
         if (interaction.channel == survivorChannel) {
-          const errEmbed = new EmbedBuilder().setDescription(`Please use this command in ${interaction.guild.channels.cache.get(env.COMMANDS_CHANNEL_ID)}`).setColor(Colors.ERROR);
-          return interaction.reply({ embeds: [errEmbed], ephemeral: true });
+          throw new Error(`Please use this command in ${interaction.guild.channels.cache.get(env.COMMANDS_CHANNEL_ID)}`);
         }
 
         const survivorRole = interaction.guild.roles.cache.get(env.SURVIVOR_ROLE_ID);
@@ -120,7 +114,6 @@ export async function execute(interaction) {
         }
 
         if (!survivorRound) {
-          // if the survivor album isn't already in the database, add it
           await createSurvivorRound({
             album: albumName,
             tracks: albumTracks,
@@ -234,13 +227,13 @@ export async function execute(interaction) {
 
         const description = roundNumber > 0 ? `✅ ${survivorChannel}` : `Reset **${albumName}** document in database - use **/survivormenu** again`;
         const confirmEmbed = new EmbedBuilder().setColor(embedColor).setDescription(description);
-        return interaction.reply({ embeds: [confirmEmbed] });
+        await interaction.reply({ embeds: [confirmEmbed] });
       }
     } else {
       const permsEmbed = new EmbedBuilder().setDescription('You do not have permission to use this command.').setColor(Colors.ERROR);
-      return interaction.reply({ embeds: [permsEmbed], ephemeral: true });
+      await interaction.reply({ embeds: [permsEmbed], ephemeral: true });
     }
   } catch (err) {
-    sendErrorEmbed(interaction, err);
+    await replyToInteraction(interaction, err);
   }
 }

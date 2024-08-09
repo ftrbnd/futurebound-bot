@@ -1,5 +1,5 @@
 import { EmbedBuilder, PermissionFlagsBits, SlashCommandBuilder } from 'discord.js';
-import { sendErrorEmbed } from '../utils/sendErrorEmbed.js';
+import { replyToInteraction, sendMessageInLogChannel } from '../utils/error-handler.js';
 import { createUser, getUser, updateUserMute } from '../lib/mongo/services/User.js';
 import { env } from '../utils/env.js';
 import { Colors } from '../utils/constants.js';
@@ -23,23 +23,17 @@ export async function execute(interaction) {
     const user = await getUser({ discordId: userToMute.id });
 
     if (!user) {
-      // if the user isn't already in the database, add their data
       await createUser({
         discordId: userToMute.id,
         username: userToMute.username,
         muteEnd: oneWeek
       });
     } else {
-      // if they already were in the database, simply update and save
       await updateUserMute(user, oneWeek, userToMute.username);
     }
 
-    try {
-      userToMuteMember = interaction.guild.members.cache.get(`${userToMute.id}`);
-      userToMuteMember.roles.set([env.MUTED_ROLE_ID]); // Mute role
-    } catch (err) {
-      return console.error(err);
-    }
+    const userToMuteMember = interaction.guild.members.cache.get(`${userToMute.id}`);
+    userToMuteMember.roles.set([env.MUTED_ROLE_ID]); // Mute role
 
     const logEmbed = new EmbedBuilder()
       .setTitle(userToMute.tag + ' was muted for a week.')
@@ -56,7 +50,8 @@ export async function execute(interaction) {
         iconURL: interaction.guild.iconURL({ dynamic: true })
       })
       .setTimestamp();
-    modChannel.send({ embeds: [logEmbed] });
+
+    await modChannel.send({ embeds: [logEmbed] });
 
     const muteEmbed = new EmbedBuilder()
       .setTitle(`You were muted in **${interaction.guild.name}** for a week.`)
@@ -74,12 +69,13 @@ export async function execute(interaction) {
     try {
       await userToMute.send({ embeds: [muteEmbed] });
     } catch (err) {
-      return console.error(err);
+      await sendMessageInLogChannel(interaction, err);
     }
 
     const mutedEmbed = new EmbedBuilder().setDescription(`${userToMute} was muted.`).setColor(Colors.CONFIRM);
-    interaction.reply({ embeds: [mutedEmbed] });
+
+    await interaction.reply({ embeds: [mutedEmbed] });
   } catch (err) {
-    sendErrorEmbed(interaction, err);
+    replyToInteraction(interaction, err);
   }
 }
