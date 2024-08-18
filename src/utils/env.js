@@ -4,7 +4,7 @@ dotenv.config();
 import z from 'zod';
 
 const envSchema = z.object({
-  NODE_ENV: z.enum(['production', 'development']).optional(),
+  NODE_ENV: z.enum(['production', 'development', 'action']).optional(),
 
   DISCORD_TOKEN: z.string(),
   DISCORD_CLIENT_ID: z.string(),
@@ -54,4 +54,4 @@ const envSchema = z.object({
   NUMBER_EMOJIS: z.string().transform((val) => val.split(','))
 });
 
-export const env = envSchema.parse(process.env);
+export const env = process.env.NODE_ENV !== 'action' ? envSchema.parse(process.env) : envSchema.partial().parse(process.env);
