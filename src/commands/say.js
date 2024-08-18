@@ -1,5 +1,4 @@
 import { EmbedBuilder, PermissionFlagsBits, SlashCommandBuilder, ChannelType } from 'discord.js';
-import { replyToInteraction } from '../utils/error-handler.js';
 import { Colors } from '../utils/constants.js';
 
 export const data = new SlashCommandBuilder()
@@ -23,53 +22,50 @@ export const data = new SlashCommandBuilder()
       )
   )
   .setDefaultMemberPermissions(PermissionFlagsBits.Administrator);
+
 export async function execute(interaction) {
   const targetChannel = interaction.options.getChannel('channel');
 
-  try {
-    if (interaction.options.getSubcommand() === 'message') {
-      const messageToSend = interaction.options.getString('message');
-      await targetChannel.send(messageToSend);
+  if (interaction.options.getSubcommand() === 'message') {
+    const messageToSend = interaction.options.getString('message');
+    await targetChannel.send(messageToSend);
 
-      const sentEmbed = new EmbedBuilder().setDescription(`Said **"${messageToSend}"** in ${targetChannel}`).setColor(Colors.CONFIRM);
+    const sentEmbed = new EmbedBuilder().setDescription(`Said **"${messageToSend}"** in ${targetChannel}`).setColor(Colors.CONFIRM);
 
-      await interaction.reply({ embeds: [sentEmbed] });
-    } else if (interaction.options.getSubcommand() === 'announcement') {
-      const sendEmbed = new EmbedBuilder().setDescription(`Enter the message that you want to announce into this channel within 3 minutes!`).setColor(Colors.CONFIRM);
+    await interaction.reply({ embeds: [sentEmbed] });
+  } else if (interaction.options.getSubcommand() === 'announcement') {
+    const sendEmbed = new EmbedBuilder().setDescription(`Enter the message that you want to announce into this channel within 3 minutes!`).setColor(Colors.CONFIRM);
 
-      await interaction.reply({ embeds: [sendEmbed] });
+    await interaction.reply({ embeds: [sendEmbed] });
 
-      const filter = (m) => m.author === interaction.user;
-      const collector = interaction.channel.createMessageCollector({ filter, time: 180000 }); // milliseconds
+    const filter = (m) => m.author === interaction.user;
+    const collector = interaction.channel.createMessageCollector({ filter, time: 180000 }); // milliseconds
 
-      collector.on('collect', async (m) => {
-        const announcementText = m.content;
+    collector.on('collect', async (m) => {
+      const announcementText = m.content;
 
-        await targetChannel.send({ content: announcementText });
+      await targetChannel.send({ content: announcementText });
 
-        collector.stop();
-      });
+      collector.stop();
+    });
 
-      collector.on('end', async (collected) => {
-        if (collected.size === 0) {
-          // if no message was entered
-          const errEmbed = new EmbedBuilder()
-            .setDescription(`You did not send a message within 3 minutes, please try again.`)
-            .setColor(Colors.ERROR)
-            .setFooter({
-              text: interaction.guild.name,
-              iconURL: interaction.guild.iconURL({ dynamic: true })
-            });
+    collector.on('end', async (collected) => {
+      if (collected.size === 0) {
+        // if no message was entered
+        const errEmbed = new EmbedBuilder()
+          .setDescription(`You did not send a message within 3 minutes, please try again.`)
+          .setColor(Colors.ERROR)
+          .setFooter({
+            text: interaction.guild.name,
+            iconURL: interaction.guild.iconURL({ dynamic: true })
+          });
 
-          await interaction.followUp({ embeds: [errEmbed], ephemeral: true });
-        } else {
-          const announcedEmbed = new EmbedBuilder().setDescription(`The announcement was sent!`).setColor(Colors.CONFIRM);
+        await interaction.followUp({ embeds: [errEmbed], ephemeral: true });
+      } else {
+        const announcedEmbed = new EmbedBuilder().setDescription(`The announcement was sent!`).setColor(Colors.CONFIRM);
 
-          await interaction.followUp({ embeds: [announcedEmbed] });
-        }
-      });
-    }
-  } catch (err) {
-    await replyToInteraction(interaction, err);
+        await interaction.followUp({ embeds: [announcedEmbed] });
+      }
+    });
   }
 }

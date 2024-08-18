@@ -193,12 +193,7 @@ async function handleHeardleWebhook(message) {
     // close and lock previous thread
     const lastThread = heardleChannel.threads.cache.last();
     if (lastThread && !lastThread.locked) {
-      try {
-        await lastThread.setLocked(true);
-      } catch (err) {
-        const logChannel = message.guild.channels.cache.get(env.LOGS_CHANNEL_ID);
-        await sendMessageInLogChannel(null, err, logChannel);
-      }
+      await lastThread.setLocked(true);
     }
 
     const heardleEmbed = new EmbedBuilder()

@@ -1,24 +1,20 @@
 import { EmbedBuilder, SlashCommandBuilder } from 'discord.js';
-import { replyToInteraction } from '../../../utils/error-handler.js';
 import { Colors } from '../../../utils/constants.js';
 import { checkPermissionsAndVoiceStatus, checkQueue } from '../util.js';
 
 export const data = new SlashCommandBuilder().setName('resume').setDescription('Resume playing the song');
+
 export async function execute(interaction) {
-  try {
-    await checkPermissionsAndVoiceStatus(interaction);
-    const queue = await checkQueue(interaction);
+  await checkPermissionsAndVoiceStatus(interaction);
+  const queue = await checkQueue(interaction);
 
-    if (!queue.paused) {
-      throw new Error(`The queue is already playing`);
-    }
-
-    queue.resume();
-
-    const pauseEmbed = new EmbedBuilder().setDescription(`Resumed the queue`).setColor(Colors.MUSIC);
-
-    await interaction.reply({ embeds: [pauseEmbed] });
-  } catch (err) {
-    await replyToInteraction(interaction, err);
+  if (!queue.paused) {
+    throw new Error(`The queue is already playing`);
   }
+
+  queue.resume();
+
+  const pauseEmbed = new EmbedBuilder().setDescription(`Resumed the queue`).setColor(Colors.MUSIC);
+
+  await interaction.reply({ embeds: [pauseEmbed] });
 }

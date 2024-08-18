@@ -28,6 +28,7 @@ export const data = new SlashCommandBuilder()
   .setName('8ball')
   .setDescription('Ask a question and get a magic 8-ball response')
   .addStringOption((option) => option.setName('question').setDescription('Ask the magic 8-ball a question').setRequired(true));
+
 export async function execute(interaction) {
   const questionAsked = interaction.options.getString('question');
 
