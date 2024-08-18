@@ -54,4 +54,4 @@ const envSchema = z.object({
   NUMBER_EMOJIS: z.string().transform((val) => val.split(','))
 });
 
-export const env = process.env.NODE_ENV !== 'action' ? envSchema.parse(process.env) : envSchema.partial().parse(process.env);
+export const env = process.env.NODE_ENV === 'action' ? envSchema.partial().parse(process.env) : envSchema.parse(process.env);
