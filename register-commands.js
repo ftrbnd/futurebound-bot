@@ -1,4 +1,5 @@
-import { env } from './src/utils/env.js';
+import dotenv from 'dotenv';
+dotenv.config();
 
 import { readdirSync } from 'fs';
 import { REST } from '@discordjs/rest';
@@ -18,13 +19,13 @@ for (const file of musicCommandFiles) {
   commands.push(musicCommand.data.toJSON());
 }
 
-const rest = new REST({ version: '9' }).setToken(env.DISCORD_TOKEN);
+const rest = new REST({ version: '9' }).setToken(process.env.DISCORD_TOKEN);
 
 (async () => {
   try {
     console.log('Started refreshing application (/) commands.');
 
-    await rest.put(Routes.applicationGuildCommands(env.DISCORD_CLIENT_ID, env.GUILD_ID), { body: commands });
+    await rest.put(Routes.applicationGuildCommands(process.env.DISCORD_CLIENT_ID, process.env.GUILD_ID), { body: commands });
 
     console.log('Successfully registered application (/) commands.');
   } catch (error) {

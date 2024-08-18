@@ -11,8 +11,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node src/index.js",
     "dev": "nodemon",
-    "register-commands": "node register-commands.js",
-    "prestart": "yarn register-commands"
+    "register-commands": "node register-commands.js"
   },
   "author": "Giovanni Salas",
   "license": "ISC",

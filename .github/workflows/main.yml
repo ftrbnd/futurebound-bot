@@ -1,0 +1,23 @@
+name: Command registration
+
+on:
+  push:
+    branches:
+      - main
+
+env:
+  DISCORD_TOKEN: ${{ secrets.DISCORD_TOKEN }}
+  DISCORD_CLIENT_ID: ${{ secrets.DISCORD_CLIENT_ID }}
+
+jobs:
+  register_commands:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20.x
+      - name: Install dependencies
+        run: yarn install
+      - name: Register commands
+        run: yarn register-commands
