@@ -47,6 +47,16 @@ export async function updateUserBirthday(user, username, birthday, timezone) {
 /**
  *
  * @param {Document<User>} user
+ */
+export async function deleteUserBirthday(user) {
+  user.birthday = null;
+
+  await user.save();
+}
+
+/**
+ *
+ * @param {Document<User>} user
  * @param {string} username
  * @param {number} warnings
  */
