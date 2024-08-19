@@ -215,7 +215,7 @@ async function handleHeardleWebhook(message) {
       reason: 'New daily Heardle song'
     });
   } else if (webhookEmbed.data.title.toLowerCase().includes('heardle') && webhookEmbed.data.description.toLowerCase().includes('error')) {
-    const owner = message.guild.members.cache.get(message.guild.ownerId);
+    const owner = await message.guild.members.fetch(message.guild.ownerId);
 
     await owner.send({ embeds: [webhookEmbed], content: 'Error with EDEN Heardle:' });
   }
