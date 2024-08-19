@@ -92,18 +92,20 @@ async function handleSurvivorVote(interaction) {
 
 async function handleGiveawayEntry(interaction) {
   const giveawayId = interaction.customId.split('_')[1];
-  const giveaway = await getGiveaway({ id: giveawayId });
+  const giveaway = await getGiveaway(giveawayId);
 
-  if (giveaway.endDate.getTime() < new Date().getTime()) {
+  const now = new Date();
+
+  if (giveaway.endDate.getTime() < now.getTime()) {
     throw new Error('The giveaway has already ended!');
   }
 
   if (giveaway.entries.includes(interaction.user.id)) {
-    throw new Error('You have already entered the giveaway!');
+    throw new Error('You have already entered this giveaway!');
   }
 
-  const premiumRole = interaction.guild.roles.cache.get(env.SUBSCRIBER_ROLE_IDS.find((roleId) => interaction.member._roles.includes(roleId)));
-  const additionalEntries = env.SUBSCRIBER_ROLE_IDS.indexOf(premiumRole.id) + 1;
+  const userPremiumRoleId = env.SUBSCRIBER_ROLE_IDS.find((roleId) => interaction.member.roles.cache.get(roleId));
+  const additionalEntries = env.SUBSCRIBER_ROLE_IDS.indexOf(userPremiumRoleId) + 1;
   const description = await updateGiveawayEntries(giveaway, interaction.user.id, 1 + additionalEntries);
 
   const timestamp = `${giveaway.endDate.getTime()}`.substring(0, 10);

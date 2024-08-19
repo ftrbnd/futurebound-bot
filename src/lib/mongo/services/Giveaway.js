@@ -11,8 +11,11 @@ export async function getGiveaways() {
   return giveaways;
 }
 
-export async function getGiveaway(fields) {
-  const giveaway = await Giveaway.findOne(fields);
+/**
+ * @param {string} id
+ */
+export async function getGiveaway(id) {
+  const giveaway = await Giveaway.findById(id);
   return giveaway;
 }
 
