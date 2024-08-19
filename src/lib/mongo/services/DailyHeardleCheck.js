@@ -28,3 +28,13 @@ export async function updateDailyHeardleCheck(nextDay, nextSong) {
 export async function deleteAllChecks() {
   await DailyHeardleCheck.deleteMany({});
 }
+
+export async function updateAttemptCount() {
+  const check = await DailyHeardleCheck.findOne({});
+  const attempts = (check.attempts ?? 0) + 1;
+
+  check.attempts = attempts;
+  await check.save();
+
+  return attempts;
+}

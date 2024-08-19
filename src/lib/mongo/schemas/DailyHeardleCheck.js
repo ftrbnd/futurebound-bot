@@ -17,6 +17,11 @@ const DailyHeardleCheckSchema = new Schema(
     nextSong: {
       type: SchemaTypes.String,
       required: false
+    },
+    attempts: {
+      type: SchemaTypes.Number,
+      required: false,
+      default: 0
     }
   },
   { versionKey: false }

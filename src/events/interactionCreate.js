@@ -4,7 +4,7 @@ import { replyToInteraction } from '../utils/error-handler.js';
 import { getLeaderboard, sendRetryRequest, createLeaderboardDescription } from '../lib/heardle/api.js';
 import { getSurvivorRound, removeDuplicateVote, updateVotes } from '../lib/mongo/services/SurvivorRound.js';
 import { getGiveaway, updateGiveawayEntries } from '../lib/mongo/services/Giveaway.js';
-import { deleteAllChecks, getDailyHeardleCheck } from '../lib/mongo/services/DailyHeardleCheck.js';
+import { deleteAllChecks, getDailyHeardleCheck, updateAttemptCount } from '../lib/mongo/services/DailyHeardleCheck.js';
 import { env } from '../utils/env.js';
 import { Colors, HEARDLE_URL } from '../utils/constants.js';
 
@@ -19,7 +19,7 @@ export async function execute(interaction) {
       await handleLeaderboardButton(interaction);
     } else if (interaction.isButton() && interaction.channel.id == env.GIVEAWAY_CHANNEL_ID) {
       await handleGiveawayEntry(interaction);
-    } else if (interaction.isButton() && interaction.customId.startsWith('retry_daily_heardle')) {
+    } else if (interaction.isButton() && interaction.customId.includes('daily_heardle')) {
       await handleRetryDailyHeardle(interaction);
     }
 
@@ -140,20 +140,32 @@ async function handleRetryDailyHeardle(interaction) {
   try {
     await interaction.deferReply();
 
-    // 'retry_daily_heardle_${status.id} => ['retry', 'daily', 'heardle', status.id]
+    // '(retry | disable)_daily_heardle_${status.id} => ['retry' | 'disable, 'daily', 'heardle', status.id]
+    const action = interaction.customId.split('_')[0];
     const statusId = interaction.customId.split('_')[3];
 
-    const statusExists = await getDailyHeardleCheck({ id: statusId });
-    if (!statusExists) {
-      throw new Error('Already sent retry request');
+    if (action === 'retry') {
+      const statusExists = await getDailyHeardleCheck({ id: statusId });
+      if (!statusExists) {
+        throw new Error('This Daily Heardle check was deleted');
+      }
+
+      const { message } = await sendRetryRequest();
+      const attempts = await updateAttemptCount();
+
+      const embed = new EmbedBuilder()
+        .setTitle(message)
+        .addFields([{ name: 'Retry Attempts', value: `${attempts}` }])
+        .setColor(Colors.CONFIRM);
+
+      await interaction.editReply({ embeds: [embed] });
+    } else if (action === 'disable') {
+      await deleteAllChecks();
+
+      const embed = new EmbedBuilder().setDescription('Deleted this Daily Heardle check').setColor(Colors.CONFIRM);
+
+      await interaction.editReply({ embeds: [embed] });
     }
-
-    const { message } = await sendRetryRequest();
-    await deleteAllChecks();
-
-    const embed = new EmbedBuilder().setDescription(message).setColor(Colors.CONFIRM);
-
-    await interaction.editReply({ embeds: [embed] });
   } catch (error) {
     await replyToInteraction(interaction, error, true);
   }

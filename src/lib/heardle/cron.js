@@ -34,13 +34,15 @@ async function snapshotNext(client) {
           { name: 'Previous Day', value: `${status.prevDay}` },
           { name: 'Previous Song', value: `${status.prevSong}` },
           { name: 'Next Day', value: `${status.nextDay}` },
-          { name: 'Next Song', value: `${status.nextSong}` }
+          { name: 'Next Song', value: `${status.nextSong}` },
+          { name: 'Retry Attempts', value: `${status.attempts ?? 0}` }
         ])
         .setColor(Colors.ERROR);
 
       const retryButton = new ButtonBuilder().setCustomId(`retry_daily_heardle_${status.id}`).setLabel('Retry').setStyle(ButtonStyle.Primary);
+      const disableButton = new ButtonBuilder().setCustomId(`disable_daily_heardle_${status.id}`).setLabel('Disable').setStyle(ButtonStyle.Danger);
 
-      const row = new ActionRowBuilder().addComponents(retryButton);
+      const row = new ActionRowBuilder().addComponents(retryButton, disableButton);
 
       await owner.send({ content: 'Daily Heardle failed to run', embeds: [embed], components: [row] });
     }
