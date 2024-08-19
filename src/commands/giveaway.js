@@ -1,7 +1,8 @@
 import { EmbedBuilder, PermissionFlagsBits, SlashCommandBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle } from 'discord.js';
-import { createGiveaway } from '../lib/mongo/services/Giveaway.js';
+import { createGiveaway, getGiveaway } from '../lib/mongo/services/Giveaway.js';
 import { env } from '../utils/env.js';
 import { Colors } from '../utils/constants.js';
+import { endGiveaway } from '../lib/mongo/cron.js';
 
 export const data = new SlashCommandBuilder()
   .setName('giveaway')
@@ -82,6 +83,13 @@ export async function execute(interaction) {
 
     await interaction.reply({ embeds: [confirmEmbed] });
   } else if (interaction.options.getSubcommand() === 'end') {
-    await interaction.reply({ content: `TODO: implement this` });
+    const giveawayId = interaction.options.getString('id');
+    const giveaway = await getGiveaway(giveawayId);
+
+    await endGiveaway(interaction.client, giveaway);
+
+    const confirmEmbed = new EmbedBuilder().setDescription(`Ended giveaway for **${giveaway.prize}**`).setColor(Colors.CONFIRM);
+
+    await interaction.reply({ embeds: [confirmEmbed] });
   }
 }
