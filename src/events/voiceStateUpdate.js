@@ -86,7 +86,12 @@ export async function execute(oldState, newState) {
       await oldState.channel.delete(`**${oldState.channel.name}** was deleted after being empty.`);
 
       await logChannel.send({ embeds: [vcUpdateEmbed] });
-    } else if (oldState.channel.members.size === 1 && oldState.channel.members.has(env.DISCORD_CLIENT_ID) && oldState.channel.parentId === env.JOIN_TO_CREATE_CATEGORY_ID) {
+    } else if (
+      oldState.channel !== null &&
+      oldState.channel.members.size === 1 &&
+      oldState.channel.members.has(env.DISCORD_CLIENT_ID) &&
+      oldState.channel.parentId === env.JOIN_TO_CREATE_CATEGORY_ID
+    ) {
       // bot is only one left in custom channel
       const vcUpdateEmbed = new EmbedBuilder().setDescription(`**${oldState.channel.name}** was deleted after being empty.`).setColor(Colors.ERROR).setTimestamp();
 
