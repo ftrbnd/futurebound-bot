@@ -79,7 +79,7 @@ export async function execute(oldState, newState) {
       await logChannel.send({ embeds: [leaveEmbed] });
     }
 
-    if (oldState.channel.members.size === 0 && oldState.channel.parent.id === env.JOIN_TO_CREATE_CATEGORY_ID && oldState.channel.id !== env.JOIN_TO_CREATE_CHANNEL_ID) {
+    if (oldState.channel !== null && oldState.channel.members.size === 0 && oldState.channel.parent.id === env.JOIN_TO_CREATE_CATEGORY_ID && oldState.channel.id !== env.JOIN_TO_CREATE_CHANNEL_ID) {
       // once a custom channel is empty
       const vcUpdateEmbed = new EmbedBuilder().setDescription(`**${oldState.channel.name}** was deleted after being empty.`).setColor(Colors.ERROR).setTimestamp();
 
