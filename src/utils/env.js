@@ -27,7 +27,6 @@ const envSchema = z.object({
   BOT_BAIT_CHANNEL_ID: z.string(),
   COMMANDS_CHANNEL_ID: z.string(),
   GENERAL_CHANNEL_ID: z.string(),
-  GIVEAWAY_CHANNEL_ID: z.string(),
   JOIN_TO_CREATE_CHANNEL_ID: z.string(),
   INTRODUCTIONS_CHANNEL_ID: z.string(),
   LOGS_CHANNEL_ID: z.string(),

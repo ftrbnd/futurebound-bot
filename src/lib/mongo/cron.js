@@ -130,7 +130,7 @@ const checkGiveaways = async (discordClient) => {
       if (giveaway.entries.length == 0) return console.log('No entries for this giveaway.');
 
       const server = discordClient.guilds.cache.get(env.GUILD_ID);
-      const giveawayChannel = server.channels.cache.get(env.GIVEAWAY_CHANNEL_ID);
+      const giveawayChannel = server.channels.cache.get(giveaway.channelId);
 
       const winnerId = giveaway.entries[Math.floor(Math.random() * giveaway.entries.length)];
       console.log(`Winner's id of giveaway #${giveaway.id}: ${winnerId}`);

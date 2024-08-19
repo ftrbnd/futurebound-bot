@@ -21,6 +21,10 @@ const GiveawaySchema = new Schema(
     imageURL: {
       type: SchemaTypes.String,
       required: false
+    },
+    channelId: {
+      type: SchemaTypes.String,
+      required: true
     }
   },
   { versionKey: false }

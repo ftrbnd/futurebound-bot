@@ -17,7 +17,7 @@ export async function execute(interaction) {
       await handleSurvivorVote(interaction); // handle menu interactions from /survivor
     } else if (interaction.isButton() && leaderboardButtonIds.includes(interaction.customId)) {
       await handleLeaderboardButton(interaction);
-    } else if (interaction.isButton() && interaction.channel.id == env.GIVEAWAY_CHANNEL_ID) {
+    } else if (interaction.isButton() && interaction.customId.includes('giveaway')) {
       await handleGiveawayEntry(interaction);
     } else if (interaction.isButton() && interaction.customId.includes('daily_heardle')) {
       await handleRetryDailyHeardle(interaction);
@@ -91,7 +91,8 @@ async function handleSurvivorVote(interaction) {
 }
 
 async function handleGiveawayEntry(interaction) {
-  const giveaway = await getGiveaway({ id: interaction.customId });
+  const giveawayId = interaction.customId.split('_')[1];
+  const giveaway = await getGiveaway({ id: giveawayId });
 
   if (giveaway.endDate.getTime() < new Date().getTime()) {
     throw new Error('The giveaway has already ended!');

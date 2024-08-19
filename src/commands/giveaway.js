@@ -10,6 +10,7 @@ export const data = new SlashCommandBuilder()
     subcommand
       .setName('start')
       .setDescription('Start a giveaway')
+      .addChannelOption((option) => option.setName('channel').setDescription('The channel to post the giveaway in').setRequired(true))
       .addStringOption((option) => option.setName('prize').setDescription('The giveaway prize').setRequired(true))
       .addStringOption((option) => option.setName('description').setDescription('A short description').setRequired(true))
       .addStringOption((option) =>
@@ -27,12 +28,11 @@ export const data = new SlashCommandBuilder()
   .setDefaultMemberPermissions(PermissionFlagsBits.Administrator);
 
 export async function execute(interaction) {
-  const giveawayChannel = interaction.guild.channels.cache.get(env.GIVEAWAY_CHANNEL_ID);
-
   if (interaction.options.getSubcommand() === 'start') {
     const prize = interaction.options.getString('prize');
     const description = interaction.options.getString('description');
     const imageURL = interaction.options.getString('image');
+    const giveawayChannel = interaction.options.getChannel('channel');
 
     const endDate = new Date();
 
@@ -55,7 +55,8 @@ export async function execute(interaction) {
       prize,
       description,
       endDate,
-      imageURL
+      imageURL,
+      channelId: giveawayChannel.id
     });
 
     console.log(`Saved ${prize} giveaway to database!`);
@@ -68,7 +69,7 @@ export async function execute(interaction) {
     if (imageURL) giveawayEmbed.setThumbnail(imageURL);
 
     const row = new ActionRowBuilder().addComponents(
-      new ButtonBuilder().setCustomId(giveaway.id).setStyle(ButtonStyle.Primary).setEmoji(env.GIVEAWAY_EMOJI_ID),
+      new ButtonBuilder().setCustomId(`giveaway_${giveaway.id}`).setStyle(ButtonStyle.Primary).setEmoji(env.GIVEAWAY_EMOJI_ID),
       new ButtonBuilder().setLabel('Subscribe').setStyle(ButtonStyle.Link).setURL(`https://discord.com/channels/${interaction.guild.id}/role-subscriptions`)
     );
 
