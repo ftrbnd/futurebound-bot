@@ -17,15 +17,10 @@ export async function execute(interaction) {
   const lyricsFolder = resolve(__dirname, '../text-files/lyrics');
   const songFiles = readdirSync(lyricsFolder).filter((file) => file.endsWith('.txt'));
 
-  if (!songFiles.includes(song)) {
-    throw new Error(`**${song}** is not a valid song, please try again!`);
-  }
-
   for (let i = 0; i < songFiles.length; i++) {
     let songName = songFiles[i].slice(0, -4); // remove '.txt'
-    switch (
-      songName // handle ---- to ????, start--end to start//end, etc.
-    ) {
+
+    switch (songName) {
       case '----':
         songName = '????';
         break;
@@ -41,22 +36,23 @@ export async function execute(interaction) {
     }
 
     if (song === songName.toLowerCase()) {
-      // if the song the user requested and the current song are the same
       const lyrics = await lineSplitFile(`${lyricsFolder}/${songFiles[i]}`); // get the lyrics
       const lyricsString = lyrics.join('\n');
       song = songName;
 
       if (songName.toLowerCase() === 'Fumes'.toLowerCase()) songName = 'Fumes (feat. gnash)';
 
-      let lyricsEmbed = new EmbedBuilder().setTitle(songName).setDescription(lyricsString).setColor(Colors.ERROR);
+      const lyricsEmbed = new EmbedBuilder().setTitle(songName).setDescription(lyricsString).setColor(Colors.ERROR);
 
       const albumsFolder = resolve(__dirname, '../text-files/albums');
       const albumFiles = readdirSync(albumsFolder).filter((file) => file.endsWith('.txt'));
+
       for (let i = 0; i < albumFiles.length; i++) {
         // check if the song belongs to any album
         const albumTracks = await lineSplitFile(`${albumsFolder}/${albumFiles[i]}`);
         const embedColor = `${albumTracks.pop()}`;
         const albumCover = albumTracks.pop();
+
         if (albumTracks.includes(songName)) {
           lyricsEmbed.setColor(embedColor);
           lyricsEmbed.setThumbnail(albumCover);
@@ -68,7 +64,9 @@ export async function execute(interaction) {
         }
       }
 
-      await interaction.reply({ embeds: [lyricsEmbed] });
+      return await interaction.reply({ embeds: [lyricsEmbed] });
     }
   }
+
+  throw new Error(`**${song}** is not a valid song, please try again!`);
 }
