@@ -32,6 +32,8 @@ export async function execute(interaction) {
     let yearOption = interaction.options.getInteger('year');
     const timezoneOption = interaction.options.getString('timezone');
 
+    const originalBirthday = new Date(`${monthOption} ${dayOption} ${yearOption}`);
+
     if (!timeZonesNames.includes(timezoneOption)) {
       throw new Error('Please enter a valid TZ database name. More info can be found here: https://en.wikipedia.org/wiki/List_of_tz_database_time_zones#List \nExample: **America/Los_Angeles**');
     }
@@ -92,7 +94,7 @@ export async function execute(interaction) {
         iconURL: interaction.guild.iconURL({ dynamic: true })
       });
 
-    const theirBirthday = new Date(`${monthOption} ${dayOption} ${yearOption}`);
+    const utcBirthday = new Date(`${monthOption} ${dayOption} ${yearOption}`);
 
     const user = await getUser({ discordId: interaction.user.id });
     if (!user) {
@@ -104,32 +106,32 @@ export async function execute(interaction) {
         timezone: timezoneOption
       });
 
-      console.log(`${interaction.user.username} set their birthday to ${theirBirthday.toLocaleDateString()}: ${birthdayAttempt}`);
+      console.log(`${interaction.user.username} set their birthday to ${utcBirthday.toLocaleDateString()}: ${birthdayAttempt}`);
 
       birthdayEmbed.setAuthor({
-        name: `${interaction.user.username} set their birthday to ${theirBirthday.toLocaleDateString()}`,
+        name: `${interaction.user.username} set their birthday to ${utcBirthday.toLocaleDateString()}`,
         iconURL: interaction.user.displayAvatarURL({ dynamic: true })
       });
       await logChannel.send({ embeds: [birthdayEmbed] });
 
       personalEmbed.setAuthor({
-        name: `You have set your birthday to ${theirBirthday.toLocaleDateString()}`
+        name: `You have set your birthday to ${utcBirthday.toLocaleDateString()}`
       });
       await interaction.reply({ embeds: [personalEmbed], ephemeral: true });
     } else {
       // if they already were in the database, simply update and save
       await updateUserBirthday(user, interaction.user.username, birthdayAttempt, timezoneOption);
 
-      console.log(`${interaction.user.username} updated their birthday to ${theirBirthday.toLocaleDateString()}: ${birthdayAttempt}`);
+      console.log(`${interaction.user.username} updated their birthday to ${utcBirthday.toLocaleDateString()}: ${birthdayAttempt}`);
 
       birthdayEmbed.setAuthor({
-        name: `${interaction.user.username} updated their birthday to ${theirBirthday.toLocaleDateString()}`,
+        name: `${interaction.user.username} updated their birthday to ${utcBirthday.toLocaleDateString()}`,
         iconURL: interaction.user.displayAvatarURL({ dynamic: true })
       });
       await logChannel.send({ embeds: [birthdayEmbed] });
 
       personalEmbed.setAuthor({
-        name: `You have updated your birthday to ${theirBirthday.toLocaleDateString()}`
+        name: `You have updated your birthday to ${originalBirthday.toDateString()}`
       });
       await interaction.reply({ embeds: [personalEmbed], ephemeral: true });
     }
