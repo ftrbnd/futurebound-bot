@@ -4,10 +4,22 @@ import ffmpeg from 'fluent-ffmpeg';
 import { client } from './bot.js';
 import { connectToDb } from './lib/mongo/index.js';
 import { registerHeardleJobs } from './lib/heardle/cron.js';
+import { registerSpotifyJob } from './lib/spotify/cron.js';
+import { sendMessageInLogChannel } from './utils/error-handler.js';
 
 ffmpeg.setFfmpegPath(ffmpegPath);
 
-client.login(env.DISCORD_TOKEN);
+async function start() {
+  try {
+    await client.login(env.DISCORD_TOKEN);
 
-connectToDb(client);
-registerHeardleJobs(client);
+    await connectToDb(client);
+    await registerHeardleJobs(client);
+    await registerSpotifyJob(client);
+  } catch (error) {
+    const logChannel = client.channels.cache.get(env.LOGS_CHANNEL_ID);
+    await sendMessageInLogChannel(null, error, logChannel);
+  }
+}
+
+start();
