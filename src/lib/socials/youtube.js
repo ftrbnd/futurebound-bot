@@ -57,7 +57,7 @@ export async function checkChannelUploads(discordClient) {
           .setColor(Colors.YOUTUBE);
 
         await announcementChannel.send({
-          content: '## EDEN just uploaded a new video @everyone!',
+          content: '## EDEN just uploaded a new video!',
           embeds: [embed]
         });
 
