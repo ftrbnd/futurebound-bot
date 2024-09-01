@@ -58,7 +58,7 @@ export async function checkArtistReleases(discordClient) {
     const previousAlbums = await getSocialCollection('spotify');
 
     for (const item of currentAlbums) {
-      const albumExists = previousAlbums.some((album) => album.spotifyId === item.id);
+      const albumExists = previousAlbums.some((album) => album.socialId === item.id);
 
       if (!albumExists) {
         const announcementChannel = discordClient.channels.cache.get(env.ANNOUNCEMENTS_CHANNEL_ID);
@@ -72,7 +72,6 @@ export async function checkArtistReleases(discordClient) {
           .setThumbnail(item.images[0].url)
           .setColor(Colors.SPOTIFY);
 
-        // TODO: add social pings role
         await announcementChannel.send({ content: `# ${item.name} is out now @everyone!`, embeds: [embed] });
 
         await addSocialItem('spotify', item.id, item.name);

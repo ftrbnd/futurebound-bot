@@ -16,7 +16,8 @@ export const Colors = {
   TYPING: 'fdfaff',
   BLACK: '000001',
   RANDOM: 'Random',
-  SPOTIFY: '1DB954'
+  SPOTIFY: '1DB954',
+  YOUTUBE: 'CD201F'
 };
 
 export const ALL_SONGS = [
