@@ -21,6 +21,9 @@ const envSchema = z.object({
   SPOTIFY_CLIENT_SECRET: z.string(),
   SPOTIFY_ARTIST_ID: z.string(),
 
+  YOUTUBE_API_KEY: z.string(),
+  YOUTUBE_CHANNEL_ID: z.string(),
+
   IMGUR_ALBUMS: z.string().transform((val) => val.split(',')),
 
   ANNOUNCEMENTS_CHANNEL_ID: z.string(),

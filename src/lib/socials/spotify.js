@@ -7,7 +7,7 @@ import { sendMessageInLogChannel } from '../../utils/error-handler.js';
 /**
  * @returns {Promise<string>} Spotify access token
  */
-const getTokenWithClientCredentials = async () => {
+async function getTokenWithClientCredentials() {
   const res = await fetch('https://accounts.spotify.com/api/token', {
     method: 'POST',
     headers: {
@@ -22,7 +22,7 @@ const getTokenWithClientCredentials = async () => {
   const { access_token } = await res.json();
 
   return access_token;
-};
+}
 
 /**
  * @returns The artist's albums from the Spotify Web API
