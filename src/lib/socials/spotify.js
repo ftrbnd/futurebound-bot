@@ -72,6 +72,7 @@ export async function checkArtistReleases(discordClient) {
           .setThumbnail(item.images[0].url)
           .setColor(Colors.SPOTIFY);
 
+        // TODO: add social pings role
         await announcementChannel.send({ content: `# ${item.name} is out now @everyone!`, embeds: [embed] });
 
         await addSpotifyAlbum(item.id, item.name);
