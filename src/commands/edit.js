@@ -72,4 +72,3 @@ export async function execute(interaction) {
     }
   });
 }
-// 1185023087587115049;
