@@ -1,6 +1,6 @@
 import { Client, EmbedBuilder } from 'discord.js';
 import { env } from '../../utils/env.js';
-import { addSpotifyAlbum, getSpotifyAlbums } from '../mongo/services/Spotify.js';
+import { addSocialItem, getSocialCollection } from '../mongo/services/Social.js';
 import { Colors } from '../../utils/constants.js';
 import { sendMessageInLogChannel } from '../../utils/error-handler.js';
 
@@ -55,7 +55,7 @@ async function fetchArtistAlbums() {
 export async function checkArtistReleases(discordClient) {
   try {
     const currentAlbums = await fetchArtistAlbums();
-    const previousAlbums = await getSpotifyAlbums();
+    const previousAlbums = await getSocialCollection('spotify');
 
     for (const item of currentAlbums) {
       const albumExists = previousAlbums.some((album) => album.spotifyId === item.id);
@@ -75,7 +75,7 @@ export async function checkArtistReleases(discordClient) {
         // TODO: add social pings role
         await announcementChannel.send({ content: `# ${item.name} is out now @everyone!`, embeds: [embed] });
 
-        await addSpotifyAlbum(item.id, item.name);
+        await addSocialItem('spotify', item.id, item.name);
       }
     }
   } catch (error) {
