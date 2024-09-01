@@ -15,7 +15,9 @@ export const Colors = {
   BIRTHDAY: 'ffffc5',
   TYPING: 'fdfaff',
   BLACK: '000001',
-  RANDOM: 'Random'
+  RANDOM: 'Random',
+  SPOTIFY: '1DB954',
+  YOUTUBE: 'CD201F'
 };
 
 export const ALL_SONGS = [
