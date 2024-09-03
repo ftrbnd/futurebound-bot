@@ -68,7 +68,7 @@ async function handleDirectMessage(message) {
       iconURL: `${message.author.displayAvatarURL({ dynamic: true })}` // message + their avatar
     })
     .setDescription(message.content)
-    .setColor(Colors.DM_COLOR)
+    .setColor(Colors.DM)
     .setFooter({
       text: `User ID: ${message.author.id}`
     })
