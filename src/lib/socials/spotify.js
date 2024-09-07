@@ -18,6 +18,7 @@ async function getTokenWithClientCredentials() {
       grant_type: 'client_credentials'
     })
   });
+  if (!res.ok) throw new Error('Failed to fetch access token');
 
   const { access_token } = await res.json();
 
