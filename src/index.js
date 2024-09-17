@@ -11,9 +11,9 @@ ffmpeg.setFfmpegPath(ffmpegPath);
 
 async function start() {
   try {
+    await connectToDb(client);
     await client.login(env.DISCORD_TOKEN);
 
-    await connectToDb(client);
     await registerHeardleJobs(client);
     await registerSocialsJobs(client);
   } catch (error) {
