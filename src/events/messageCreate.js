@@ -88,7 +88,7 @@ async function handleServerBoosts(message, level) {
       name: `${message.member.displayName} just boosted the server!`,
       iconURL: `${message.member.user.displayAvatarURL({ dynamic: true })}` // message + their avatar
     })
-    .setColor(Colors.BOOST_COLOR)
+    .setColor(Colors.BOOST)
     .setThumbnail('https://emoji.gg/assets/emoji/1819_boostingtop.gif') // nitro boost gif
     .addFields([
       { name: 'Server Level', value: `${message.guild.premiumTier}`, inline: true },
