@@ -3,9 +3,14 @@ import { env } from '../../utils/env.js';
 import { addSocialItem, getSocialCollection } from '../mongo/services/Social.js';
 import { Colors } from '../../utils/constants.js';
 import { sendMessageInLogChannel } from '../../utils/error-handler.js';
+import { getServiceToken, saveServiceToken } from '../mongo/services/Token.js';
 
 /**
- * @returns {Promise<string>} Spotify access token
+ * @returns {Promise<{
+ *    access_token: string,
+ *    token_type: string,
+ *    expires_in: number
+ * }>}
  */
 async function getTokenWithClientCredentials() {
   const res = await fetch('https://accounts.spotify.com/api/token', {
@@ -18,18 +23,35 @@ async function getTokenWithClientCredentials() {
       grant_type: 'client_credentials'
     })
   });
-  if (!res.ok) throw new Error('Failed to fetch access token');
+  if (!res.ok) throw new Error('Spotify: Failed to fetch access token');
 
-  const { access_token } = await res.json();
+  const data = await res.json();
+  return data;
+}
 
-  return access_token;
+async function getToken() {
+  let token = await getServiceToken('spotify');
+  const now = new Date();
+
+  if (!token || token.expires_at.getTime() < now.getTime()) {
+    const data = await getTokenWithClientCredentials();
+    const expires_at = new Date(new Date().getTime() + data.expires_in * 1000);
+
+    token = await saveServiceToken('spotify', {
+      access_token: data.access_token,
+      token_type: data.token_type,
+      expires_at
+    });
+  } // else we have a valid token
+
+  return token.access_token;
 }
 
 /**
  * @returns The artist's albums from the Spotify Web API
  */
 async function fetchArtistAlbums() {
-  const token = await getTokenWithClientCredentials();
+  const token = await getToken();
 
   const albums = [];
   let nextPage = null;
@@ -40,7 +62,10 @@ async function fetchArtistAlbums() {
         Authorization: `Bearer ${token}`
       }
     });
-    if (!res.ok) throw new Error(`Failed to get artist's albums`);
+    if (res.status === 401) throw new Error('Spotify: Bad or expired token');
+    if (res.status === 403) throw new Error('Spotify: Bad OAuth request');
+    if (res.status === 429) throw new Error('Spotify: Rate limit exceeded');
+    if (!res.ok) throw new Error(`Spotify: Failed to get artist's albums`);
 
     const { items, next } = await res.json();
     albums.push(...items);
