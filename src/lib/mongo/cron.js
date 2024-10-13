@@ -95,6 +95,9 @@ const checkUsers = async (discordClient) => {
         // if a user has a muteEnd date != null
         if (today.getFullYear() === user.muteEnd.getFullYear() && today.getMonth() === user.muteEnd.getMonth() && today.getDate() === user.muteEnd.getDate()) {
           const userToUnmute = await server.members.fetch(user.discordId);
+          if (!userToUnmute) {
+            throw new Error(`Cannot unmute: ${user.username} is no longer in the server`);
+          }
 
           try {
             userToUnmute.roles.set([]); // remove all roles - including Muted
