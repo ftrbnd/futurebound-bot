@@ -93,16 +93,23 @@ const checkUsers = async (discordClient) => {
 
       if (user.muteEnd) {
         // if a user has a muteEnd date != null
-        if (today.getFullYear() === user.muteEnd.getFullYear() && today.getMonth() === user.muteEnd.getMonth() && today.getDate() === user.muteEnd.getDate()) {
-          const userToUnmute = await server.members.fetch(user.discordId);
-          if (!userToUnmute) {
-            throw new Error(`Cannot unmute: ${user.username} is no longer in the server`);
-          }
-
+        if (
+          today.getFullYear() === user.muteEnd.getFullYear() &&
+          today.getMonth() === user.muteEnd.getMonth() &&
+          today.getDate() === user.muteEnd.getDate() &&
+          today.getHours() === user.muteEnd.getHours() &&
+          today.getMinutes() === user.muteEnd.getMinutes()
+        ) {
+          let userToUnmute = null;
           try {
+            userToUnmute = await server.members.fetch(user.discordId);
             userToUnmute.roles.set([]); // remove all roles - including Muted
-          } catch {
-            console.error();
+          } catch (error) {
+            // remove the muteEnd date in the database so it doesn't trigger again
+            await updateUserMute(user, null, user.username);
+
+            const logChannel = server.channels.cache.get(env.LOGS_CHANNEL_ID);
+            return await sendMessageInLogChannel(null, new Error(`Cannot unmute: ${user.username} is no longer in the server`), logChannel);
           }
 
           const logEmbed = new EmbedBuilder()
