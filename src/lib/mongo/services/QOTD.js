@@ -1,17 +1,18 @@
-import { Document } from 'mongoose';
-import { Answer, QOTD } from '../schemas/QOTD';
-import { Collection, Message, ThreadChannel } from 'discord.js';
+import { QOTD } from '../schemas/QOTD.js';
+import { Collection, Message, ThreadChannel, User } from 'discord.js';
 
 /**
  *
  * @param {string} question
  * @param {Message} message
+ * @param {User} user
  * @returns
  */
-export async function createQOTD(question, message) {
+export async function createQOTD(question, message, user) {
   const qotd = await QOTD.create({
     question,
-    messageId: message.id
+    messageId: message.id,
+    userId: user.id
   });
 
   return qotd;
@@ -57,4 +58,9 @@ export async function getTopAnswer(messages) {
   }
 
   return mostPopular;
+}
+
+export async function getDailyNumber() {
+  const count = await QOTD.countDocuments();
+  return count;
 }

@@ -26,6 +26,10 @@ const envSchema = z.object({
 
   IMGUR_ALBUMS: z.string().transform((val) => val.split(',')),
 
+  QOTD_CHANNEL_ID: z.string(),
+  QOTD_ROLE_ID: z.string(),
+  QOTD_ALLOWED_USER_IDS: z.string().transform((val) => val.split(',')),
+
   ANNOUNCEMENTS_CHANNEL_ID: z.string(),
   BOTS_CHANNEL_ID: z.string(),
   BOT_BAIT_CHANNEL_ID: z.string(),

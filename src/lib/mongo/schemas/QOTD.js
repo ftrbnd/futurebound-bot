@@ -23,6 +23,10 @@ const QuestionSchema = new Schema(
     messageId: {
       type: SchemaTypes.String,
       required: true
+    },
+    userId: {
+      type: SchemaTypes.String,
+      required: true
     }
   },
   { versionKey: false }
