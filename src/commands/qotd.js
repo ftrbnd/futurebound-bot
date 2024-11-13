@@ -1,4 +1,4 @@
-import { ChatInputCommandInteraction, EmbedBuilder, SlashCommandBuilder } from 'discord.js';
+import { ActionRowBuilder, ButtonBuilder, ButtonStyle, ChatInputCommandInteraction, EmbedBuilder, SlashCommandBuilder } from 'discord.js';
 import { Colors } from '../utils/constants.js';
 import { env } from '../utils/env.js';
 import { collectAnswers, createQOTD, getDailyNumber, getTopAnswer } from '../lib/mongo/services/QOTD.js';
@@ -30,10 +30,10 @@ export async function execute(interaction) {
     const topAnswerEmbed = new EmbedBuilder()
       .setAuthor({ name: `Top Answer: ${topAnswer.author.displayName}`, iconURL: topAnswer.author.avatarURL() })
       .setDescription(topAnswer.content)
-      .setColor(Colors.YELLOW)
+      .setColor(Colors.QOTD)
       .setFooter({ text: `⭐ ${count}` });
 
-    await lastMessage.edit({ content: lastMessage.content, embeds: [...lastMessage.embeds, topAnswerEmbed] });
+    await lastMessage.edit({ embeds: [...lastMessage.embeds, topAnswerEmbed] });
   } catch (error) {
     console.log(error);
   }
@@ -42,19 +42,26 @@ export async function execute(interaction) {
   const creditedUser = submissionUser ?? interaction.user;
 
   const dailyNumber = await getDailyNumber();
+
+  const suggestButton = new ButtonBuilder().setCustomId('qotd_suggest_button').setLabel('Suggest a question!').setStyle(ButtonStyle.Primary);
+  const row = new ActionRowBuilder().addComponents(suggestButton);
   const qotdEmbed = new EmbedBuilder()
     .setTitle(`Question of the Day #${dailyNumber}`)
     .setDescription(question)
-    .setColor(Colors.RANDOM)
+    .setColor(Colors.QOTD)
     .setFooter({
       text: `submitted by ${creditedUser.displayName ?? creditedUser.username}`,
       iconURL: creditedUser.avatarURL()
     })
     .setTimestamp();
-  const message = await channel.send({ content: `${role}`, embeds: [qotdEmbed] });
-  await message.startThread({
+
+  const message = await channel.send({ content: `${role}`, embeds: [qotdEmbed], components: [row] });
+  const thread = await message.startThread({
     name: `QOTD #${dailyNumber}`
   });
+
+  const infoEmbed = new EmbedBuilder().setDescription('React to your favorite responses with a ⭐!').setColor(Colors.QOTD);
+  await thread.send({ embeds: [infoEmbed] });
 
   await createQOTD(question, message, creditedUser);
 

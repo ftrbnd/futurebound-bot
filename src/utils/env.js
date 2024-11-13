@@ -29,6 +29,7 @@ const envSchema = z.object({
   QOTD_CHANNEL_ID: z.string(),
   QOTD_ROLE_ID: z.string(),
   QOTD_ALLOWED_USER_IDS: z.string().transform((val) => val.split(',')),
+  QOTD_SUBMISSIONS_CHANNEL_ID: z.string(),
 
   ANNOUNCEMENTS_CHANNEL_ID: z.string(),
   BOTS_CHANNEL_ID: z.string(),
