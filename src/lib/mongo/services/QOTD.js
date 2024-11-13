@@ -49,7 +49,8 @@ export async function getTopAnswer(messages) {
   let max = 0;
 
   for (const [_, message] of messages) {
-    const starCount = message.reactions.cache.find((r) => r.emoji === '⭐').count;
+    const starReactions = message.reactions.cache.filter((r) => r.emoji.name === '⭐').get('⭐');
+    const starCount = starReactions ? starReactions.count : 0;
 
     if (starCount > max) {
       max = starCount;
@@ -57,7 +58,10 @@ export async function getTopAnswer(messages) {
     }
   }
 
-  return mostPopular;
+  return {
+    topAnswer: mostPopular,
+    count: max
+  };
 }
 
 export async function getDailyNumber() {

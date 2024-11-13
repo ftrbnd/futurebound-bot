@@ -1,7 +1,7 @@
 import { ChatInputCommandInteraction, EmbedBuilder, SlashCommandBuilder } from 'discord.js';
 import { Colors } from '../utils/constants.js';
 import { env } from '../utils/env.js';
-import { createQOTD, getDailyNumber } from '../lib/mongo/services/QOTD.js';
+import { collectAnswers, createQOTD, getDailyNumber, getTopAnswer } from '../lib/mongo/services/QOTD.js';
 
 export const data = new SlashCommandBuilder()
   .setName('qotd')
@@ -18,12 +18,28 @@ export async function execute(interaction) {
     throw new Error("You don't have permission to start QOTDs!");
   }
 
-  const submissionUser = interaction.options.getUser('user');
-  const creditedUser = submissionUser ?? interaction.user;
-
   const role = interaction.guild.roles.cache.get(env.QOTD_ROLE_ID);
   const question = interaction.options.getString('question');
   const channel = interaction.guild.channels.cache.get(env.QOTD_CHANNEL_ID);
+
+  try {
+    const lastMessage = await channel.messages.fetch(channel.lastMessageId);
+    const messages = await collectAnswers(lastMessage.thread);
+    const { topAnswer, count } = await getTopAnswer(messages);
+
+    const topAnswerEmbed = new EmbedBuilder()
+      .setAuthor({ name: `Top Answer: ${topAnswer.author.displayName}`, iconURL: topAnswer.author.avatarURL() })
+      .setDescription(topAnswer.content)
+      .setColor(Colors.YELLOW)
+      .setFooter({ text: `⭐ ${count}` });
+
+    await lastMessage.edit({ content: lastMessage.content, embeds: [...lastMessage.embeds, topAnswerEmbed] });
+  } catch (error) {
+    console.log(error);
+  }
+
+  const submissionUser = interaction.options.getUser('user');
+  const creditedUser = submissionUser ?? interaction.user;
 
   const dailyNumber = await getDailyNumber();
   const qotdEmbed = new EmbedBuilder()

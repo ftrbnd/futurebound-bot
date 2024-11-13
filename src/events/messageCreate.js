@@ -1,9 +1,13 @@
-import { EmbedBuilder, ChannelType, MessageType, ThreadAutoArchiveDuration } from 'discord.js';
+import { EmbedBuilder, ChannelType, MessageType, ThreadAutoArchiveDuration, Message } from 'discord.js';
 import { env } from '../utils/env.js';
 import { Colors, EDEN_LOGO, HEARDLE_URL } from '../utils/constants.js';
 import { sendMessageInLogChannel } from '../utils/error-handler.js';
 
 export const name = 'messageCreate';
+
+/**
+ * @param {Message} message
+ */
 export async function execute(message) {
   const logChannel = message.client.guilds.cache.get(env.GUILD_ID).channels.cache.get(env.LOGS_CHANNEL_ID);
 
@@ -56,6 +60,9 @@ export async function execute(message) {
   }
 }
 
+/**
+ * @param {Message} message
+ */
 async function handleDirectMessage(message) {
   const logChannel = message.client.guilds.cache.get(env.GUILD_ID).channels.cache.get(env.LOGS_CHANNEL_ID);
   if (!logChannel) return;
@@ -77,6 +84,10 @@ async function handleDirectMessage(message) {
   await logChannel.send({ embeds: [dmEmbed] });
 }
 
+/**
+ * @param {Message} message
+ * @param {number} level
+ */
 async function handleServerBoosts(message, level) {
   const generalChannel = message.guild.channels.cache.get(env.GENERAL_CHANNEL_ID);
   if (!generalChannel) return;
@@ -111,6 +122,9 @@ async function handleServerBoosts(message, level) {
   await generalChannel.send({ content: `${message.author}`, embeds: [boostEmbed] });
 }
 
+/**
+ * @param {Message} message
+ */
 async function handleMentions(message) {
   await message.channel.sendTyping();
 
@@ -151,6 +165,9 @@ async function handleMentions(message) {
   }
 }
 
+/**
+ * @param {Message} message
+ */
 async function handleServerSubscriptions(message) {
   const generalChannel = message.guild.channels.cache.get(env.GENERAL_CHANNEL_ID);
   if (!generalChannel) return;
@@ -177,6 +194,9 @@ async function handleServerSubscriptions(message) {
   await generalChannel.send({ content: `${message.author}`, embeds: [subscriptionEmbed] });
 }
 
+/**
+ * @param {Message} message
+ */
 async function handleHeardleWebhook(message) {
   const webhookEmbed = message.embeds[0];
 
@@ -221,13 +241,9 @@ async function handleHeardleWebhook(message) {
   }
 }
 
-function stylizeText(text) {
-  const emojis = [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', 'x', '💚', '🙂', '🤠', '💫'];
-  const randomEmoji = emojis[Math.floor(Math.random() * emojis.length)];
-
-  return `${text.toLowerCase().slice(0, -1)} ${randomEmoji}`; // remove punctuation of last sentence in message
-}
-
+/**
+ * @param {Message} message
+ */
 async function handleBotBaitMessage(message) {
   const modChannel = message.guild.channels.cache.get(env.MODERATORS_CHANNEL_ID);
   const member = message.member;
