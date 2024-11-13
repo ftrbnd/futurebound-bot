@@ -1,5 +1,5 @@
 // Interactions: slash commands, buttons, select menus
-import { EmbedBuilder, InteractionType } from 'discord.js';
+import { ActionRowBuilder, EmbedBuilder, InteractionType, ModalBuilder, TextInputBuilder, TextInputStyle } from 'discord.js';
 import { replyToInteraction } from '../utils/error-handler.js';
 import { getLeaderboard, sendRetryRequest, createLeaderboardDescription } from '../lib/heardle/api.js';
 import { getSurvivorRound, removeDuplicateVote, updateVotes } from '../lib/mongo/services/SurvivorRound.js';
@@ -21,6 +21,10 @@ export async function execute(interaction) {
       await handleGiveawayEntry(interaction);
     } else if (interaction.isButton() && interaction.customId.includes('daily_heardle')) {
       await handleRetryDailyHeardle(interaction);
+    } else if (interaction.isButton() && interaction.customId === 'qotd_suggest_button') {
+      await handleQOTDButtonPress(interaction);
+    } else if (interaction.isModalSubmit() && interaction.customId === 'qotd_submission_modal') {
+      await handleQOTDModalSubmit(interaction);
     }
 
     if (!interaction.type === InteractionType.ApplicationCommand) return;
@@ -172,4 +176,39 @@ async function handleRetryDailyHeardle(interaction) {
   } catch (error) {
     await replyToInteraction(interaction, error, true);
   }
+}
+
+const textInputId = 'qotd_question_input';
+
+async function handleQOTDButtonPress(interaction) {
+  const modal = new ModalBuilder().setCustomId('qotd_submission_modal').setTitle('QOTD Question Submissions');
+  const input = new TextInputBuilder().setCustomId(textInputId).setLabel('Submit your question idea!').setStyle(TextInputStyle.Paragraph).setRequired(true);
+  const row = new ActionRowBuilder().addComponents(input);
+
+  modal.addComponents(row);
+
+  await interaction.showModal(modal);
+}
+
+async function handleQOTDModalSubmit(interaction) {
+  const question = interaction.fields.getTextInputValue(textInputId);
+
+  const channel = interaction.guild.channels.cache.get(env.QOTD_SUBMISSIONS_CHANNEL_ID);
+  const submissionEmbed = new EmbedBuilder()
+    .setTitle('New Submission')
+    .setDescription(`"${question}"`)
+    .setFooter({
+      text: `submitted by ${interaction.user.displayName ?? interaction.user.username}`,
+      iconURL: interaction.user.avatarURL()
+    })
+    .setColor(Colors.QOTD)
+    .setTimestamp();
+  await channel.send({ embeds: [submissionEmbed] });
+
+  const confirmEmbed = new EmbedBuilder()
+    .setTitle('Thank you for submitting your question!')
+    .setDescription(`"${question}"`)
+    .setFooter({ text: interaction.guild.name, iconURL: interaction.guild.iconURL() })
+    .setColor(Colors.CONFIRM);
+  await interaction.reply({ embeds: [confirmEmbed], ephemeral: true });
 }
