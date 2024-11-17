@@ -19,8 +19,8 @@ export async function execute(interaction) {
       await handleLeaderboardButton(interaction);
     } else if (interaction.isButton() && interaction.customId.includes('giveaway')) {
       await handleGiveawayEntry(interaction);
-    } else if (interaction.isButton() && interaction.customId.includes('daily_heardle')) {
-      await handleRetryDailyHeardle(interaction);
+    } else if (interaction.isButton() && interaction.customId.includes('heardle')) {
+      await handleHeardleError(interaction);
     } else if (interaction.isButton() && interaction.customId === 'qotd_suggest_button') {
       await handleQOTDButtonPress(interaction);
     } else if (interaction.isModalSubmit() && interaction.customId === 'qotd_submission_modal') {
@@ -143,26 +143,31 @@ async function handleLeaderboardButton(interaction) {
   await interaction.editReply({ embeds: [leaderboardEmbed] });
 }
 
-async function handleRetryDailyHeardle(interaction) {
+async function handleHeardleError(interaction) {
   try {
     await interaction.deferReply();
 
-    // '(retry | disable)_daily_heardle_${status.id} => ['retry' | 'disable, 'daily', 'heardle', status.id]
+    // '(retry | disable)_daily_heardle_${status.id} => ['retry' | 'disable, 'daily' | 'unlimited, 'heardle', status.id]
     const action = interaction.customId.split('_')[0];
+    const heardleType = interaction.customId.split('_')[1];
     const statusId = interaction.customId.split('_')[3];
 
     if (action === 'retry') {
-      const statusExists = await getDailyHeardleCheck({ id: statusId });
-      if (!statusExists) {
-        throw new Error('This Daily Heardle check was deleted');
+      if (heardleType === 'daily') {
+        const statusExists = await getDailyHeardleCheck({ id: statusId });
+        if (!statusExists) {
+          throw new Error('This Daily Heardle check was deleted');
+        }
       }
 
-      const { message } = await sendRetryRequest();
-      const attempts = await updateAttemptCount();
+      const { message } = await sendRetryRequest(heardleType);
+
+      let attempts = 0;
+      if (heardleType === 'daily') attempts = await updateAttemptCount();
 
       const embed = new EmbedBuilder()
         .setTitle(message)
-        .addFields([{ name: 'Retry Attempts', value: `${attempts}` }])
+        .addFields(heardleType === 'daily' ? [{ name: 'Retry Attempts', value: `${attempts}` }] : [])
         .setColor(Colors.CONFIRM);
 
       await interaction.editReply({ embeds: [embed] });
