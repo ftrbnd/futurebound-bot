@@ -17,13 +17,20 @@ export async function sendHealthCheck() {
   return { data, res };
 }
 
-export async function sendRetryRequest() {
-  const res = await fetch(`${ENDPOINT}/daily/retry`, {
+/**
+ *
+ * @param {'daily' | 'unlimited'} type
+ * @returns
+ */
+export async function sendRetryRequest(type) {
+  if (type !== 'daily' && type !== 'unlimited') throw new Error("Invalid Heardle type: must be 'daily' or 'unlimited' ");
+
+  const res = await fetch(`${ENDPOINT}/${type.toLowerCase()}/retry`, {
     headers: {
       Authorization: `Bearer ${env.DISCORD_TOKEN}`
     }
   });
-  if (!res.ok) throw new Error('Failed to send Daily Heardle retry request');
+  if (!res.ok) throw new Error(`Failed to send ${type[0].toUpperCase() + type.substring(1)} Heardle retry request`);
 
   const { message } = await res.json();
   return { message };

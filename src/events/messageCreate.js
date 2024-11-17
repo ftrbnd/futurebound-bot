@@ -1,4 +1,4 @@
-import { EmbedBuilder, ChannelType, MessageType, ThreadAutoArchiveDuration, Message } from 'discord.js';
+import { EmbedBuilder, ChannelType, MessageType, ThreadAutoArchiveDuration, Message, ActionRowBuilder, ButtonBuilder, ButtonStyle } from 'discord.js';
 import { env } from '../utils/env.js';
 import { Colors, EDEN_LOGO, HEARDLE_URL } from '../utils/constants.js';
 import { sendMessageInLogChannel } from '../utils/error-handler.js';
@@ -199,8 +199,10 @@ async function handleServerSubscriptions(message) {
  */
 async function handleHeardleWebhook(message) {
   const webhookEmbed = message.embeds[0];
+  const title = webhookEmbed.data.title.toLowerCase();
+  const description = webhookEmbed.data.description.toLowerCase();
 
-  if (webhookEmbed.data.title.toLowerCase().includes('daily') && webhookEmbed.data.description.toLowerCase().includes('successfully')) {
+  if (title.includes('daily') && description.includes('successfully')) {
     const heardleChannel = message.guild.channels.cache.get(env.HEARDLE_CHANNEL_ID);
     const server = message.guild;
 
@@ -234,10 +236,13 @@ async function handleHeardleWebhook(message) {
       autoArchiveDuration: ThreadAutoArchiveDuration.OneDay,
       reason: 'New daily Heardle song'
     });
-  } else if (webhookEmbed.data.title.toLowerCase().includes('heardle') && webhookEmbed.data.description.toLowerCase().includes('error')) {
+  } else if (description.includes('error')) {
     const owner = await message.guild.members.fetch(message.guild.ownerId);
 
-    await owner.send({ embeds: [webhookEmbed], content: 'Error with EDEN Heardle:' });
+    const retryButton = new ButtonBuilder().setCustomId(`retry_unlimited_heardle`).setLabel('Retry').setStyle(ButtonStyle.Primary);
+    const row = new ActionRowBuilder().addComponents(retryButton);
+
+    await owner.send({ content: 'Error with EDEN Heardle:', embeds: [webhookEmbed], components: title.includes('unlimited') ? [row] : [] });
   }
 }
 
