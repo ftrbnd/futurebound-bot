@@ -3,6 +3,7 @@ import { env } from '../../utils/env.js';
 import { sendMessageInLogChannel } from '../../utils/error-handler.js';
 import { addSocialItem, getSocialCollection } from '../mongo/services/Social.js';
 import { Colors } from '../../utils/constants.js';
+import { checkSocialCronSettings } from '../mongo/services/Settings.js';
 
 async function fetchUploads() {
   const res = await fetch(`https://www.googleapis.com/youtube/v3/channels?part=contentDetails&id=${env.YOUTUBE_CHANNEL_ID}&key=${env.YOUTUBE_API_KEY}`);
@@ -38,6 +39,9 @@ async function fetchVideos() {
 export async function checkChannelUploads(discordClient) {
   // TODO: filter out Shorts
   try {
+    const { youtubeCronEnabled } = await checkSocialCronSettings();
+    if (!youtubeCronEnabled) return;
+
     const currentVideos = await fetchVideos();
     const previousVideos = await getSocialCollection('youtube');
 

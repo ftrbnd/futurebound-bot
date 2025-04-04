@@ -4,6 +4,7 @@ import { addSocialItem, getSocialCollection } from '../mongo/services/Social.js'
 import { Colors } from '../../utils/constants.js';
 import { sendMessageInLogChannel } from '../../utils/error-handler.js';
 import { getServiceToken, saveServiceToken } from '../mongo/services/Token.js';
+import { checkSocialCronSettings } from '../mongo/services/Settings.js';
 
 /**
  * @returns {Promise<{
@@ -80,6 +81,9 @@ async function fetchArtistAlbums() {
  */
 export async function checkArtistReleases(discordClient) {
   try {
+    const { spotifyCronEnabled } = await checkSocialCronSettings();
+    if (!spotifyCronEnabled) return;
+
     const currentAlbums = await fetchArtistAlbums();
     const previousAlbums = await getSocialCollection('spotify');
 
