@@ -1,6 +1,7 @@
 import { EmbedBuilder, ChannelType } from 'discord.js';
 import { env } from '../utils/env.js';
 import { Colors } from '../utils/constants.js';
+import { sendMessageInLogChannel } from '../utils/error-handler.js';
 
 export const name = 'channelUpdate';
 export async function execute(oldChannel, newChannel) {

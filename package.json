@@ -24,7 +24,7 @@
     "@ffmpeg-installer/ffmpeg": "^1.1.0",
     "@vvo/tzdb": "^6.89.0",
     "cron": "^3.1.7",
-    "discord.js": "^14.15.2",
+    "discord.js": "^14.20.0",
     "distube": "^5.0.2",
     "dotenv": "^10.0.0",
     "ffmpeg-static": "^5.2.0",
