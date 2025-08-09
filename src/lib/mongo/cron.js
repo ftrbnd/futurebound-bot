@@ -172,7 +172,10 @@ export const endGiveaway = async (client, giveaway) => {
       name: `${member.displayName} won the giveaway!`,
       iconURL: member.displayAvatarURL()
     })
-    .addFields([{ name: 'Prize: ', value: giveaway.prize }])
+    .addFields([
+      { name: 'Prize', value: giveaway.prize },
+      { name: 'Description', value: giveaway.description }
+    ])
     .setColor(Colors.GIVEAWAY)
     .setTimestamp();
   if (giveaway.imageURL) winnerEmbed.setThumbnail(giveaway.imageURL);
