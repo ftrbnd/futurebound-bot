@@ -2,7 +2,9 @@ import { ActionRowBuilder, ButtonBuilder } from '@discordjs/builders';
 import { SlashCommandBuilder, ButtonStyle, EmbedBuilder, PermissionFlagsBits } from 'discord.js';
 import { statusSquares } from '../lib/heardle/guess-statuses.js';
 import { getUserStats, getLeaderboard, createLeaderboardDescription, setAnnouncement, sendHealthCheck } from '../lib/heardle/api.js';
+import { sendDailyHeardleAnnouncement } from '../lib/heardle/daily-announcement.js';
 import { Colors, HEARDLE_URL } from '../utils/constants.js';
+import { env } from '../utils/env.js';
 
 export const data = new SlashCommandBuilder()
   .setName('heardle')
@@ -28,6 +30,7 @@ export const data = new SlashCommandBuilder()
           .addChoices({ name: 'Success', value: 'success' }, { name: 'Info', value: 'info' }, { name: 'Error', value: 'error' })
       )
   )
+  .addSubcommand((subcommand) => subcommand.setName('announce-daily-song').setDescription('Manually post the daily Heardle announcement embed'))
   .addSubcommand((subcommand) => subcommand.setName('health-check').setDescription('Ping the EDEN Heardle server'))
   .setDefaultMemberPermissions(PermissionFlagsBits.Administrator);
 
@@ -92,6 +95,40 @@ export async function execute(interaction) {
       .setURL(`${HEARDLE_URL}/play`);
 
     await interaction.reply({ embeds: [confirmEmbed] });
+  } else if (interaction.options.getSubcommand() === 'announce-daily-song') {
+    const owner = await interaction.guild.fetchOwner();
+    if (interaction.member.id !== owner.id) {
+      throw new Error('You are not the server owner.');
+    }
+
+    await interaction.deferReply({ ephemeral: true });
+
+    const logChannel = interaction.guild.channels.cache.get(env.LOGS_CHANNEL_ID);
+    if (!logChannel) throw new Error('Logs channel not found.');
+
+    const messages = await logChannel.messages.fetch({ limit: 100 });
+    const webhookMessage = messages.find((message) => {
+      if (message.webhookId !== env.HEARDLE_WEBHOOK_ID || !message.embeds[0]) return false;
+
+      const title = (message.embeds[0].title ?? '').toLowerCase();
+      const description = (message.embeds[0].description ?? '').toLowerCase();
+      return title.includes('daily') && description.includes('successfully');
+    });
+
+    if (!webhookMessage) {
+      throw new Error('No successful daily Heardle webhook message found in the logs channel.');
+    }
+
+    const previousSong = webhookMessage.embeds[0].fields[0]?.value;
+    const dayNumber = webhookMessage.embeds[0].fields[1]?.value;
+
+    if (!previousSong || dayNumber == null) {
+      throw new Error('Could not read previous song or day number from the Heardle webhook embed.');
+    }
+
+    await sendDailyHeardleAnnouncement(interaction.guild, { dayNumber, previousSong });
+
+    await interaction.editReply({ content: `Posted EDEN Heardle #${dayNumber} announcement (yesterday: **${previousSong}**).` });
   } else if (interaction.options.getSubcommand() === 'health-check') {
     const owner = await interaction.guild.fetchOwner();
     if (interaction.member.id !== owner.id) {

@@ -1,7 +1,8 @@
-import { EmbedBuilder, ChannelType, MessageType, ThreadAutoArchiveDuration, Message, ActionRowBuilder, ButtonBuilder, ButtonStyle } from 'discord.js';
+import { EmbedBuilder, ChannelType, MessageType, Message, ActionRowBuilder, ButtonBuilder, ButtonStyle } from 'discord.js';
 import { env } from '../utils/env.js';
-import { Colors, EDEN_LOGO, HEARDLE_URL } from '../utils/constants.js';
+import { Colors } from '../utils/constants.js';
 import { sendMessageInLogChannel } from '../utils/error-handler.js';
+import { sendDailyHeardleAnnouncement } from '../lib/heardle/daily-announcement.js';
 
 export const name = 'messageCreate';
 
@@ -203,39 +204,11 @@ async function handleHeardleWebhook(message) {
   const description = webhookEmbed.data.description.toLowerCase();
 
   if (title.includes('daily') && description.includes('successfully')) {
-    const heardleChannel = message.guild.channels.cache.get(env.HEARDLE_CHANNEL_ID);
-    const server = message.guild;
-
     // get yesterday's Heardle details
     const previousSong = message.embeds[0].data.fields[0].value;
     const dayNumber = message.embeds[0].data.fields[1].value;
 
-    const notificationRole = await message.guild.roles.cache.get(env.HEARDLE_ROLE_ID);
-
-    // close and lock previous thread
-    const lastThread = heardleChannel.threads.cache.last();
-    if (lastThread && !lastThread.locked) {
-      await lastThread.setLocked(true);
-    }
-
-    const heardleEmbed = new EmbedBuilder()
-      .setTitle(`EDEN Heardle #${dayNumber} - New daily song!`)
-      .setURL(HEARDLE_URL)
-      .setDescription(`Yesterday's song was **${previousSong}**`)
-      .setThumbnail(EDEN_LOGO)
-      .setColor(Colors.HEARDLE)
-      .setFooter({
-        text: 'Share your results in the thread!',
-        iconURL: server.iconURL({ dynamic: true })
-      });
-
-    const dailyMessage = await heardleChannel.send({ content: `${notificationRole}`, embeds: [heardleEmbed] });
-
-    await dailyMessage.startThread({
-      name: `EDEN Heardle #${dayNumber}`,
-      autoArchiveDuration: ThreadAutoArchiveDuration.OneDay,
-      reason: 'New daily Heardle song'
-    });
+    await sendDailyHeardleAnnouncement(message.guild, { dayNumber, previousSong });
   } else if (description.includes('error')) {
     const owner = await message.guild.members.fetch(message.guild.ownerId);
 
