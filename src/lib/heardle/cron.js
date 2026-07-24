@@ -6,14 +6,18 @@ import { env } from '../../utils/env.js';
 import { Colors } from '../../utils/constants.js';
 
 async function snapshotPrev() {
-  const { song: prev } = await getCurrentDailySong();
+  try {
+    const { song: prev } = await getCurrentDailySong();
 
-  await deleteAllChecks();
+    await deleteAllChecks();
 
-  await createDailyHeardleCheck({
-    prevDay: prev.heardleDay,
-    prevSong: prev.name
-  });
+    await createDailyHeardleCheck({
+      prevDay: prev.heardleDay,
+      prevSong: prev.name
+    });
+  } catch (error) {
+    console.error(error);
+  }
 }
 
 async function snapshotNext(client) {

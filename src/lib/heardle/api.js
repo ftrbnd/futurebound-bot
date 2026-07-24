@@ -42,7 +42,10 @@ export async function getCurrentDailySong() {
       Authorization: `Bearer ${env.DISCORD_TOKEN}`
     }
   });
-  if (!res.ok) throw new Error('Failed to send GET /api/heardles/daily request');
+  if (!res.ok) {
+    const body = await res.text().catch(() => '');
+    throw new Error(`Failed to send GET /api/heardles/daily request (${res.status}): ${body}`);
+  }
 
   // data: { song: DailySong }
   const { song } = await res.json();
