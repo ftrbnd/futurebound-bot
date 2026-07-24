@@ -5,6 +5,7 @@ import { getLeaderboard, sendRetryRequest, createLeaderboardDescription } from '
 import { getSurvivorRound, removeDuplicateVote, updateVotes } from '../lib/mongo/services/SurvivorRound.js';
 import { getGiveaway, updateGiveawayEntries } from '../lib/mongo/services/Giveaway.js';
 import { deleteAllChecks, getDailyHeardleCheck, updateAttemptCount } from '../lib/mongo/services/DailyHeardleCheck.js';
+import { getLatestSuccessfulDailyWebhook, sendDailyHeardleAnnouncement } from '../lib/heardle/daily-announcement.js';
 import { env } from '../utils/env.js';
 import { Colors, HEARDLE_URL } from '../utils/constants.js';
 
@@ -19,6 +20,8 @@ export async function execute(interaction) {
       await handleLeaderboardButton(interaction);
     } else if (interaction.isButton() && interaction.customId.includes('giveaway')) {
       await handleGiveawayEntry(interaction);
+    } else if (interaction.isButton() && interaction.customId === 'announce_daily_heardle') {
+      await handleAnnounceDailyHeardle(interaction);
     } else if (interaction.isButton() && interaction.customId.includes('heardle')) {
       await handleHeardleError(interaction);
     } else if (interaction.isButton() && interaction.customId === 'qotd_suggest_button') {
@@ -178,6 +181,26 @@ async function handleHeardleError(interaction) {
 
       await interaction.editReply({ embeds: [embed] });
     }
+  } catch (error) {
+    await replyToInteraction(interaction, error, true);
+  }
+}
+
+async function handleAnnounceDailyHeardle(interaction) {
+  try {
+    await interaction.deferReply();
+
+    const guild = interaction.guild ?? interaction.client.guilds.cache.get(env.GUILD_ID);
+    if (!guild) throw new Error('Guild not found.');
+
+    const { previousSong, dayNumber } = await getLatestSuccessfulDailyWebhook(guild);
+    await sendDailyHeardleAnnouncement(guild, { dayNumber, previousSong });
+
+    const embed = new EmbedBuilder()
+      .setDescription(`Posted EDEN Heardle #${dayNumber} announcement (yesterday: **${previousSong}**).`)
+      .setColor(Colors.CONFIRM);
+
+    await interaction.editReply({ embeds: [embed] });
   } catch (error) {
     await replyToInteraction(interaction, error, true);
   }
