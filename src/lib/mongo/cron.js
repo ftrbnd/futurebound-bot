@@ -1,6 +1,6 @@
 import { Client, EmbedBuilder } from 'discord.js';
 import { CronJob } from 'cron';
-import { getUsers } from './services/User.js';
+import { deleteUser, getUsers, updateUserMute } from './services/User.js';
 import { getGiveaways } from './services/Giveaway.js';
 import { env } from '../../utils/env.js';
 import { Colors } from '../../utils/constants.js';
@@ -79,10 +79,17 @@ const checkUsers = async (discordClient) => {
             });
 
           try {
-            birthdayPerson.send({ content: 'happy birthday!! 🥳' });
+            await birthdayPerson.send({ content: 'happy birthday!! 🥳' });
           } catch (error) {
             console.log(`Failed to dm ${user.username}`);
             console.log(error);
+
+            // User left the server (no mutual guilds with the bot)
+            if (error.code === 50278) {
+              await deleteUser(user);
+              console.log(`Removed ${user.username} from the database (no mutual guilds)`);
+              return;
+            }
           }
 
           const generalChannel = discordClient.channels.cache.get(env.GENERAL_CHANNEL_ID);

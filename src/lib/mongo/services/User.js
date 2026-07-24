@@ -57,6 +57,14 @@ export async function deleteUserBirthday(user) {
 /**
  *
  * @param {Document<User>} user
+ */
+export async function deleteUser(user) {
+  await user.deleteOne();
+}
+
+/**
+ *
+ * @param {Document<User>} user
  * @param {string} username
  * @param {number} warnings
  */
